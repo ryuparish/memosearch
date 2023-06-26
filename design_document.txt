@@ -1,0 +1,47 @@
+Memo Search Notes and Screenshot Search Tool
+
+Executive Summary:
+
+  A desktop application that searches Notes, screenshots, and bookmarks.
+
+  Stores each item with context for remembering when found later.
+
+  The design is heavily based on Spotify's desktop application:
+    https://engineering.atspotify.com/2021/04/building-the-future-of-our-desktop-apps/
+
+
+
+Infrastructure Design:
+
+1. Frontend 
+  a. The frontend consists of CMake and React (Typescript) container that communicates 
+  to the Memosearch backend (Python)
+
+
+2. Backend
+  a. The backend consists of a flask server that feeds endpoints to the 
+  React frontend.
+
+
+
+Case Study:
+
+Often times, Ryu is scrolling through the internet whilst tired, travelling, and/or about to do something important. In those moments,
+sometimes he sees something that is worth keeping note of, but not acting upon right away. Ryu screenshots the IPhone/Mac screen,
+bookmarks the page, and/or makes a note in his IPhone notes app. Eventually, Ryu forgets about these memos and finds them again, completely
+confused by what the context was. If he has possibly been reminded of it the next day, he could wrote some context for it and started
+something, or perhaps wrote some context and saved it for later date.
+
+This is where Ryu thought about creating a system that would:
+
+  1. Save the screenshot, note, or bookmark.
+
+  2. Remind Ryu of screenshots with no context, so that
+  he actually understands what they were for in the future.
+
+  3. Extract text from screenshots and bookmarked pages to
+  allow for search on these memos when he thinks about them
+  later on.
+
+  4. Do analytics and keep track of what type of content he is saving 
+  and suggest some ways to explore his ideas.
