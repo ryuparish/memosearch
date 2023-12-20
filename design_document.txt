@@ -6,21 +6,82 @@ Executive Summary:
 
   Stores each item with context for remembering when found later.
 
-  The design is heavily based on Spotify's desktop application:
-    https://engineering.atspotify.com/2021/04/building-the-future-of-our-desktop-apps/
-
-
-
 Infrastructure Design:
 
 1. Frontend 
-  a. The frontend consists of CMake and React (Typescript) container that communicates 
+  a. The frontend consists of Electron and React (Javascript) container that communicates 
   to the Memosearch backend (Python)
+
+  Features:
+    Pages:
+
+      - Links page
+
+        * Textbox to add a new link
+
+        * Textboxes for each of the following:
+          ^ About
+          ^ Site Name
+          ^ Date
+          ^ Related Activity (predicted activity)
+
+        * Error message that automatically loads to show that validation for the link occurred.
+
+        * Upload button
+
+      - Images page
+      
+        * Image Upload button
+
+        * Textboxes for each of the following:
+          ^ About
+          ^ Caption
+          ^ Image in text
+          ^ Date
+          ^ Related Activity (predicted activity)
+
+        * Error message that automatically loads to show that validation for the image occurred.
+
+        * Upload button
+
+        * Upload button
+
+      - Notes page
+
+        * Textbox to add a new note
+
+        * Textboxes for each of the following:
+          ^ About
+          ^ Date
+          ^ Related Activity (predicted activity)
+
+        * Error message that automatically loads to show that validation for the note occurred.
+
+        * Upload button
+
+      - Search page
+
+        * Search bar
+
+        * List of search results
+
+        * Opens a new window or a side menu to display information about the link highlighted and selected
 
 
 2. Backend
-  a. The backend consists of a flask server that feeds endpoints to the 
+  a. The backend consists of a django server that feeds endpoints to the 
   React frontend.
+
+  Features:
+    - A text generation mvc model that:
+      * Converts screenshots to textual descriptions
+      * Converts notes into author's thoughts
+      * Converts bookmarks into 
+
+    - A classicfication mvc model that:
+      * Clusters all the textual data into categories
+      * Asks user if they could classify the topic of the
+      text, with one k-mean getting one topic.
 
 
 
