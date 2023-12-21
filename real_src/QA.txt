@@ -1,0 +1,21 @@
+Why can we not use "electron ." from the command line?
+
+  - Electron is unfortunately not a part of the developer tools program for Apple.
+  This means that we cannot run electron by itself and we must run it through npm (npm run electron-dev, where
+  electron-dev is an alias for electron . within the npm shell)
+
+How is this project setup? What is are the main components that make up this project?
+
+  - This project has three main portions
+
+    * Flask
+
+      ^ For having an ML backend to do ML stuff and other pythonic things
+
+    * Electron
+
+      ^ For having the application be a desktop application rather than a browser application
+
+    * React
+
+      ^ For having react components within the Electron desktop application
