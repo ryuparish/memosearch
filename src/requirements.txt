@@ -1,7 +1,0 @@
-requests
-beautifulsoup4
-Flask
-numpy
-keras
-tensorflow
-lxml
