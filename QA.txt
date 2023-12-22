@@ -1,0 +1,49 @@
+Why can we not use "electron ." from the command line?
+
+  - Electron is unfortunately not a part of the developer tools program for Apple.
+  This means that we cannot run electron by itself and we must run it through npm (npm run electron-dev, where
+  electron-dev is an alias for electron . within the npm shell)
+
+How is this project setup? What is are the main components that make up this project?
+
+  - This project has three main portions
+
+    * Flask
+
+      ^ For having an ML backend to do ML stuff and other pythonic things
+
+    * Electron
+
+      ^ For having the application be a desktop application rather than a browser application
+
+    * React
+
+      ^ For having react components within the Electron desktop application 
+
+What is the benefit of having React vs. no React?
+
+  - We want to be able to load more than just HTML dynamicallly. We want react components that 
+  can make function calls and have more functionality (such as a dynamically generated list)
+  than a HTML page.
+
+    * Otherwise, we have to hack our way by modifying jinja in Python and sending HTML through Flask sporadically.
+
+What is public/main.js?
+
+  - This file in the src is for piping everything that the react application on port XXXX sends into the
+  electron desktop application.
+
+How does the search page work in
+
+What is the process of getting a link added, analyzed and retrieved?
+  - Adding a link
+    * User enters information in on the Links icon.
+    * Validation for missing fields that the user needs to update.
+    * Sends the link to the database and saves the analyzed link.
+    * Assert that the link is complete and insert into db.
+  - Analyzed
+    * Use Flask backend to analyze the title and the text of the file
+      ^ Use ml (sent bert) to encode the title+text.
+    * Send back the title, text, and vector.
+  - Retrieved
+    * Query database in react and get the link data.
