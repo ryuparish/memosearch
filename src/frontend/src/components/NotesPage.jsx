@@ -2,7 +2,13 @@ import React, { useContext } from 'react';
 import {AppContext} from "../App";
 
 export default function LinksPage() {
-  const [page, setPage] = useContext(AppContext);
+  const {
+    setPage,
+    noteActivity,
+    setNoteActivity,
+    noteAbout,
+    setNoteAbout,
+  } = useContext(AppContext);
   const date = new Date();
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   return (
@@ -24,11 +30,11 @@ export default function LinksPage() {
         <form id="links">
           <h3> Add Note </h3>
             <label for="activity">Related Activity:</label>
-              <input type="text" id="activity" name="activity"/><br/><br/>
+          <input type="text" id="activity" name="activity" onChange={(e) => setNoteActivity(e.target.value)} value={noteActivity}/><br/><br/>
             <label for="date">Date:</label>
               <p>{formattedDate}</p><br/>
             <label for="about">About:</label><br/>
-              <textarea id="about" name="freeform" rows="4" cols="50"></textarea><br/><br/>
+          <textarea id="about" name="freeform" rows="4" cols="50" onChange={(e) => setNoteAbout(e.target.value)} value={noteAbout}></textarea><br/><br/>
           <button type="submit" class="btn btn-info" onClick={() => {}}>Submit</button>
         </form>
       </div>

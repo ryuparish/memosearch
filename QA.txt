@@ -47,3 +47,6 @@ What is the process of getting a link added, analyzed and retrieved?
     * Send back the title, text, and vector.
   - Retrieved
     * Query database in react and get the link data.
+
+What are we using for reference to get started with the SQL queries?
+  - https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/#a-minimal-application

@@ -6,7 +6,7 @@ import search_image from "../images/search.jpg";
 import {AppContext} from "../App";
 
 export default function MainPage() {
-  const [page, setPage] = useContext(AppContext);
+  const {setPage} = useContext(AppContext);
 
   return (
        <div>

@@ -64,11 +64,14 @@ Infrastructure Design:
         * Search bar
 
         * List of search results
+          ^ All are listed in a "link" style format with an annotation on the side that 
+          says [RESULT_TYPE], where RESULT_TYPE is one of following: [Link, Screenshot, Note].
 
         * Opens a new window or a side menu to display information about the link highlighted and selected
 
 
 2. Backend
+
   a. The backend consists of a django server that feeds endpoints to the 
   React frontend.
 
@@ -93,16 +96,19 @@ bookmarks the page, and/or makes a note in his IPhone notes app. Eventually, Ryu
 confused by what the context was. If he has possibly been reminded of it the next day, he could wrote some context for it and started
 something, or perhaps wrote some context and saved it for later date.
 
-This is where Ryu thought about creating a system that would:
 
-  1. Save the screenshot, note, or bookmark.
+  Happy Path: 
 
-  2. Remind Ryu of screenshots with no context, so that
-  he actually understands what they were for in the future.
-
-  3. Extract text from screenshots and bookmarked pages to
-  allow for search on these memos when he thinks about them
-  later on.
-
-  4. Do analytics and keep track of what type of content he is saving 
-  and suggest some ways to explore his ideas.
+    This is where Ryu thought about creating a system that would:
+    
+      1. Save the screenshot, note, or bookmark.
+    
+      2. Remind Ryu of screenshots with no context, so that
+      he actually understands what they were for in the future.
+    
+      3. Extract text from screenshots and bookmarked pages to
+      allow for search on these memos when he thinks about them
+      later on.
+    
+      4. Do analytics and keep track of what type of content he is saving 
+      and suggest some ways to explore his ideas.

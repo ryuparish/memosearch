@@ -1,5 +1,8 @@
 import os
+import sys
 import random
+import sqlalchemy
+from logging.config import dictConfig
 from flask import Flask
 from flask import jsonify
 from urllib.parse import urlparse
@@ -21,6 +24,18 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+
+#class Base(DeclarativeBase):
+#    metadata = MetaData(naming_convention={
+#        "ix": 'ix_%(column_0_label)s',
+#        "uq": "uq_%(table_name)s_%(column_0_name)s",
+#        "ck": "ck_%(table_name)s_%(constraint_name)s",
+#        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+#        "pk": "pk_%(table_name)s"
+#    })
+
+
+#db = SQLAlchemy(model_class=Base)
 db = SQLAlchemy(app)
 
 
@@ -73,10 +88,11 @@ with app.app_context():
 # Routes
 @app.route("/search", methods=["POST", "OPTIONS"])
 @cross_origin()
-def search():
+def search() :
     """Handles the search route.
 
     POST: This route returns all the matching results from the query.
+
 
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
@@ -84,57 +100,24 @@ def search():
     request_data = request.json
 
     # Process request (return list of dicts)
-    if request.method == "POST":
-        curr_results = {k: [] for k in request_data["content"]}
-
-        # Adding site-name-matched links to the result list
-        if ("links" in request_data["content"]):
-            results = Link.query.filter_by(
+    if request.method == "GET":
+        curr_results = {}
+        if ("list" in request_data.content):
+            curr_results["links"] = Link.query.filter_by(
                 site_name=request_data["search"]
             ).all()
 
-            for result in results:
-                curr_results["links"] += [{
-                    "id": result.id,
-                    "about": result.about,
-                    "link": result.link,
-                    "site_name": result.site_name,
-                    "related_activity": result.related_activity
-                }]
-                print(result.link)
-
-        # Adding caption-matched screenshots to the result list
-        if ("screenshots" in request_data["content"]):
-            results = Screenshot.query.filter_by(
+        if ("screenshots" in request_data.content):
+            curr_results["screenshots"] = Screenshot.query.filter_by(
                 caption=request_data["search"]
             ).all()
 
-            for result in results:
-                curr_results["screenshots"] += [{
-                    "id": result.id,
-                    "about": result.about,
-                    "date": result.date,
-                    "caption": result.caption,
-                    "text_in_image": result.test_in_image,
-                    "related_activity": result.related_activity
-                }]
-
-        # Adding title-matched notes to the result list
-        if ("notes" in request_data["content"]):
-            results = Note.query.filter_by(
+        if ("note" in request_data.content):
+            curr_results["notes"] = curr_results.concat(Note.query.filter_by(
                 title=request_data["search"]
-            ).all()
-
-            for result in results:
-                curr_results["notes"] += [{
-                    "id": result.id,
-                    "about": result.about,
-                    "date": result.date,
-                    "related_activity": result.related_activity
-                }]
+            ).all())
 
         response = jsonify(curr_results)
-        print(curr_results)
         return response
 
 
@@ -154,6 +137,27 @@ def links():
     :rtype: list(dict (JSON))
     """
     request_data = request.json
+
+    # Process request (return list of dicts)
+    if request.method == "GET":
+        curr_results = {}
+        if ("list" in request_data.content):
+            curr_results["links"] = Link.query.filter_by(
+                site_name=request_data["search"]
+            ).all()
+
+        if ("screenshots" in request_data.content):
+            curr_results["screenshots"] = Screenshot.query.filter_by(
+                caption=request_data["search"]
+            ).all()
+
+        if ("note" in request_data.content):
+            curr_results["notes"] = curr_results.concat(Note.query.filter_by(
+                title=request_data["search"]
+            ).all())
+
+        response = jsonify(curr_results)
+        return response
 
     if request.method == "POST":
         # Link validation for POST

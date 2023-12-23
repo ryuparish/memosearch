@@ -44,7 +44,19 @@ import {AppContext} from "../App";
 //}
 
 export default function ScreenshotsPage() {
-  const [page, setPage] = useContext(AppContext);
+  const {
+    setPage,
+    screenshotActivity,
+    setScreenshotActivity,
+    screenshotCaption,
+    setScreenshotCaption,
+    screenshotText,
+    setScreenshotText,
+    screenshotFile,
+    setScreenshotFile,
+    screenshotAbout,
+    setScreenshotAbout
+  } = useContext(AppContext);
   const date = new Date();
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   return (
@@ -65,18 +77,18 @@ export default function ScreenshotsPage() {
         <br/>
         <form id="links">
           <h3> Add Screenshot </h3>
-            <label for="activity">File or Photo Directory:</label>
-            <input type="file"/><br/>
+            <label for="file">File or Photo Directory:</label>
+          <input type="file" onChange={(e) => setScreenshotFile(e.target.value)} value={screenshotFile}/><br/>
             <label for="Caption">Caption:</label>
-              <input type="text" id="caption" name="caption"/><br/><br/>
+          <input type="text" id="caption" name="caption" onChange={(e) => setScreenshotCaption(e.target.value)} value={screenshotCaption}/><br/><br/>
             <label for="text_in_image">Text in image (if any):</label>
-              <input type="text" id="text_in_image" name="text_in_image"/><br/><br/>
+              <input type="text" id="text_in_image" name="text_in_image" onChange={(e) => setScreenshotText(e.target.value)} value={screenshotText}/><br/><br/>
             <label for="activity">Related Activity:</label>
-              <input type="text" id="activity" name="activity"/><br/><br/>
+              <input type="text" id="activity" name="activity" onChange={(e) => setScreenshotActivity(e.target.value)} value={screenshotActivity}/><br/><br/>
             <label for="date">Date:</label>
               <p>{formattedDate}</p><br/>
             <label for="about">About:</label><br/>
-              <textarea id="about" name="freeform" rows="4" cols="50"></textarea><br/><br/>
+              <textarea id="about" name="freeform" rows="4" cols="50" onChange={(e) => setScreenshotAbout(e.target.value)} value={screenshotAbout}></textarea><br/><br/>
           <button type="submit" class="btn btn-info" onClick={() => {}}>Submit</button>
         </form>
       </div>
