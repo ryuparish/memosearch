@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% block content %}
+<h1><a href={{ link }} target="_blank">{{ link }}</a></h1> 
+    <br/>
+    <h3>{{ about }}</h3>
+    <br/>
+    <p>Date: {{ date }} </p>
+    <br/>
+    <p>Domain: {{ site_name }}</p>
+    <br/>
+    <p>Related Activity: {{ related_activity }}</p>
+{% endblock %}

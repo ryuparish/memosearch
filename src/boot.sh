@@ -1,5 +1,4 @@
-cd frontend &
-npm start &
+export FLASK_APP=~/Code/memosearch/src/backend/src/app.py &&
+npm start --prefix ./frontend/ &
 npm run electron-dev &
-cd ../backend/src/ &
-flask run;
+flask run &

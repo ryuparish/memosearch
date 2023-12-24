@@ -27,6 +27,8 @@ export default function App() {
   // Notes Page state
   const [noteActivity, setNoteActivity] = React.useState("");
   const [noteAbout, setNoteAbout] = React.useState("");
+  const [noteTitle, setNoteTitle] = React.useState("");
+  const [noteError, setNoteError] = React.useState("");
 
   // Search Page State
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -34,6 +36,8 @@ export default function App() {
   const [searchNote, setSearchNote] = React.useState(true);
   const [searchScreenshot, setSearchScreenshot] = React.useState(true);
   const [searchLink, setSearchLink] = React.useState(true);
+
+  console.log("searchQuery in App.jsx: " + searchQuery);
 
   // Accumulated State
   const all_states = {
@@ -63,6 +67,10 @@ export default function App() {
     setNoteActivity,
     noteAbout,
     setNoteAbout,
+    noteTitle,
+    setNoteTitle,
+    noteError,
+    setNoteError,
     searchResults,
     setSearchResults,
     searchQuery,

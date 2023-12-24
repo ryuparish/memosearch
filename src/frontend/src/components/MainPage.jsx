@@ -2,8 +2,10 @@ import React, { useContext } from 'react';
 import link_image from "../images/link.jpg";
 import screenshot_image from "../images/screenshot.jpg";
 import notes_image from "../images/notes.png";
-import search_image from "../images/search.jpg";
 import {AppContext} from "../App";
+import SearchBar from "./SearchBar";
+import SearchResults from "./SearchResults";
+import "./style.css";
 
 export default function MainPage() {
   const {setPage} = useContext(AppContext);
@@ -20,27 +22,36 @@ export default function MainPage() {
                <p>Search for links and screenshots</p>
              </div>
              <br/>
-             <div class="row">
-             <div class="col-xs-3">
+           <div class="row">
+             <div class="column" style={{"text-align":"center"}}>
                <img style={{"width":"30%"}}src={link_image} alt=""/>
                <br/>
                <button class="btn btn-info" onClick={() => setPage("links")}>Links</button>
              </div>
-             <div class="col-xs-3">
+             <div class="column" style={{"text-align":"center"}}>
                <img style={{"width":"30%"}} src={screenshot_image} alt=""/>
                <br/>
                <button class="btn btn-info" onClick={() => setPage("screenshots")}>Screenshots</button>
              </div>
-             <div class="col-xs-3">
+             <div class="column" style={{"text-align":"center"}}>
                <img style={{"width":"30%"}} src={notes_image} alt=""/>
                <br/>
                <button class="btn btn-info" onClick={() => setPage("notes")}>Notes</button>
              </div>
-             <div class="col-xs-3">
+             {/*<div class="col-xs-3">
                <img style={{"width":"40%","padding":"5px"}} src={search_image} alt=""/>
                <br/>
                <button class="btn btn-warning" onClick={() => setPage("search")}>Search</button>
+             </div>*/}
+           </div>
+           <br/><br/>
+           <div>
+             <div style={{"text-align":"center"}}>
+               <h4>Search</h4>
              </div>
+             <SearchBar/>
+           <br/><br/>
+             <SearchResults/>
            </div>
          </div>
          </body>

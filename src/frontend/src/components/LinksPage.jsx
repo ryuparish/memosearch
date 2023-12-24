@@ -38,8 +38,8 @@ export default function LinksPage() {
   function handleSubmit(event) {
     event.preventDefault()
 
-    // Only allow database insertion on a link that at least has
-    // a link name
+    // Only allow database insertion on a link that has valid 
+    // inputs
     setLinkError("")
     if (linkName === "") {
       setLinkError("The name of the link is required")
