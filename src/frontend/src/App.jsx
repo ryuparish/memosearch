@@ -21,8 +21,9 @@ export default function App() {
   const [screenshotActivity, setScreenshotActivity] = React.useState("");
   const [screenshotCaption, setScreenshotCaption] = React.useState("");
   const [screenshotText, setScreenshotText] = React.useState("");
-  const [screenshotFile, setScreenshotFile] = React.useState("");
+  const [screenshotFile, setScreenshotFile] = React.useState();
   const [screenshotAbout, setScreenshotAbout] = React.useState("");
+  const [screenshotError, setScreenshotError] = React.useState("");
 
   // Notes Page state
   const [noteActivity, setNoteActivity] = React.useState("");
@@ -36,8 +37,6 @@ export default function App() {
   const [searchNote, setSearchNote] = React.useState(true);
   const [searchScreenshot, setSearchScreenshot] = React.useState(true);
   const [searchLink, setSearchLink] = React.useState(true);
-
-  console.log("searchQuery in App.jsx: " + searchQuery);
 
   // Accumulated State
   const all_states = {
@@ -80,7 +79,9 @@ export default function App() {
     searchLink,
     setSearchLink,
     searchScreenshot,
-    setSearchScreenshot
+    setSearchScreenshot,
+    screenshotError,
+    setScreenshotError
   }
 
   // Page changing logic

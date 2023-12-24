@@ -55,10 +55,73 @@ export default function ScreenshotsPage() {
     screenshotFile,
     setScreenshotFile,
     screenshotAbout,
-    setScreenshotAbout
+    setScreenshotAbout,
+    screenshotError,
+    setScreenshotError
   } = useContext(AppContext);
   const date = new Date();
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
+  function handleSubmit(event) {
+    event.preventDefault()
+
+    // Only allow database insertion on a link that has valid 
+    // inputs
+    setScreenshotError("")
+    if (screenshotFile === undefined) {
+      setScreenshotError("The file of the screenshot is required")
+    } else if (screenshotCaption === "") {
+      setScreenshotError("The screenshot caption is required")
+    } else if (screenshotText === "") {
+      setScreenshotError("The screenshot text is required")
+    } else if (screenshotActivity === "") {
+      setScreenshotError("The activity of the screenshot is required")
+    } else if (screenshotAbout === "") {
+      setScreenshotError("The about of the screenshot is required")
+    }
+
+    if (screenshotError !== "") {
+      console.log("Returning due to empty fields")
+      return;
+    }
+
+    // Putting the image into a form so flask can read in
+    const formData = new FormData()
+    formData.append("file", screenshotFile)
+    formData.append("caption", screenshotCaption)
+    formData.append("text", screenshotText)
+    formData.append("activity", screenshotActivity)
+    formData.append("about", screenshotAbout)
+    formData.append("date", date)
+
+    // Create a new link object and send to the server
+    // const screenshotObj = {
+    //   file:formData,
+    //   caption:screenshotCaption,
+    //   activity:screenshotActivity,
+    //   about:screenshotAbout,
+    //   date:date
+    // }
+
+    console.log("Sending this form data: " + formData.get("file"))
+    // Post to the "links" api
+    fetch("http://127.0.0.1:4444/screenshots", {
+      method: "POST",
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: formData
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Here is the data we put into the database: " + JSON.stringify(data[0]));
+      })
+      .catch((error) => console.log(error));
+  }
+
+  console.log("Here is the screenshotFile: " + screenshotFile)
   return (
   <div>
     <head>
@@ -75,10 +138,10 @@ export default function ScreenshotsPage() {
           <h2>Add, Delete, and Edit Screenshot data</h2>
         </div>
         <br/>
-        <form id="links">
+        <form id="links" onSubmit={handleSubmit}>
           <h3> Add Screenshot </h3>
             <label for="file">File or Photo Directory:</label>
-          <input type="file" onChange={(e) => setScreenshotFile(e.target.value)} value={screenshotFile}/><br/>
+          <input type="file" name="image" onChange={(e) => {setScreenshotFile(e.target.files[0])}} /><br/>
             <label for="Caption">Caption:</label>
           <input type="text" id="caption" name="caption" onChange={(e) => setScreenshotCaption(e.target.value)} value={screenshotCaption}/><br/><br/>
             <label for="text_in_image">Text in image (if any):</label>
@@ -89,8 +152,9 @@ export default function ScreenshotsPage() {
               <p>{formattedDate}</p><br/>
             <label for="about">About:</label><br/>
               <textarea id="about" name="freeform" rows="4" cols="50" onChange={(e) => setScreenshotAbout(e.target.value)} value={screenshotAbout}></textarea><br/><br/>
-          <button type="submit" class="btn btn-info" onClick={() => {}}>Submit</button>
+              <input type="submit" id="submit" name="submit"/>
         </form>
+        <p><font color="red"> {screenshotError} </font></p>
       </div>
     </body>
   </div>)

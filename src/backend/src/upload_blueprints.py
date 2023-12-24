@@ -1,17 +1,88 @@
 import os
-from flask import Flask
 import random
 from flask import jsonify
 from urllib.parse import urlparse
-from flask import Blueprint, abort, request, render_template
+from flask import Blueprint, request
 from flask_cors import cross_origin
-from thefuzz import fuzz
 from .extensions import db
 from .models import Note, Screenshot, Link
+
 
 upload = Blueprint('upload', __name__, template_folder='templates')
 # Routes
 
+@upload.route("/screenshots", methods=["GET", "POST", "OPTIONS"])
+@cross_origin()
+def screenshots():
+    """Handles the note route.
+
+    GET: This route gets information about the note
+    and returns it in a dictionary.
+
+    POST: This route adds information about the note
+    and returns the result in a dictionary.
+
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+    request_form = request.form
+
+    if request.method == "POST":
+        # Check for empty screenshot
+        if request.files["file"] is None or request.files["file"].filename == "":
+            print("file is empty returning nothing")
+            return "Error, file is empty"
+
+        # Upload file to our directory
+        id = random.getrandbits(16)
+        target = os.environ.get("UPLOAD_FOLDER")
+        if not os.path.isdir(target):
+            os.mkdir(target)
+
+        file = request.files['file']
+        filename = str(id)
+        destination = "/".join([target, filename])
+        file.save(destination)
+
+        # Data for database.
+        # The file is replaced with the path to the file in the
+        # UPLOAD_FOLDER because we dont need to save an entire image in
+        # the database.
+        about = request_form["about"]
+        date = request_form["date"]
+        caption = request_form["caption"]
+        text_in_image = request_form["text"]
+        path = destination
+        related_activity = request_form["activity"]
+
+        # # Getting data from request and adding to the database.
+        new_screenshot = Screenshot(
+            id=id,
+            about=about,
+            caption=caption,
+            date=date,
+            text_in_image=text_in_image,
+            path=path,
+            related_activity=related_activity,
+        )
+
+        new_dict_screenshot = {
+            "id": id,
+            "about": about,
+            "caption": caption,
+            "date": date,
+            "text_in_image": text_in_image,
+            "path": path,
+            "related_activity": related_activity,
+        }
+
+        # Do not prevent duplicates
+        db.session.add(new_screenshot)
+        db.session.commit()
+
+        response = jsonify([new_dict_screenshot])
+        return response
 
 
 @upload.route("/links", methods=["GET", "POST", "OPTIONS"])

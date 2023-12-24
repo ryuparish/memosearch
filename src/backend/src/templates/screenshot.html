@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% block content %}
+<h1><img src={{ url_for('static', filename=path) }} alt="Image Failed"/></h1> 
+    <br/>
+    <h3>{{ caption }}</h3>
+    <br/>
+    <p>About: {{ about }} </p>
+    <br/>
+    <p>Text in image: {{ text }} </p>
+    <br/>
+    <p>Date: {{ date }} </p>
+    <br/>
+    <p>Related Activity: {{ related_activity }}</p>
+{% endblock %}

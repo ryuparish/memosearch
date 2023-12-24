@@ -19,16 +19,20 @@ def open_screenshot(id):
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
     """
-    request_data = Note.query.filter_by(id=id).one()
+    request_data = Screenshot.query.filter_by(id=id).one()
+    path = str(request_data.id)
 
     # Process request (return html)
     if request.method == "GET":
         return render_template(
-            "note.html",
+            "screenshot.html",
+            path=path,
             about=request_data.about,
             date=request_data.date,
+            text=request_data.text_in_image,
+            caption=request_data.caption,
             related_activity=request_data.related_activity,
-            content_type="Note",
+            content_type="Screenshot",
             content_id=request_data.id
         )
 
@@ -135,8 +139,9 @@ def search():
                         "id": screenshot.id,
                         "about": screenshot.about,
                         "date": screenshot.date,
+                        "path": screenshot.path,
                         "caption": screenshot.caption,
-                        "text_in_image": screenshot.test_in_image,
+                        "text_in_image": screenshot.text_in_image,
                         "related_activity": screenshot.related_activity
                     }]
 

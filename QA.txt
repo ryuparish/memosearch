@@ -50,3 +50,18 @@ What is the process of getting a link added, analyzed and retrieved?
 
 What are we using for reference to get started with the SQL queries?
   - https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/#a-minimal-application
+
+Why is the screenshot uploading so tricky?
+
+  - There are a few quirks and rigid rules to the image sending and uploading process:
+
+    * Accessing a field that does not exist in Flask will automatically create a 
+    400 response and throw an error of BadRequest.
+
+    * You cannot get the original path of an uploaded file in javascript. This means you cant send it either.
+
+    * You must send the content of the formdata using an automatically configured header for content-type.
+
+      ^ Doing it myself usually ended up in some sort of error.
+
+    * Messing up the content type or the request will result in Flask reading a blank object with nothing in it.

@@ -15,6 +15,23 @@ Infrastructure Design:
   Features:
     Pages:
 
+
+      - Main Page
+
+        * Buttons to all Links, Notes, and Screenshots configuration
+
+        * Search bar and results
+          
+          ^ Autoload this with the top k most recent additions to the database.
+
+          ^ Results should show:
+            
+            - Content type
+            - Preview of the about
+            - A small picture of the image if found
+            - A Link if found
+            - Date of the content
+
       - Links page
 
         * Textbox to add a new link

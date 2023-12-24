@@ -27,6 +27,7 @@ class Screenshot(db.Model):
     date: Mapped[str] = mapped_column(String)
     caption: Mapped[str] = mapped_column(String)
     text_in_image: Mapped[str] = mapped_column(String)
+    path: Mapped[str] = mapped_column(String)
     related_activity: Mapped[str] = mapped_column(String)
 
     def __repr__(self):
