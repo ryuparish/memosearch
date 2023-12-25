@@ -74,8 +74,30 @@ export default function SearchBar() {
             const item_id = data[key][obj]["id"];
             // Use absoute path only in env file for data folder.
             const href = "http://localhost:4444/open_" + route + "/" + item_id;
+            
+            // Customize icon next to search result based on the route type
+            if (route === "link") {
+              result_list.push(
+                <li>
+                  <i style={{"color":"DarkOrange"}} class="material-icons">link</i><a href={href} target="_blank">{data[key][obj][display_field]}</a>&nbsp;({data[key][obj]["about"].substring(0, 25)}...)
+                </li>
+              )
+            } else if (route === "screenshot") {
+              result_list.push(
+                <li>
+                  <i style={{"color":"Black"}} class="material-icons">image</i><a href={href} target="_blank">{data[key][obj][display_field]}</a>&nbsp;({data[key][obj]["about"].substring(0, 25)}...)
+                </li>
+              )
 
-            result_list.push(<li><text>{'[' + key.toUpperCase() +'] '}</text><a href={href} target="_blank">{data[key][obj][display_field]}</a>&nbsp;({data[key][obj]["about"].substring(0, 25)}...)</li>)
+            } else if (route === "note") {
+              result_list.push(
+                <li>
+                  <i style={{"color":"Beige"}} class="material-icons">description</i><a href={href} target="_blank">{data[key][obj][display_field]}</a>&nbsp;({data[key][obj]["about"].substring(0, 25)}...)
+                </li>
+              )
+
+            }
+
           }
         }
         setSearchResults(result_list);
@@ -88,7 +110,7 @@ export default function SearchBar() {
         <form onSubmit={handleSearch}>
           <div style={{"text-align":"center"}}>
             <div>
-                <input style={{"text-align":"center"}} type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}/>
+                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}/>
                 <input type="submit" value="Search" id="search"/>
             </div>
           <br/>

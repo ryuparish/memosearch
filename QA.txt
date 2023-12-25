@@ -65,3 +65,8 @@ Why is the screenshot uploading so tricky?
       ^ Doing it myself usually ended up in some sort of error.
 
     * Messing up the content type or the request will result in Flask reading a blank object with nothing in it.
+
+
+How do we handle multi-file uploads?
+  
+  - We can allow multiple file inputs.

@@ -28,11 +28,17 @@ Infrastructure Design:
             
             - Content type
             - Preview of the about
-            - A small picture of the image if found
             - A Link if found
             - Date of the content
 
       - Links page
+
+        * Allow for multiple link uploads.
+
+          ^ Multi-upload should allow for an interactive frontend.
+
+        * Clear page fields and load success message on sucessful
+        submission.
 
         * Textbox to add a new link
 
@@ -46,7 +52,10 @@ Infrastructure Design:
 
         * Upload button
 
+
       - Images page
+
+        * Allow for multiple Image uploads.
       
         * Image Upload button
 
@@ -64,6 +73,8 @@ Infrastructure Design:
         * Upload button
 
       - Notes page
+
+        * Allow for multiple Note uploads.
 
         * Textbox to add a new note
 

@@ -1,7 +1,8 @@
 import React from "react";
 import './App.css';
 import MainPage from "./components/MainPage";
-import LinksPage from "./components/LinksPage";
+//import LinksPage from "./components/LinksPage";
+import LinkExperiment from "./components/LinkExperiment";
 import ScreenshotsPage from "./components/ScreenshotsPage";
 import NotesPage from "./components/NotesPage";
 import SearchPage from "./components/SearchPage";
@@ -11,11 +12,14 @@ export default function App() {
   const [page, setPage] = React.useState("main");
 
   // Link Page state
+  // Mapping between uuid and link data (links)
+  const [links, setLinks] = React.useState([]);
   const [linkName, setLinkName] = React.useState("");
   const [link, setLink] = React.useState("");
   const [linkActivity, setLinkActivity] = React.useState("");
   const [linkAbout, setLinkAbout] = React.useState("");
   const [linkError, setLinkError] = React.useState("");
+  const [htmlFile, setHtmlFile] = React.useState(null)
 
   // Screenshots Page state
   const [screenshotActivity, setScreenshotActivity] = React.useState("");
@@ -81,7 +85,11 @@ export default function App() {
     searchScreenshot,
     setSearchScreenshot,
     screenshotError,
-    setScreenshotError
+    setScreenshotError,
+    links,
+    setLinks,
+    htmlFile,
+    setHtmlFile
   }
 
   // Page changing logic
@@ -93,9 +101,10 @@ export default function App() {
     );
   }
   else if (page === "links"){ 
+    console.log("Switching to links");
     return (
       <AppContext.Provider value={all_states}>
-        <LinksPage/>
+        <LinkExperiment/>
       </AppContext.Provider>
     );
   }

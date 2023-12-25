@@ -1,5 +1,6 @@
 import os
 import random
+import json
 from flask import jsonify
 from urllib.parse import urlparse
 from flask import Blueprint, request
@@ -101,48 +102,54 @@ def links():
     :rtype: list(dict (JSON))
     """
     request_data = request.json
+    for json_data in request_data:
+        print('Here is one of the json: ' + json.dumps(json_data))
 
     if request.method == "POST":
         # Link validation for POST
         # Check for empty link
-        if len(request_data["link"]) == 0:
-            print(f"Error, link is empty: {request_data['link']}")
-            return f"Error, link is empty: {request_data['link']}"
+        if len(request_data) == 0:
+            print(f"Error, link is empty: {request_data}")
+            return f"Error, link is empty: {request_data}"
 
-        # Data for database.
-        id = random.getrandbits(16)
-        link = request_data["link"]
-        about = request_data["linkAbout"]
-        date = request_data["linkDate"]
-        site_name = urlparse(request_data["link"]).netloc
-        related_activity = request_data["linkActivity"]
 
-        # Getting data from request and adding to the database.
-        new_link = Link(
-            id=id,
-            link=link,
-            about=about,
-            date=date,
-            site_name=site_name,
-            related_activity=related_activity,
-        )
+        new_links = []
+        for json_data in request_data:
+            # Data for database.
+            id = random.getrandbits(16)
+            link = json_data["link"]
+            about = json_data["about"]
+            date = json_data["date"]
+            site_name = json_data["site_name"]
+            related_activity = json_data["related_activity"]
 
-        new_dict_link = {
-            "id": id,
-            "link": link,
-            "about": about,
-            "date": date,
-            "site_name": site_name,
-            "related_activity": related_activity,
-        }
+            # Getting data from json and adding to the database.
+            new_link = Link(
+                id=id,
+                link=link,
+                about=about,
+                date=date,
+                site_name=site_name,
+                related_activity=related_activity,
+            )
 
-        # Prevent duplicates
-        if len(Link.query.filter_by(link=link).all()) == 0:
-            print("Query Link is not yet known, adding to database")
-            db.session.add(new_link)
-            db.session.commit()
+            new_dict_link = {
+                "id": id,
+                "link": link,
+                "about": about,
+                "date": date,
+                "site_name": site_name,
+                "related_activity": related_activity,
+            }
 
-        response = jsonify([new_dict_link])
+            # Prevent duplicates
+            if len(Link.query.filter_by(link=link).all()) == 0:
+                print("Query Link is not yet known, adding to database")
+                db.session.add(new_link)
+                db.session.commit()
+                new_links.append(new_dict_link)
+
+        response = jsonify(new_links)
         return response
 
 

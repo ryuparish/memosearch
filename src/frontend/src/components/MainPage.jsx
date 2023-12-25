@@ -14,6 +14,7 @@ export default function MainPage() {
        <div>
          <head>
            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
          </head>
          <body>
            <div class="container">
@@ -38,11 +39,6 @@ export default function MainPage() {
                <br/>
                <button class="btn btn-info" onClick={() => setPage("notes")}>Notes</button>
              </div>
-             {/*<div class="col-xs-3">
-               <img style={{"width":"40%","padding":"5px"}} src={search_image} alt=""/>
-               <br/>
-               <button class="btn btn-warning" onClick={() => setPage("search")}>Search</button>
-             </div>*/}
            </div>
            <br/><br/>
            <div>

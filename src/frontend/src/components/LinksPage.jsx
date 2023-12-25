@@ -98,22 +98,29 @@ export default function LinksPage() {
           <h2>Add, Delete, and Edit Link data</h2>
         </div>
         <br/>
-        <form id="links" onSubmit={handleSubmit}>
+        <form name="single-link" id="link" onSubmit={handleSubmit}>
         <h3> Add Link </h3>
-        <label for="link_name">Link name:</label>
-          <input type="text" id="link_name" name="link_name" value={linkName}/><br/><br/>
-        <label for="link">Link:</label>
-          <input type="text" id="link" name="link" onChange={handleLinkChange} value={link}/><br/><br/>
-        <label for="activity">Related Activity:</label>
-          <input type="text" id="activity" name="activity" onChange={(e) => setLinkActivity(e.target.value)} value={linkActivity}/><br/><br/>
-        <label for="date">Date:</label>
-          <p>{formattedDate}</p><br/>
-        <label for="about">About:</label>
-        <br/>
+          <div class="input-row">
+            <label for="link_name">Link name:</label>
+              <input type="text" id="link_name" name="link_name" value={linkName}/>
+            <label for="link">Link:</label>
+              <input type="text" id="link" name="link" onChange={handleLinkChange} value={link}/>
+            <label for="activity">Related Activity:</label>
+              <input type="text" id="activity" name="activity" onChange={(e) => setLinkActivity(e.target.value)} value={linkActivity}/><br/><br/>
+          </div>
+          <label for="date">Date:</label>
+            <p>{formattedDate}</p><br/>
+          <label for="about">About:</label>
+          <br/>
           <textarea id="about" name="about" rows="4" cols="50" onChange={(e) => setLinkAbout(e.target.value)} value={linkAbout}></textarea><br/><br/>
-          <input type="submit" id="submit" name="submit"/>
+            <input type="submit" id="submit" name="submit"/>
         </form>
         <p><font color="red"> {linkError} </font></p>
+        <form name="multi-link" id="links" onSubmit={() => {}}>
+        <h3> Add Multiple Links </h3>
+          <label for="file">HTML Bookmarks File:</label>
+          <input type="file" name="image" onChange={(e) => {}} /><br/>
+        </form>
       </div>
     </body>
   </div>)
