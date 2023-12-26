@@ -15,6 +15,14 @@ Infrastructure Design:
   Features:
     Pages:
 
+      Every Page:
+        
+        - Editor for a content item
+
+          * Easy to switch from item to item
+
+        - Bulk adding content items
+
 
       - Main Page
 
@@ -140,3 +148,9 @@ something, or perhaps wrote some context and saved it for later date.
     
       4. Do analytics and keep track of what type of content he is saving 
       and suggest some ways to explore his ideas.
+
+
+Dying Wish:
+  
+The application is really detailed for each of the three content types and each content type feels completely maxed out.
+Then again, the searching makes them feel all the same when searched.

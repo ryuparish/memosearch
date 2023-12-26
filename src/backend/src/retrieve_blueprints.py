@@ -86,6 +86,15 @@ def open_link(id):
             content_id=request_data.id
         )
 
+@retrieve.route("/topfive", methods=["GET", "OPTIONS"])
+@cross_origin()
+def topfive():
+    top_5_links = Link.query.order_by(Link.date.desc()).limit(5).all()
+    top_5_notes = Note.query.order_by(Note.date.desc()).limit(5).all()
+    top_5_screenshots = Screenshot.query.order_by(Screenshot.date.desc()).limit(5).all()
+
+    return [*top_5_links, *top_5_notes, *top_5_screenshots]
+
 
 @retrieve.route("/search", methods=["POST", "OPTIONS"])
 @cross_origin()

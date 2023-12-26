@@ -11,7 +11,6 @@ from .models import Note, Screenshot, Link
 
 upload = Blueprint('upload', __name__, template_folder='templates')
 # Routes
-
 @upload.route("/screenshots", methods=["GET", "POST", "OPTIONS"])
 @cross_origin()
 def screenshots():
@@ -56,6 +55,7 @@ def screenshots():
         text_in_image = request_form["text"]
         path = destination
         related_activity = request_form["activity"]
+        view = request_form["view"]
 
         # # Getting data from request and adding to the database.
         new_screenshot = Screenshot(
@@ -66,6 +66,7 @@ def screenshots():
             text_in_image=text_in_image,
             path=path,
             related_activity=related_activity,
+            view=view,
         )
 
         new_dict_screenshot = {
@@ -76,6 +77,7 @@ def screenshots():
             "text_in_image": text_in_image,
             "path": path,
             "related_activity": related_activity,
+            "view": view
         }
 
         # Do not prevent duplicates
@@ -85,6 +87,25 @@ def screenshots():
         response = jsonify([new_dict_screenshot])
         return response
 
+@upload.route("/views", methods=["GET", "OPTIONS"])
+@cross_origin()
+def views():
+    """Handles the link route.
+
+    GET: This route gets information about the link
+    and returns it in a dictionary.
+
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+    if request.method == "GET":
+        all_views = set(["all"])
+        for table in [Note, Link, Screenshot]:
+            for value in table.query.distinct(table.view).group_by(table.view):
+                print(value)
+                all_views.add(value)
+        return list(all_views)
 
 @upload.route("/links", methods=["GET", "POST", "OPTIONS"])
 @cross_origin()
@@ -122,6 +143,7 @@ def links():
             date = json_data["date"]
             site_name = json_data["site_name"]
             related_activity = json_data["related_activity"]
+            view = json_data["view"]
 
             # Getting data from json and adding to the database.
             new_link = Link(
@@ -131,6 +153,7 @@ def links():
                 date=date,
                 site_name=site_name,
                 related_activity=related_activity,
+                view=view,
             )
 
             new_dict_link = {
@@ -140,6 +163,7 @@ def links():
                 "date": date,
                 "site_name": site_name,
                 "related_activity": related_activity,
+                "view": view,
             }
 
             # Prevent duplicates
@@ -182,6 +206,7 @@ def notes():
         about = request_data["noteAbout"]
         date = request_data["noteDate"]
         related_activity = request_data["noteActivity"]
+        view = request_data["view"]
 
         # Getting data from request and adding to the database.
         new_note = Note(
@@ -190,6 +215,7 @@ def notes():
             about=about,
             date=date,
             related_activity=related_activity,
+            view=view,
         )
 
         new_dict_note = {
@@ -198,6 +224,7 @@ def notes():
             "about": about,
             "date": date,
             "related_activity": related_activity,
+            "view": view,
         }
 
         # Prevent duplicates

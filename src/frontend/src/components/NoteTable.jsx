@@ -1,16 +1,14 @@
 import React, { useContext } from 'react';
 import {AppContext} from "../App";
 
-export default function LinkTable() {
+export default function NoteTable() {
   const {
-    setLink,
     linkError,
     setLinkError,
     links,
     setLinks,
     htmlFile,
-    setHtmlFile,
-    view
+    setHtmlFile
   } = useContext(AppContext);
 
   const date = new Date();
@@ -33,11 +31,10 @@ export default function LinkTable() {
               id: Math.floor(Math.random() * 65536),
               about: "",
               link: anchors[i].href,
-              date: date,
+              date: formattedDate,
               site_name: domain ? matches[1] : "",
               related_activity: "",
-              status: "New",
-              view: view
+              status: "New"
             });
           }
           setLinks(links.concat(newLinks));
@@ -65,19 +62,16 @@ export default function LinkTable() {
           id: link.id,
           about: link.about,
           link: event.target.value,
-          date: date,
+          date: formattedDate,
           site_name: newSiteName,
           related_activity: link.related_activity,
-          status: "New",
-          view: view,
+          status: "New"
         };
       }
     }));
-    setLink(event.target.value);
   }
 
   function handleAboutChange(event, id) {
-    setLink(event.target.value);
     setLinks(links.map(link => {
       if (link.id !== id) {
         // No change
@@ -88,7 +82,7 @@ export default function LinkTable() {
           id: link.id,
           about: event.target.value,
           link: link.link,
-          date: date,
+          date: formattedDate,
           site_name: link.site_name,
           related_activity: link.related_activity,
           status: "New"
@@ -98,7 +92,6 @@ export default function LinkTable() {
   }
 
   function handleActivityChange(event, id) {
-    setLink(event.target.value);
     setLinks(links.map(link => {
       if (link.id !== id) {
         // No change
@@ -109,7 +102,7 @@ export default function LinkTable() {
           id: link.id,
           about: link.about,
           link: link.link,
-          date: date,
+          date: formattedDate,
           site_name: link.site_name,
           related_activity: event.target.value,
           status: "New"
@@ -127,11 +120,10 @@ export default function LinkTable() {
         id: Math.floor(Math.random() * 65536),
         link: "",
         about: "",
-        date: date,
+        date: formattedDate,
         site_name: "",
         related_activity: "",
-        status: "New",
-        view: view
+        status: "New"
       }
     ])
     console.log("links is now: " + JSON.stringify(links));
@@ -142,7 +134,7 @@ export default function LinkTable() {
   function handleSubmit(event) {
     event.preventDefault()
 
-    // WHAT DO WE DO ABOUT MULTIPLE FILE UPLOADS?
+    // THIS IS WHERE WE LEFRT OFF. WHAT DO WE DO ABOUT MULTIPLE FILE UPLOADS?
     // THis is links so we dont have to worry yet, but we should figure it out.
 
     // Only allow database insertion on a link that has valid 
@@ -188,11 +180,10 @@ export default function LinkTable() {
               id: link.id,
               about: link.about,
               link: link.link,
-              date: date,
+              date: formattedDate,
               site_name: link.site_name,
               related_activity: link.related_activity,
-              status: "Done",
-              view: view
+              status: "Done"
             };
         }));
       })
@@ -210,7 +201,6 @@ export default function LinkTable() {
           <td><input value={link_item["related_activity"]} onChange={(e) => handleActivityChange(e, link_item["id"])} ></input></td>
           <td><input value={link_item["about"]} onChange={(e) => handleAboutChange(e, link_item["id"])} ></input></td>
           <td><input value={link_item["date"]} onChange={() => {}} ></input></td>                        
-          <td><input value={link_item["view"]} onChange={() => {}} ></input></td>                        
           <td><span class="status text-success">•</span>{link_item["status"]}</td>
           <td>
 		  	  <a onClick={() => {setLinks(links.filter(a => a.id !== link_item["id"]))}} href="#"><i value="1" class="editItem material-icons" style={{"cursor":"pointer"}}>remove</i></a>
@@ -229,19 +219,17 @@ export default function LinkTable() {
 		  					<h2>Add <b>Links</b></h2>
 		  				</div>
 		  				<div class="col-sm-8">
-		  					<a href="#" class="btn btn-info"><i class="material-icons">file_download_done</i><input value={"Submit Links"} type="submit"/></a>
+		  					<a href="#" class="btn btn-info"><i class="material-icons">file_download_done</i><input value={"Submit Notes"} type="submit"/></a>
 		  				</div>
             </div>
           </div>
           <table class="table table-striped table-hover">
            <thead>
              <tr>
-               <th>Site</th>
-		  		 		 <th>Link</th>
-		  		 		 <th>Activity</th>
+		  		 		 <th>Title</th>
 		  		 		 <th>About</th>
+		  		 		 <th>Activity</th>
 		  		 		 <th>Date</th>						
-		  		 		 <th>View</th>						
                <th>Status</th>						
 		  		 		<th>Remove</th>
              </tr>
@@ -251,10 +239,10 @@ export default function LinkTable() {
            </tbody>
           </table>
 		  		<div class="clearfix">
-              <ul id="pagination" class="pagination">
-                <li class="page-item disabled"><a onClick={() => setLinks([])}>Clear</a></li>
-                <li class="page-item"><a onClick={handleAddButton} class="page-link">Add Link</a></li>
-              </ul>
+            <ul id="pagination" class="pagination">
+              <li class="page-item disabled"><a onClick={() => setLinks([])}>Clear</a></li>
+              <li class="page-item"><a onClick={handleAddButton} class="page-link">Add Link</a></li>
+            </ul>
           </div>
         </div>
       </div>

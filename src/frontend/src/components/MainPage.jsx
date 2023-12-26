@@ -6,9 +6,27 @@ import {AppContext} from "../App";
 import SearchBar from "./SearchBar";
 import SearchResults from "./SearchResults";
 import "./style.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import ViewModal from "./ViewModal";
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import ViewDropdown from "./ViewDropdown";
+
 
 export default function MainPage() {
-  const {setPage} = useContext(AppContext);
+  const {
+    setPage,
+    view,
+    setView,
+    views,
+    setShow
+  } = useContext(AppContext);
+
+  const viewList = []
+  for (let i = 0; i < views.length; ++i) {
+    viewList.push(<a onClick={() => setView(views[i])}>{view}</a>);
+  }
 
   return (
        <div>
@@ -19,26 +37,38 @@ export default function MainPage() {
          <body>
            <div class="container">
              <div class="jumbotron">
+               <ViewModal/>
                <h1>Memosearch</h1>
                <p>Search for links and screenshots</p>
+                <Button variant="primary" onClick={() => setShow(true)}>Add View</Button>
+                &nbsp;&nbsp;
+                <ViewDropdown/>
              </div>
              <br/>
            <div class="row">
-             <div class="column" style={{"text-align":"center"}}>
-               <img style={{"width":"30%"}}src={link_image} alt=""/>
-               <br/>
-               <button class="btn btn-info" onClick={() => setPage("links")}>Links</button>
-             </div>
-             <div class="column" style={{"text-align":"center"}}>
-               <img style={{"width":"30%"}} src={screenshot_image} alt=""/>
-               <br/>
-               <button class="btn btn-info" onClick={() => setPage("screenshots")}>Screenshots</button>
-             </div>
-             <div class="column" style={{"text-align":"center"}}>
-               <img style={{"width":"30%"}} src={notes_image} alt=""/>
-               <br/>
-               <button class="btn btn-info" onClick={() => setPage("notes")}>Notes</button>
-             </div>
+             <Row>
+               <Col>
+              <div class="column" style={{"text-align":"center"}}>
+                <img  src={link_image} alt=""/>
+                <br/>
+                <button class="btn btn-info" onClick={() => setPage("links")}>Links</button>
+              </div>
+               </Col>
+               <Col>
+              <div class="column" style={{"text-align":"center"}}>
+                <img  src={screenshot_image} alt=""/>
+                <br/>
+                <button class="btn btn-info" onClick={() => setPage("screenshots")}>Screenshots</button>
+              </div>
+               </Col>
+               <Col>
+              <div class="column" style={{"text-align":"center"}}>
+                <img style={{"width":"100%"}} src={notes_image} alt=""/>
+                <br/>
+                <button class="btn btn-info" onClick={() => setPage("notes")}>Notes</button>
+              </div>
+               </Col>
+             </Row>
            </div>
            <br/><br/>
            <div>

@@ -1,15 +1,47 @@
-import React from "react";
+import React, { useEffect } from "react";
 import './App.css';
 import MainPage from "./components/MainPage";
-//import LinksPage from "./components/LinksPage";
-import LinkExperiment from "./components/LinkExperiment";
+import LinksPage from "./components/LinksPage";
 import ScreenshotsPage from "./components/ScreenshotsPage";
 import NotesPage from "./components/NotesPage";
 import SearchPage from "./components/SearchPage";
 
 export const AppContext = React.createContext();
 export default function App() {
+  // Main Page state
   const [page, setPage] = React.useState("main");
+  const [views, setViews] = React.useState(["all"]);
+  useEffect(() => {
+    fetch("http://127.0.0.1:4444/views", {
+      method: "GET",
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Here are the views we received: " + JSON.stringify(data));
+      })
+      .catch((error) => console.log(error));
+
+    fetch("http://127.0.0.1:4444/topfive", {
+      method: "GET",
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Here are the top fives we received: " + JSON.stringify(data));
+      })
+      .catch((error) => console.log(error));
+  }, [])
+  const [view, setView] = React.useState("all");
+  const [show, setShow] = React.useState(false);
 
   // Link Page state
   // Mapping between uuid and link data (links)
@@ -89,9 +121,16 @@ export default function App() {
     links,
     setLinks,
     htmlFile,
-    setHtmlFile
+    setHtmlFile,
+    view,
+    setView,
+    views,
+    setViews,
+    show,
+    setShow
   }
 
+  console.log("view is: " + view + " in App")
   // Page changing logic
   if (page === "main") {
     return (
@@ -104,7 +143,7 @@ export default function App() {
     console.log("Switching to links");
     return (
       <AppContext.Provider value={all_states}>
-        <LinkExperiment/>
+        <LinksPage/>
       </AppContext.Provider>
     );
   }

@@ -57,7 +57,8 @@ export default function ScreenshotsPage() {
     screenshotAbout,
     setScreenshotAbout,
     screenshotError,
-    setScreenshotError
+    setScreenshotError,
+    view
   } = useContext(AppContext);
   const date = new Date();
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
