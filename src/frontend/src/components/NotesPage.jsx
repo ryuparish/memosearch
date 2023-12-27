@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import {AppContext} from "../App";
+import Button from "react-bootstrap/Button";
 
 export default function NotesPage() {
 
@@ -50,7 +51,7 @@ export default function NotesPage() {
     }
 
     // Post to the "notes" api
-    fetch("http://127.0.0.1:4444/notes", {
+    fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/notes", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -67,6 +68,12 @@ export default function NotesPage() {
       .catch((error) => console.log(error));
   }
 
+  function handleClear () {
+    setNoteAbout("");
+    setNoteTitle("");
+    setNoteActivity("");
+  }
+
   return (
   <div>
     <head>
@@ -77,7 +84,9 @@ export default function NotesPage() {
     <body>
       <br/>
       <div class="container">
+        <br/><br/>
         <button class="btn btn-info" onClick={() => setPage("main")}>Back</button>
+        <br/><br/>
         <div class="jumbotron">
           <h1>Configure Notes</h1>
           <h2>Add, Delete, and Edit Notes data</h2>
@@ -93,7 +102,9 @@ export default function NotesPage() {
           <input type="text" id="activity" name="activity" onChange={(e) => setNoteActivity(e.target.value)} value={noteActivity}/><br/><br/>
             <label for="date">Date:</label>
               <p>{formattedDate}</p><br/>
-          <button type="submit" class="btn btn-info" onClick={(e) => handleSubmit(e)}>Submit</button>
+          <Button type="submit" class="btn btn-info" onClick={(e) => handleSubmit(e)}>Submit</Button>
+          &nbsp;&nbsp;
+          <Button class="btn btn-info" onClick={handleClear}>Clear</Button>
         </form>
         <p><font color="red"> {noteError} </font></p>
       </div>

@@ -11,16 +11,21 @@ export default function SearchResults() {
     searchResults,
   } = useContext(AppContext);
 
+
+  let searchResult = <text>No Results</text>;
+  if (Object.keys(searchResults).length !== 0) {
+    searchResult = <ul>{searchResults}</ul>;
+  }
+
   return (
     <div>
       <div class="container">
         <h4><a>Results:</a></h4>
         <div class="slider" >
-          <ul>
-            {searchResults}
-          </ul>
+          {searchResult}
         </div>
       </div>
+      <br /><br /><br />
     </div>
   )
 }

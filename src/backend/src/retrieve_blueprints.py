@@ -157,12 +157,13 @@ def search():
 
         # Adding caption-matched screenshots to the result list
         if ("screenshots" in request_data["content"]):
-            all_screenshots = Screenshot.query.all()
+            all_screenshots = Screenshot.query.all() if request_data["view"] == "all" else Screenshot.query.where(Screenshot.view == request_data["view"])
             for screenshot in all_screenshots:
                 token_set_score = fuzz.token_set_ratio(screenshot.caption, request_data["search"])
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot.about, request_data["search"]))
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot.text_in_image, request_data["search"]))
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot.related_activity, request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot.view, request_data["search"]))
                 print(f"screenshots token set score: {token_set_score}")
                 if token_set_score > 50:
                     curr_results["screenshots"] += [{
@@ -178,11 +179,12 @@ def search():
 
         # Adding title-matched notes to the result list
         if ("notes" in request_data["content"]):
-            all_notes = Note.query.all()
+            all_notes = Note.query.all() if request_data["view"] == "all" else Note.query.where(Note.view == request_data["view"])
             for note in all_notes:
                 token_set_score = fuzz.token_set_ratio(note.title, request_data["search"])
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(note.about, request_data["search"]))
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(note.related_activity, request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(note.view, request_data["search"]))
                 print(f"notes token set score: {token_set_score}")
                 if token_set_score > 50:
                     curr_results["notes"] += [{

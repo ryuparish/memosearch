@@ -1,4 +1,4 @@
 #.flaskenv
 FLASK_APP=app.py
 FLASK_ENV=development
-FLASK_RUN_PORT=4444
+FLASK_RUN_PORT=5000

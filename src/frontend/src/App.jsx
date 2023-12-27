@@ -5,6 +5,14 @@ import LinksPage from "./components/LinksPage";
 import ScreenshotsPage from "./components/ScreenshotsPage";
 import NotesPage from "./components/NotesPage";
 import SearchResult from "./components/SearchResult";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Link,
+  useRouteMatch,
+  useParams
+} from "react-router-dom";
 
 export const AppContext = React.createContext();
 
@@ -100,7 +108,7 @@ export default function App() {
   // and load the top five content items from
   // each content group (Note, Screenshot, Link).
   useEffect(() => {
-    fetch("http://127.0.0.1:4444/views", {
+    fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/views", {
       method: "GET",
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -110,6 +118,7 @@ export default function App() {
         return response.json();
       })
       .then((data) => {
+        console.log("Out here");
         let init_views = [];
         for (let i = 0; i < data.length; i++) {
           init_views.push(data[i]);
@@ -118,7 +127,7 @@ export default function App() {
       })
       .catch((error) => console.log(error));
 
-    fetch("http://127.0.0.1:4444/topfive", {
+    fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/topfive", {
       method: "GET",
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -158,7 +167,7 @@ export default function App() {
             const item_id = data[key][obj]["id"];
 
             // Use absoute path only in env file for data folder.
-            const href = "http://localhost:4444/open_" + route + "/" + item_id;
+            const href = process.env.REACT_APP_BACKEND_ENDPOINT + "/open_" + route + "/" + item_id;
             top_fives.push(<SearchResult
                 route={route}
                 href={href}
@@ -176,9 +185,11 @@ export default function App() {
   // Page changing logic
   if (page === "main") {
     return (
-      <AppContext.Provider value={all_states}>
-        <MainPage />
-      </AppContext.Provider>
+      <Router>
+        <Routes>
+          <Route index element={<AppContext.Provider value={all_states}><MainPage /></AppContext.Provider>}/>
+        </Routes>
+      </Router>
     );
   }
   else if (page === "links") {

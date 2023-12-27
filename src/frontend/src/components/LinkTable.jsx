@@ -198,7 +198,7 @@ export default function LinkTable() {
     // Post to the "links" api
     console.log("Sending this: " + JSON.stringify(links))
     console.log("while the linkError is this: " + linkError)
-    fetch("http://127.0.0.1:4444/links", {
+    fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/links", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -211,6 +211,18 @@ export default function LinkTable() {
       })
       .then((data) => {
         console.log("Here is the data we put into the database: " + JSON.stringify(data));
+        console.log("Here is what we set the new links equal to: " + JSON.stringify(links.map(link => {
+          return {
+            id: link.id,
+            about: link.about,
+            link: link.link,
+            date: date,
+            site_name: link.site_name,
+            related_activity: link.related_activity,
+            status: "Done",
+            view: link.view
+          };
+        })))
         setLinks(links.map(link => {
           return {
             id: link.id,
@@ -220,9 +232,10 @@ export default function LinkTable() {
             site_name: link.site_name,
             related_activity: link.related_activity,
             status: "Done",
-            view: view
+            view: link.view
           };
         }));
+        console.log("Links is now: " + JSON.stringify([...links]));
       })
       .catch((error) => console.log(error));
   }
@@ -288,6 +301,7 @@ export default function LinkTable() {
         <input onChange={(e) => setHtmlFile(e.target.files[0])} type="file" />
         <a onClick={handleLinks} class=""><input value="Upload Links" type="submit" /></a>
       </div>
+      <br/><br/><br/><br/>
     </form>
   )
 }

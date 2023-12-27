@@ -16,10 +16,18 @@ Infrastructure Design:
     Pages:
 
       Every Page:
+
+        - Separate pop up window for editing fields and or deletion.
+          
+          * We will need to use react-router-dom to solve our multiple-window
+          issue.
+
+            ^ Specifically, we can use content ids and their data for this type of 
+            dynamic route: https://reactrouter.com/en/main/route/route#path
         
         - Editor for a content item
 
-          * Easy to switch from item to item
+          * Easy to switch from item to item within the content type
 
         - Bulk adding content items
 
@@ -113,9 +121,9 @@ Infrastructure Design:
 
   Features:
     - A text generation mvc model that:
-      * Converts screenshots to textual descriptions
-      * Converts notes into author's thoughts
-      * Converts bookmarks into 
+      * Extracts screenshots to textual descriptions
+      * Extracts notes into author's thoughts
+      * Extracts bookmarks into TODO activities
 
     - A classicfication mvc model that:
       * Clusters all the textual data into categories

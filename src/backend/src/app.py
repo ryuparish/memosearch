@@ -3,9 +3,15 @@ from flask import Flask
 from .extensions import db
 from .upload_blueprints import upload
 from .retrieve_blueprints import retrieve
+from flask_cors import CORS
 
 # Setup
 app = Flask(__name__)
+cors = CORS(app, resource={
+    r"/*":{
+        "origins":"*"
+    }
+})
 
 # Setup database with sqlite connection
 # This changes if the application is a module vs. a package.

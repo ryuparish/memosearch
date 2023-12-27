@@ -44,36 +44,33 @@ export default function MainPage() {
       </head>
       <body>
         <div class="container">
+          <br/><br/><br/>
           <div class="jumbotron">
             <ViewModal />
-            <h1>Memosearch</h1>
+            <h1>MemoSearch</h1>
             <h3>Current View: <Badge bg="secondary">{view}</Badge></h3>
             <Button variant="primary" onClick={() => setShow(true)}>Add View</Button>
             &nbsp;&nbsp;
             <ViewDropdown />
           </div>
           <br />
-          <Container>
-            <Row>
-              <Col>
-                <img src={link_image} alt="" />
-                <br />
-                <button class="btn btn-info" onClick={() => setPage("links")}>Links</button>
-              </Col>
-              <Col>
-                <img src={screenshot_image} alt="" />
-                <br />
-                <button class="btn btn-info" onClick={() => setPage("screenshots")}>Screenshots</button>
-              </Col>
-              <Col>
-                <div style={{ "width": "33.33%" }}>
-                  <img style={{ "width": "100%" }} src={notes_image} alt="" />
+          <div class="d-flex justify-content-around">
+                <div>
+                  <img src={link_image} alt=""/>
+                  <br />
+                  <button class="btn btn-info" onClick={() => setPage("links")}>Links</button>
+                </div>
+                <div>
+                  <img src={screenshot_image} alt=""/>
+                  <br />
+                  <button class="btn btn-info" onClick={() => setPage("screenshots")}>Screenshots</button>
+                </div>
+                <div>
+                  <img src={notes_image} alt=""/>
                   <br />
                   <button class="btn btn-info" onClick={() => setPage("notes")}>Notes</button>
                 </div>
-              </Col>
-            </Row>
-          </Container>
+          </div>
           <br /><br />
           <div>
             <div style={{ "text-align": "center" }}>

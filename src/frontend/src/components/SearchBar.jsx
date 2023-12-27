@@ -43,7 +43,7 @@ export default function SearchBar() {
     }
 
     console.log("Here is the searchQuery: " + searchQuery);
-    fetch("http://127.0.0.1:4444/search", {
+    fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/search", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export default function SearchBar() {
             const item_id = data[key][obj]["id"];
 
             // Use absoute path only in env file for data folder.
-            const href = "http://localhost:4444/open_" + route + "/" + item_id;
+            const href = process.env.REACT_APP_BACKEND_ENDPOINT + "/open_" + route + "/" + item_id;
 
             result_list.push(
               <SearchResult

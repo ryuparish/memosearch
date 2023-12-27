@@ -37,7 +37,7 @@ export default function SearchPage() {
     }
 
     console.log("Here is the searchQuery: " + searchQuery);
-    fetch("http://127.0.0.1:4444/search", {
+    fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/search", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',

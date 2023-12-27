@@ -22,9 +22,10 @@ export default function LinksPage() {
     </head>
     
     <body>
-      <br/>
       <div class="container">
+        <br/><br/>
         <button class="btn btn-info" onClick={() => setPage("main")}>Back</button>
+        <br/><br/>
         <div class="jumbotron">
           <h1>Configure Links</h1>
           <h2>Add, Delete, and Edit Link data</h2>

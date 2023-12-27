@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AppContext } from "../App";
+import Button from "react-bootstrap/Button";
 // Use fetch() instead.
 //import axios from 'axios';
 
@@ -65,10 +66,9 @@ export default function ScreenshotsPage() {
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
   /**
-   * Handling the submission of 
+   * Handling the submission of screenshots to the server.
    *
-   * @param {[TODO:type]} event - [TODO:description]
-   * @returns {[TODO:type]} [TODO:description]
+   * @param {object} event - the event that triggered the screenshot submission
    */
   function handleSubmit(event) {
     event.preventDefault()
@@ -104,8 +104,9 @@ export default function ScreenshotsPage() {
     formData.append("date", date)
 
     console.log("Sending this form data: " + formData.get("file"))
+
     // Post to the "links" api
-    fetch("http://127.0.0.1:4444/screenshots", {
+    fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/screenshots", {
       method: "POST",
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -121,7 +122,24 @@ export default function ScreenshotsPage() {
       .catch((error) => console.log(error));
   }
 
-  console.log("Here is the screenshotFile: " + screenshotFile)
+  /**
+   * Handler for clear calls.
+   *
+   */
+  function handleClear() {
+    setScreenshotActivity("");
+    setScreenshotCaption("");
+    setScreenshotText("");
+    setScreenshotFile(null);
+    setScreenshotAbout("")
+  }
+
+  // Create an img or display N/A if none uploaded
+  let imageDisplay = <text>N/A</text>;
+  if (screenshotFile) {
+    imageDisplay = <img src={URL.createObjectURL(screenshotFile)} alt=""/>;
+  }
+
   return (
     <div>
       <head>
@@ -132,7 +150,9 @@ export default function ScreenshotsPage() {
       <body>
         <br />
         <div class="container">
+          <br /><br />
           <button class="btn btn-info" onClick={() => setPage("main")}>Back</button>
+          <br /><br />
           <div class="jumbotron">
             <h1>Configure Screenshots</h1>
             <h2>Add, Delete, and Edit Screenshot data</h2>
@@ -142,6 +162,7 @@ export default function ScreenshotsPage() {
             <h3> Add Screenshot </h3>
             <label for="file">File or Photo Directory:</label>
             <input type="file" name="image" onChange={(e) => { setScreenshotFile(e.target.files[0]) }} /><br />
+            {imageDisplay}<br /><br />
             <label for="Caption">Caption:</label>
             <input type="text" id="caption" name="caption" onChange={(e) => setScreenshotCaption(e.target.value)} value={screenshotCaption} /><br /><br />
             <label for="text_in_image">Text in image (if any):</label>
@@ -151,8 +172,10 @@ export default function ScreenshotsPage() {
             <label for="date">Date:</label>
             <p>{formattedDate}</p><br />
             <label for="about">About:</label><br />
-            <textarea id="about" name="freeform" rows="4" cols="50" onChange={(e) => setScreenshotAbout(e.target.value)} value={screenshotAbout}></textarea><br /><br />
-            <input type="submit" id="submit" name="submit" />
+            <textarea id="about" name="freeform" rows="20" cols="100" onChange={(e) => setScreenshotAbout(e.target.value)} value={screenshotAbout}></textarea><br /><br />
+            <Button type="submit" class="btn btn-info">Submit</Button>
+            &nbsp;&nbsp;
+            <Button class="btn btn-info" onClick={handleClear}>Clear</Button>
           </form>
           <p><font color="red"> {screenshotError} </font></p>
         </div>
