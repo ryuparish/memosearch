@@ -57,7 +57,7 @@ def screenshots():
         related_activity = request_form["activity"]
         view = request_form["view"]
 
-        # # Getting data from request and adding to the database.
+        # Getting data from request and adding to the database.
         new_screenshot = Screenshot(
             id=id,
             about=about,
@@ -87,25 +87,6 @@ def screenshots():
         response = jsonify([new_dict_screenshot])
         return response
 
-@upload.route("/views", methods=["GET", "OPTIONS"])
-@cross_origin()
-def views():
-    """Handles the link route.
-
-    GET: This route gets information about the link
-    and returns it in a dictionary.
-
-
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
-    """
-    if request.method == "GET":
-        all_views = set(["all"])
-        for table in [Note, Link, Screenshot]:
-            for value in table.query.distinct(table.view).group_by(table.view):
-                print(value)
-                all_views.add(value)
-        return list(all_views)
 
 @upload.route("/links", methods=["GET", "POST", "OPTIONS"])
 @cross_origin()
@@ -172,6 +153,8 @@ def links():
                 db.session.add(new_link)
                 db.session.commit()
                 new_links.append(new_dict_link)
+            else:
+                print("Query Link is known")
 
         response = jsonify(new_links)
         return response

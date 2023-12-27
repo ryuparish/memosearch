@@ -1,6 +1,11 @@
 import React, { useContext } from 'react';
-import {AppContext} from "../App";
+import { AppContext } from "../App";
 
+/**
+ * Component for displaying search results state.
+ *
+ * @returns {object} html object - This represents the search results in HTML.
+ */
 export default function SearchResults() {
   const {
     searchResults,
@@ -17,4 +22,5 @@ export default function SearchResults() {
         </div>
       </div>
     </div>
-  )}
+  )
+}

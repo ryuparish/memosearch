@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import {AppContext} from "../App";
+import { AppContext } from "../App";
 // Use fetch() instead.
 //import axios from 'axios';
 
@@ -60,9 +60,16 @@ export default function ScreenshotsPage() {
     setScreenshotError,
     view
   } = useContext(AppContext);
+
   const date = new Date();
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
+  /**
+   * Handling the submission of 
+   *
+   * @param {[TODO:type]} event - [TODO:description]
+   * @returns {[TODO:type]} [TODO:description]
+   */
   function handleSubmit(event) {
     event.preventDefault()
 
@@ -93,16 +100,8 @@ export default function ScreenshotsPage() {
     formData.append("text", screenshotText)
     formData.append("activity", screenshotActivity)
     formData.append("about", screenshotAbout)
+    formData.append("view", view)
     formData.append("date", date)
-
-    // Create a new link object and send to the server
-    // const screenshotObj = {
-    //   file:formData,
-    //   caption:screenshotCaption,
-    //   activity:screenshotActivity,
-    //   about:screenshotAbout,
-    //   date:date
-    // }
 
     console.log("Sending this form data: " + formData.get("file"))
     // Post to the "links" api
@@ -124,39 +123,39 @@ export default function ScreenshotsPage() {
 
   console.log("Here is the screenshotFile: " + screenshotFile)
   return (
-  <div>
-    <head>
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    </head>
-    
-    <body>
-      <br/>
-      <div class="container">
-        <button class="btn btn-info" onClick={() => setPage("main")}>Back</button>
-        <div class="jumbotron">
-          <h1>Configure Screenshots</h1>
-          <h2>Add, Delete, and Edit Screenshot data</h2>
-        </div>
-        <br/>
-        <form id="links" onSubmit={handleSubmit}>
-          <h3> Add Screenshot </h3>
+    <div>
+      <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+      </head>
+
+      <body>
+        <br />
+        <div class="container">
+          <button class="btn btn-info" onClick={() => setPage("main")}>Back</button>
+          <div class="jumbotron">
+            <h1>Configure Screenshots</h1>
+            <h2>Add, Delete, and Edit Screenshot data</h2>
+          </div>
+          <br />
+          <form id="links" onSubmit={handleSubmit}>
+            <h3> Add Screenshot </h3>
             <label for="file">File or Photo Directory:</label>
-          <input type="file" name="image" onChange={(e) => {setScreenshotFile(e.target.files[0])}} /><br/>
+            <input type="file" name="image" onChange={(e) => { setScreenshotFile(e.target.files[0]) }} /><br />
             <label for="Caption">Caption:</label>
-          <input type="text" id="caption" name="caption" onChange={(e) => setScreenshotCaption(e.target.value)} value={screenshotCaption}/><br/><br/>
+            <input type="text" id="caption" name="caption" onChange={(e) => setScreenshotCaption(e.target.value)} value={screenshotCaption} /><br /><br />
             <label for="text_in_image">Text in image (if any):</label>
-              <input type="text" id="text_in_image" name="text_in_image" onChange={(e) => setScreenshotText(e.target.value)} value={screenshotText}/><br/><br/>
+            <input type="text" id="text_in_image" name="text_in_image" onChange={(e) => setScreenshotText(e.target.value)} value={screenshotText} /><br /><br />
             <label for="activity">Related Activity:</label>
-              <input type="text" id="activity" name="activity" onChange={(e) => setScreenshotActivity(e.target.value)} value={screenshotActivity}/><br/><br/>
+            <input type="text" id="activity" name="activity" onChange={(e) => setScreenshotActivity(e.target.value)} value={screenshotActivity} /><br /><br />
             <label for="date">Date:</label>
-              <p>{formattedDate}</p><br/>
-            <label for="about">About:</label><br/>
-              <textarea id="about" name="freeform" rows="4" cols="50" onChange={(e) => setScreenshotAbout(e.target.value)} value={screenshotAbout}></textarea><br/><br/>
-              <input type="submit" id="submit" name="submit"/>
-        </form>
-        <p><font color="red"> {screenshotError} </font></p>
-      </div>
-    </body>
-  </div>)
+            <p>{formattedDate}</p><br />
+            <label for="about">About:</label><br />
+            <textarea id="about" name="freeform" rows="4" cols="50" onChange={(e) => setScreenshotAbout(e.target.value)} value={screenshotAbout}></textarea><br /><br />
+            <input type="submit" id="submit" name="submit" />
+          </form>
+          <p><font color="red"> {screenshotError} </font></p>
+        </div>
+      </body>
+    </div>)
 }

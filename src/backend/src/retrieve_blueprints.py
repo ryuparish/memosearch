@@ -8,6 +8,26 @@ retrieve = Blueprint('retrieve', __name__, template_folder='templates')
 
 # Routes
 
+@retrieve.route("/views", methods=["GET", "OPTIONS"])
+@cross_origin()
+def views():
+    """Handles the link route.
+
+    GET: This route gets information about the link
+    and returns it in a dictionary.
+
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+    if request.method == "GET":
+        all_views = set()
+        all_views.add("all")
+        for table in [Note, Link, Screenshot]:
+            for value in table.query.distinct(table.view):
+                print(value.view)
+                all_views.add(value.view)
+        return list(all_views)
 
 @retrieve.route("/open_screenshot/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
@@ -93,7 +113,7 @@ def topfive():
     top_5_notes = Note.query.order_by(Note.date.desc()).limit(5).all()
     top_5_screenshots = Screenshot.query.order_by(Screenshot.date.desc()).limit(5).all()
 
-    return [*top_5_links, *top_5_notes, *top_5_screenshots]
+    return {"links":top_5_links, "notes":top_5_notes, "screenshots":top_5_screenshots}
 
 
 @retrieve.route("/search", methods=["POST", "OPTIONS"])
@@ -116,13 +136,14 @@ def search():
 
         # Adding site-name-matched links to the result list
         if ("links" in request_data["content"]):
-            all_links = Link.query.all()
+            all_links = Link.query.all() if request_data["view"] == "all" else Link.query.where(Link.view == request_data["view"])
             print(all_links)
             for link in all_links:
                 token_set_score = fuzz.token_set_ratio(link.link, request_data["search"])
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(link.about, request_data["search"]))
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(link.site_name, request_data["search"]))
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(link.related_activity, request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(link.view, request_data["search"]))
                 print(f"links token set score: {token_set_score}")
                 if token_set_score > 50:
                     curr_results["links"] += [{
@@ -130,13 +151,13 @@ def search():
                         "about": link.about,
                         "link": link.link,
                         "site_name": link.site_name,
-                        "related_activity": link.related_activity
+                        "related_activity": link.related_activity,
+                        "view": link.view,
                     }]
 
         # Adding caption-matched screenshots to the result list
         if ("screenshots" in request_data["content"]):
             all_screenshots = Screenshot.query.all()
-            print(all_screenshots)
             for screenshot in all_screenshots:
                 token_set_score = fuzz.token_set_ratio(screenshot.caption, request_data["search"])
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot.about, request_data["search"]))
@@ -151,13 +172,13 @@ def search():
                         "path": screenshot.path,
                         "caption": screenshot.caption,
                         "text_in_image": screenshot.text_in_image,
-                        "related_activity": screenshot.related_activity
+                        "related_activity": screenshot.related_activity,
+                        "view": screenshot.view,
                     }]
 
         # Adding title-matched notes to the result list
         if ("notes" in request_data["content"]):
             all_notes = Note.query.all()
-            print(all_notes)
             for note in all_notes:
                 token_set_score = fuzz.token_set_ratio(note.title, request_data["search"])
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(note.about, request_data["search"]))
@@ -169,7 +190,8 @@ def search():
                         "title": note.title,
                         "about": note.about,
                         "date": note.date,
-                        "related_activity": note.related_activity
+                        "related_activity": note.related_activity,
+                        "view": note.view,
                     }]
 
         response = jsonify(curr_results)

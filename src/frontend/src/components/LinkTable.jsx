@@ -1,9 +1,13 @@
 import React, { useContext } from 'react';
-import {AppContext} from "../App";
+import { AppContext } from "../App";
 
+/**
+ * A component for configuring links
+ *
+ * @returns {object} HTML object - The link table component
+ */
 export default function LinkTable() {
   const {
-    setLink,
     linkError,
     setLinkError,
     links,
@@ -14,21 +18,27 @@ export default function LinkTable() {
   } = useContext(AppContext);
 
   const date = new Date();
-  const formattedDate = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
 
+  /**
+   * Function for loading links file into links state.
+   *
+   */
   function handleLinks() {
     // Parse HTML file
     if (htmlFile) {
       const newReader = new FileReader();
-      newReader.onload = (function (theFile) {
-        return function (e) {
+      newReader.onload = (() => {
+        return function(e) {
+          // The first five anchors from Firefox are for automatically generated bookmarks
           const parser = new DOMParser();
           const htmlDoc = parser.parseFromString(e.target.result, "text/html");
           const anchors = htmlDoc.getElementsByTagName("a");
           let newLinks = [];
           for (let i = 5; i < anchors.length; i++) {
+            // Finding http://<something> from link and using
+            // site_name if match found.
             let matches = anchors[i].href.match(/^https?\:\/\/([^/?#]+)(?:[/?#]|$)/i);
-            let domain = matches && matches[1]; 
+            let domain = matches && matches[1];
             newLinks.push({
               id: Math.floor(Math.random() * 65536),
               about: "",
@@ -45,22 +55,30 @@ export default function LinkTable() {
       })(htmlFile);
       newReader.readAsText(htmlFile);
     }
-    return; 
+    return;
   }
 
+  /**
+   * Handles the link change for each row of table
+   *
+   * @param {object} event - [TODO:description]
+   * @param {[TODO:type]} id - [TODO:description]
+   * @returns {[TODO:type]} [TODO:description]
+   */
   function handleLinkChange(event, id) {
+    console.log(typeof event);
     setLinks(links.map(link => {
       if (link.id !== id) {
         // No change
         return link;
       } else {
-          var matches = event.target.value.match(/^https?\:\/\/([^/?#]+)(?:[/?#]|$)/i);
-          var domain = matches && matches[1]; 
-          var newSiteName = link.site_name;
-          // Set domain (site_name) only if there is a valid link
-          if (domain) {
-            newSiteName=matches[1]
-          }        // Return a new link
+        var matches = event.target.value.match(/^https?\:\/\/([^/?#]+)(?:[/?#]|$)/i);
+        var domain = matches && matches[1];
+        var newSiteName = link.site_name;
+        // Set domain (site_name) only if there is a valid link
+        if (domain) {
+          newSiteName = matches[1]
+        }        // Return a new link
         return {
           id: link.id,
           about: link.about,
@@ -73,11 +91,9 @@ export default function LinkTable() {
         };
       }
     }));
-    setLink(event.target.value);
   }
 
   function handleAboutChange(event, id) {
-    setLink(event.target.value);
     setLinks(links.map(link => {
       if (link.id !== id) {
         // No change
@@ -91,14 +107,14 @@ export default function LinkTable() {
           date: date,
           site_name: link.site_name,
           related_activity: link.related_activity,
-          status: "New"
+          status: "New",
+          view: link.view
         };
       }
     }));
   }
 
   function handleActivityChange(event, id) {
-    setLink(event.target.value);
     setLinks(links.map(link => {
       if (link.id !== id) {
         // No change
@@ -112,18 +128,18 @@ export default function LinkTable() {
           date: date,
           site_name: link.site_name,
           related_activity: event.target.value,
-          status: "New"
+          status: "New",
+          view: link.view
         };
       }
     }));
   }
 
-  function handleAddButton(event) {
+  function handleAddButton() {
     // Following the link structure in the scheme models
-    console.log("links was previously: " + JSON.stringify(links) + " in add");
-    const newListOfObj = 
+    console.log("links was previously: " + links + " in add");
     setLinks([...links,
-      { 
+      {
         id: Math.floor(Math.random() * 65536),
         link: "",
         about: "",
@@ -134,7 +150,18 @@ export default function LinkTable() {
         view: view
       }
     ])
-    console.log("links is now: " + JSON.stringify(links));
+    console.log("links is now set to: " + JSON.stringify([...links,
+      {
+        id: Math.floor(Math.random() * 65536),
+        link: "",
+        about: "",
+        date: date,
+        site_name: "",
+        related_activity: "",
+        status: "New",
+        view: view
+      }
+    ]));
   }
 
   // Get the submitted values and call the python backend
@@ -163,13 +190,14 @@ export default function LinkTable() {
       }
 
     })
+
     if (linkError !== "") {
       return;
     }
 
-    console.log("Sending this: " + links);
-    console.log("Sending while error is: " + linkError);
     // Post to the "links" api
+    console.log("Sending this: " + JSON.stringify(links))
+    console.log("while the linkError is this: " + linkError)
     fetch("http://127.0.0.1:4444/links", {
       method: "POST",
       headers: {
@@ -182,18 +210,18 @@ export default function LinkTable() {
         return response.json();
       })
       .then((data) => {
-        console.log("Here is the data we put into the database: " + JSON.stringify(data[0]));
+        console.log("Here is the data we put into the database: " + JSON.stringify(data));
         setLinks(links.map(link => {
-            return {
-              id: link.id,
-              about: link.about,
-              link: link.link,
-              date: date,
-              site_name: link.site_name,
-              related_activity: link.related_activity,
-              status: "Done",
-              view: view
-            };
+          return {
+            id: link.id,
+            about: link.about,
+            link: link.link,
+            date: date,
+            site_name: link.site_name,
+            related_activity: link.related_activity,
+            status: "Done",
+            view: view
+          };
         }));
       })
       .catch((error) => console.log(error));
@@ -204,18 +232,17 @@ export default function LinkTable() {
   for (const link_num in links) {
     const link_item = links[link_num];
     link_items.push(
-        <tr>
-          <td><input value={link_item["site_name"]} onChange={()=>{}} ></input></td>
-          <td><input value={link_item["link"]} onChange={(e) => handleLinkChange(e, link_item["id"])} ></input></td>
-          <td><input value={link_item["related_activity"]} onChange={(e) => handleActivityChange(e, link_item["id"])} ></input></td>
-          <td><input value={link_item["about"]} onChange={(e) => handleAboutChange(e, link_item["id"])} ></input></td>
-          <td><input value={link_item["date"]} onChange={() => {}} ></input></td>                        
-          <td><input value={link_item["view"]} onChange={() => {}} ></input></td>                        
-          <td><span class="status text-success">•</span>{link_item["status"]}</td>
-          <td>
-		  	  <a onClick={() => {setLinks(links.filter(a => a.id !== link_item["id"]))}} href="#"><i value="1" class="editItem material-icons" style={{"cursor":"pointer"}}>remove</i></a>
-          </td>
-        </tr>
+      <tr>
+        <td><input value={link_item["site_name"]} onChange={() => { }} ></input></td>
+        <td><input value={link_item["link"]} onChange={(e) => handleLinkChange(e, link_item["id"])} ></input></td>
+        <td><input value={link_item["related_activity"]} onChange={(e) => handleActivityChange(e, link_item["id"])} ></input></td>
+        <td><input value={link_item["about"]} onChange={(e) => handleAboutChange(e, link_item["id"])} ></input></td>
+        <td><input value={link_item["view"]} onChange={() => { }} ></input></td>
+        <td><span class="status text-success">•</span>{link_item["status"]}</td>
+        <td>
+          <a onClick={() => { setLinks(links.filter(a => a.id !== link_item["id"])) }} href="#"><i value="1" class="editItem material-icons" style={{ "cursor": "pointer" }}>remove</i></a>
+        </td>
+      </tr>
     );
   }
 
@@ -226,41 +253,41 @@ export default function LinkTable() {
           <div class="table-title">
             <div class="row">
               <div class="col-sm-4">
-		  					<h2>Add <b>Links</b></h2>
-		  				</div>
-		  				<div class="col-sm-8">
-		  					<a href="#" class="btn btn-info"><i class="material-icons">file_download_done</i><input value={"Submit Links"} type="submit"/></a>
-		  				</div>
+                <h2>Add <b>Links</b></h2>
+              </div>
+              <div class="col-sm-8">
+                <a href="#" class="btn btn-info"><i class="material-icons">file_download_done</i><input value={"Submit Links"} type="submit" /></a>
+              </div>
             </div>
           </div>
           <table class="table table-striped table-hover">
-           <thead>
-             <tr>
-               <th>Site</th>
-		  		 		 <th>Link</th>
-		  		 		 <th>Activity</th>
-		  		 		 <th>About</th>
-		  		 		 <th>Date</th>						
-		  		 		 <th>View</th>						
-               <th>Status</th>						
-		  		 		<th>Remove</th>
-             </tr>
-           </thead>
-           <tbody id="tbody">
-             {link_items}
-           </tbody>
+            <thead>
+              <tr>
+                <th>Site</th>
+                <th>Link</th>
+                <th>Activity</th>
+                <th>About</th>
+                <th>View</th>
+                <th>Status</th>
+                <th>Remove</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              {link_items}
+            </tbody>
           </table>
-		  		<div class="clearfix">
-              <ul id="pagination" class="pagination">
-                <li class="page-item disabled"><a onClick={() => setLinks([])}>Clear</a></li>
-                <li class="page-item"><a onClick={handleAddButton} class="page-link">Add Link</a></li>
-              </ul>
+          <div class="clearfix">
+            <ul id="pagination" class="pagination">
+              <li class="page-item disabled"><a onClick={() => setLinks([])}>Clear</a></li>
+              <li class="page-item"><a onClick={handleAddButton} class="page-link">Add Link</a></li>
+            </ul>
           </div>
         </div>
       </div>
       <div class="row col-sm-4 container">
-        <input onChange={(e) => setHtmlFile(e.target.files[0])} type="file"/>
-		  	<a onClick={handleLinks} class=""><input value="Upload Links" type="submit"/></a>
+        <input onChange={(e) => setHtmlFile(e.target.files[0])} type="file" />
+        <a onClick={handleLinks} class=""><input value="Upload Links" type="submit" /></a>
       </div>
     </form>
-  )}
+  )
+}
