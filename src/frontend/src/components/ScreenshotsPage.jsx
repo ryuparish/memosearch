@@ -103,7 +103,6 @@ export default function ScreenshotsPage() {
     formData.append("view", view)
     formData.append("date", date)
 
-    console.log("Sending this form data: " + formData.get("file"))
 
     // Post to the "links" api
     fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/screenshots", {

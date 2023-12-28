@@ -29,7 +29,7 @@ export default function SearchResult(props) {
   }
   return (
     <li>
-      <i style={{ "color": color }} class="material-icons">{content_type}</i><a href={props.href} target="_blank">{props.display_field}</a>&nbsp;({props.about}...)
+      <i style={{ "color": color }} class="material-icons">{content_type}</i><a href={props.href} target="_blank">{props.display_field ? props.display_field : "[Empty Name]"}</a>&nbsp;({props.about}...)
     </li>
   )
 }

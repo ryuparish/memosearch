@@ -51,5 +51,3 @@ class Note(db.Model):
 
     def __repr__(self):
         return f"<Screenshot id:{self.id}, about: {self.about}>"
-
-

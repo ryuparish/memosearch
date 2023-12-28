@@ -88,12 +88,12 @@ export default function NotesPage() {
         <button class="btn btn-info" onClick={() => setPage("main")}>Back</button>
         <br/><br/>
         <div class="jumbotron">
-          <h1>Configure Notes</h1>
-          <h2>Add, Delete, and Edit Notes data</h2>
+          <h1>Note</h1>
+          <h2>Create a new note</h2>
         </div>
         <br/>
         <form id="links">
-          <h3> Add Note </h3>
+          <h3> New Note </h3>
             <label for="title">Title:</label>
           <input type="text" id="title" name="title" onChange={(e) => setNoteTitle(e.target.value)} value={noteTitle}/><br/><br/>
             <label for="about">About:</label><br/>

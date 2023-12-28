@@ -70,3 +70,8 @@ Why is the screenshot uploading so tricky?
 How do we handle multi-file uploads?
   
   - We can allow multiple file inputs.
+
+How do we handle the image access issues from javascript?
+  - As soon as we get access to the image in Python, we allow the backend server to save and 
+  send out that Screenshot-ID matching file data as a binary object.
+

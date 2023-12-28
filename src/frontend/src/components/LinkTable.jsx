@@ -66,7 +66,6 @@ export default function LinkTable() {
    * @returns {[TODO:type]} [TODO:description]
    */
   function handleLinkChange(event, id) {
-    console.log(typeof event);
     setLinks(links.map(link => {
       if (link.id !== id) {
         // No change
@@ -137,7 +136,6 @@ export default function LinkTable() {
 
   function handleAddButton() {
     // Following the link structure in the scheme models
-    console.log("links was previously: " + links + " in add");
     setLinks([...links,
       {
         id: Math.floor(Math.random() * 65536),
@@ -150,18 +148,6 @@ export default function LinkTable() {
         view: view
       }
     ])
-    console.log("links is now set to: " + JSON.stringify([...links,
-      {
-        id: Math.floor(Math.random() * 65536),
-        link: "",
-        about: "",
-        date: date,
-        site_name: "",
-        related_activity: "",
-        status: "New",
-        view: view
-      }
-    ]));
   }
 
   // Get the submitted values and call the python backend
@@ -178,7 +164,6 @@ export default function LinkTable() {
 
     // Loop over the links in links state and send lists of JSONs to flask.
     links.forEach((link) => {
-      console.log("Looping over this: " + link);
       if (link.site_name === "") {
         setLinkError("The site of the links is required")
       } else if (link.link === "") {
@@ -196,8 +181,6 @@ export default function LinkTable() {
     }
 
     // Post to the "links" api
-    console.log("Sending this: " + JSON.stringify(links))
-    console.log("while the linkError is this: " + linkError)
     fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/links", {
       method: "POST",
       headers: {
@@ -211,18 +194,6 @@ export default function LinkTable() {
       })
       .then((data) => {
         console.log("Here is the data we put into the database: " + JSON.stringify(data));
-        console.log("Here is what we set the new links equal to: " + JSON.stringify(links.map(link => {
-          return {
-            id: link.id,
-            about: link.about,
-            link: link.link,
-            date: date,
-            site_name: link.site_name,
-            related_activity: link.related_activity,
-            status: "Done",
-            view: link.view
-          };
-        })))
         setLinks(links.map(link => {
           return {
             id: link.id,
@@ -235,7 +206,6 @@ export default function LinkTable() {
             view: link.view
           };
         }));
-        console.log("Links is now: " + JSON.stringify([...links]));
       })
       .catch((error) => console.log(error));
   }

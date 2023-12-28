@@ -5,6 +5,9 @@ import LinksPage from "./components/LinksPage";
 import ScreenshotsPage from "./components/ScreenshotsPage";
 import NotesPage from "./components/NotesPage";
 import SearchResult from "./components/SearchResult";
+import NoteEditor from "./components/NoteEditor";
+import ScreenshotEditor from "./components/ScreenshotEditor";
+import LinkEditor from "./components/LinkEditor";
 import {
   BrowserRouter as Router,
   Route,
@@ -118,7 +121,6 @@ export default function App() {
         return response.json();
       })
       .then((data) => {
-        console.log("Out here");
         let init_views = [];
         for (let i = 0; i < data.length; i++) {
           init_views.push(data[i]);
@@ -167,7 +169,7 @@ export default function App() {
             const item_id = data[key][obj]["id"];
 
             // Use absoute path only in env file for data folder.
-            const href = process.env.REACT_APP_BACKEND_ENDPOINT + "/open_" + route + "/" + item_id;
+            const href = process.env.REACT_APP_FRONTEND_ENDPOINT + "/" + route + "/" + item_id;
             top_fives.push(<SearchResult
                 route={route}
                 href={href}
@@ -188,12 +190,14 @@ export default function App() {
       <Router>
         <Routes>
           <Route index element={<AppContext.Provider value={all_states}><MainPage /></AppContext.Provider>}/>
+          <Route path="/note/:Id" element={<AppContext.Provider value={all_states}><NoteEditor /></AppContext.Provider>}/>
+          <Route path="/link/:Id" element={<AppContext.Provider value={all_states}><LinkEditor /></AppContext.Provider>}/>
+          <Route path="/screenshot/:Id" element={<AppContext.Provider value={all_states}><ScreenshotEditor /></AppContext.Provider>}/>
         </Routes>
       </Router>
     );
   }
   else if (page === "links") {
-    console.log("Switching to links");
     return (
       <AppContext.Provider value={all_states}>
         <LinksPage />

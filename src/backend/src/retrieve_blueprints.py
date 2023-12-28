@@ -1,8 +1,10 @@
 from flask import jsonify
 from flask import Blueprint, request, render_template
 from flask_cors import cross_origin
+from PIL import Image
 from thefuzz import fuzz
 from .models import Note, Screenshot, Link
+from .app import db
 
 retrieve = Blueprint('retrieve', __name__, template_folder='templates')
 
@@ -29,9 +31,9 @@ def views():
                 all_views.add(value.view)
         return list(all_views)
 
-@retrieve.route("/open_screenshot/<id>", methods=["GET", "OPTIONS"])
+@retrieve.route("/get_image/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
-def open_screenshot(id):
+def get_image(id):
     """Handles the file obtaining route given an object.
 
     POST: This route returns an html page that has just text in it.
@@ -39,27 +41,16 @@ def open_screenshot(id):
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
     """
-    request_data = Screenshot.query.filter_by(id=id).one()
-    path = str(request_data.id)
 
-    # Process request (return html)
+    # Process request (return dict)
     if request.method == "GET":
-        return render_template(
-            "screenshot.html",
-            path=path,
-            about=request_data.about,
-            date=request_data.date,
-            text=request_data.text_in_image,
-            caption=request_data.caption,
-            related_activity=request_data.related_activity,
-            content_type="Screenshot",
-            content_id=request_data.id
-        )
+        image_path = db.get_or_404(Screenshot, id).path
+        file = Image.open(image_path)
+        return file
 
-
-@retrieve.route("/open_note/<id>", methods=["GET", "OPTIONS"])
+@retrieve.route("/delete_link/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
-def open_note(id):
+def delete_link(id):
     """Handles the file obtaining route given an object.
 
     POST: This route returns an html page that has just text in it.
@@ -67,18 +58,38 @@ def open_note(id):
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
     """
-    request_data = Note.query.filter_by(id=id).one()
 
-    # Process request (return html)
+    # Process request (return dict)
     if request.method == "GET":
-        return render_template(
-            "note.html",
-            about=request_data.about,
-            date=request_data.date,
-            related_activity=request_data.related_activity,
-            content_type="Note",
-            content_id=request_data.id
-        )
+        link = db.get_or_404(Link, id)
+        db.session.delete(link)
+        db.session.commit()
+        return f"{id} has been deleted"
+
+@retrieve.route("/update_link/<id>", methods=["POST", "OPTIONS"])
+@cross_origin()
+def update_link(id):
+    """Handles the file obtaining route given an object.
+
+    POST: This route returns an html page that has just text in it.
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+    request_data = request.json
+
+    # Process request (return dict)
+    if request.method == "POST":
+
+        link = db.get_or_404(Link, id)
+        link.link = request_data["link"]
+        link.about = request_data["about"]
+        link.site_name = request_data["site_name"]
+        link.date = request_data["date"]
+        link.view = request_data["view"]
+        link.related_activity = request_data["related_activity"]
+        db.session.commit()
+        return f"{id} has been updated"
 
 
 @retrieve.route("/open_link/<id>", methods=["GET", "OPTIONS"])
@@ -93,18 +104,67 @@ def open_link(id):
     """
     request_data = Link.query.filter_by(id=id).one()
 
-    # Process request (return html)
+    # Process request (return dict)
     if request.method == "GET":
-        return render_template(
-            "link.html",
-            site_name=request_data.site_name,
-            about=request_data.about,
-            date=request_data.date,
-            link=request_data.link,
-            related_activity=request_data.related_activity,
-            content_type="Link",
-            content_id=request_data.id
-        )
+        print(f"Here is the request_data.view: {request_data.view}")
+        return {
+            "site_name": request_data.site_name,
+            "about": request_data.about,
+            "date": request_data.date,
+            "link": request_data.link,
+            "related_activity": request_data.related_activity,
+            "id": request_data.id,
+            "view": request_data.view,
+        }
+
+@retrieve.route("/open_screenshot/<id>", methods=["GET", "OPTIONS"])
+@cross_origin()
+def open_screenshot(id):
+    """Handles the file obtaining route given an object.
+
+    POST: This route returns an html page that has just text in it.
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+    print(f"Here is id in open_screenshot: {id}")
+    request_data = Screenshot.query.filter_by(id=int(id)).one()
+
+    # Process request (return dict)
+    if request.method == "GET":
+        return {
+            "view": request_data.view,
+            "about": request_data.about,
+            "caption": request_data.caption,
+            "text": request_data.text_in_image,
+            "path": request_data.path,
+            "date": request_data.date,
+            "related_activity": request_data.related_activity,
+            "id": request_data.id
+        }
+
+@retrieve.route("/open_note/<id>", methods=["GET", "OPTIONS"])
+@cross_origin()
+def open_note(id):
+    """Handles the file obtaining route given an object.
+
+    POST: This route returns an html page that has just text in it.
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+    request_data = Note.query.filter_by(id=id).one()
+
+    # Process request (return dict)
+    if request.method == "GET":
+        return {
+            "view": request_data.view,
+            "title": request_data.title,
+            "about": request_data.about,
+            "date": request_data.date,
+            "related_activity": request_data.related_activity,
+            "id": request_data.id
+        }
 
 @retrieve.route("/topfive", methods=["GET", "OPTIONS"])
 @cross_origin()

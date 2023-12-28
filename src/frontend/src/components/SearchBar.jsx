@@ -42,7 +42,6 @@ export default function SearchBar() {
       content.push("links")
     }
 
-    console.log("Here is the searchQuery: " + searchQuery);
     fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/search", {
       method: "POST",
       headers: {
@@ -84,7 +83,7 @@ export default function SearchBar() {
             const item_id = data[key][obj]["id"];
 
             // Use absoute path only in env file for data folder.
-            const href = process.env.REACT_APP_BACKEND_ENDPOINT + "/open_" + route + "/" + item_id;
+            const href = process.env.REACT_APP_FRONTEND_ENDPOINT + "/" + route + "/" + item_id;
 
             result_list.push(
               <SearchResult

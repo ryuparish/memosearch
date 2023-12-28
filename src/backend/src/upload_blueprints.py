@@ -11,6 +11,136 @@ from .models import Note, Screenshot, Link
 
 upload = Blueprint('upload', __name__, template_folder='templates')
 # Routes
+
+@upload.route("/delete_screenshot/<id>", methods=["GET", "OPTIONS"])
+@cross_origin()
+def delete_screenshot(id):
+    """Handles the file obtaining route given an object.
+
+    POST: This route returns an html page that has just text in it.
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+
+    # Process request (return dict)
+    if request.method == "GET":
+        screenshot = db.get_or_404(Screenshot, id)
+        db.session.delete(screenshot)
+        db.session.commit()
+        return f"{id} has been deleted"
+
+@upload.route("/update_screenshot/<id>", methods=["POST", "OPTIONS"])
+@cross_origin()
+def update_screenshot(id):
+    """Handles the file obtaining route given an object.
+
+    POST: This route returns an html page that has just text in it.
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+    request_data = request.json
+
+    # Process request (return dict)
+    if request.method == "POST":
+
+        print(f"Here is the json in update screenshot: {request_data}");
+        screenshot = db.get_or_404(Screenshot, id)
+        screenshot.caption = request_data["caption"]
+        screenshot.text_in_image = request_data["text"]
+        screenshot.about = request_data["about"]
+        screenshot.date = request_data["date"]
+        screenshot.view = request_data["view"]
+        screenshot.related_activity = request_data["related_activity"]
+        db.session.commit()
+        return f"{id} has been updated"
+
+@upload.route("/delete_note/<id>", methods=["GET", "OPTIONS"])
+@cross_origin()
+def delete_note(id):
+    """Handles the file obtaining route given an object.
+
+    POST: This route returns an html page that has just text in it.
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+
+    # Process request (return dict)
+    if request.method == "GET":
+        note = db.get_or_404(Note, id)
+        db.session.delete(note)
+        db.session.commit()
+        return f"{id} has been deleted"
+
+@upload.route("/update_note/<id>", methods=["POST", "OPTIONS"])
+@cross_origin()
+def update_note(id):
+    """Handles the file obtaining route given an object.
+
+    POST: This route returns an html page that has just text in it.
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+    request_data = request.json
+
+    # Process request (return dict)
+    if request.method == "POST":
+
+        note = db.get_or_404(Note, id)
+        note.title = request_data["title"]
+        note.about = request_data["about"]
+        note.date = request_data["date"]
+        note.view = request_data["view"]
+        note.related_activity = request_data["related_activity"]
+        db.session.commit()
+        return f"{id} has been updated"
+
+@upload.route("/delete_link/<id>", methods=["GET", "OPTIONS"])
+@cross_origin()
+def delete_link(id):
+    """Handles the file obtaining route given an object.
+
+    POST: This route returns an html page that has just text in it.
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+
+    # Process request (return dict)
+    if request.method == "GET":
+        link = db.get_or_404(Link, id)
+        db.session.delete(link)
+        db.session.commit()
+        return f"{id} has been deleted"
+
+@upload.route("/update_link/<id>", methods=["POST", "OPTIONS"])
+@cross_origin()
+def update_link(id):
+    """Handles the file obtaining route given an object.
+
+    POST: This route returns an html page that has just text in it.
+
+    :returns:   JSON representation of what was saved in database
+    :rtype: list(dict (JSON))
+    """
+    request_data = request.json
+
+    # Process request (return dict)
+    if request.method == "POST":
+
+        link = db.get_or_404(Link, id)
+        link.link = request_data["link"]
+        link.about = request_data["about"]
+        link.site_name = request_data["site_name"]
+        link.date = request_data["date"]
+        link.view = request_data["view"]
+        link.related_activity = request_data["related_activity"]
+        db.session.commit()
+        return f"{id} has been updated"
+
 @upload.route("/screenshots", methods=["GET", "POST", "OPTIONS"])
 @cross_origin()
 def screenshots():
