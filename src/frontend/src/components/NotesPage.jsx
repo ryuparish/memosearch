@@ -66,6 +66,7 @@ export default function NotesPage() {
         console.log("Here is the data we put into the database: " + JSON.stringify(data[0]));
       })
       .catch((error) => console.log(error));
+    setPage("main");
   }
 
   function handleClear () {

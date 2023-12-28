@@ -131,6 +131,13 @@ Infrastructure Design:
       text, with one k-mean getting one topic.
 
 
+3. Testing
+
+  React Testing:
+    - Jest
+
+  Flask Testing:
+    - Flask Testing
 
 Case Study:
 

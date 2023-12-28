@@ -1,48 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AppContext } from "../App";
 import Button from "react-bootstrap/Button";
-// Use fetch() instead.
-//import axios from 'axios';
-
-
-// Send multiple files to a server.
-// Example of processing many files by sending to a server.
-// We want to do this with our flask backend server.
-//export const function App() {
-//
-//  const [file, setFile] = useState()
-//
-//  function handleChange(event) {
-//    setFile(event.target.files[0])
-//  }
-//  
-//  function handleSubmit(event) {
-//    event.preventDefault()
-//    const url = 'http://localhost:3000/uploadFile';
-//    const formData = new FormData();
-//    formData.append('file', file);
-//    formData.append('fileName', file.name);
-//    const config = {
-//      headers: {
-//        'content-type': 'multipart/form-data',
-//      },
-//    };
-//    axios.post(url, formData, config).then((response) => {
-//      console.log(response.data);
-//    });
-//
-//  }
-//
-//  return (
-//    <div className="App">
-//        <form onSubmit={handleSubmit}>
-//          <h1>React File Upload</h1>
-//          <input type="file" onChange={handleChange}/>
-//          <button type="submit">Upload</button>
-//        </form>
-//    </div>
-//  );
-//}
 
 export default function ScreenshotsPage() {
   const {
@@ -119,6 +77,7 @@ export default function ScreenshotsPage() {
         console.log("Here is the data we put into the database: " + JSON.stringify(data[0]));
       })
       .catch((error) => console.log(error));
+    setPage("main");
   }
 
   /**
