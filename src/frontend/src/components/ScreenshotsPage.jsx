@@ -112,12 +112,12 @@ export default function ScreenshotsPage() {
           <button class="btn btn-info" onClick={() => setPage("main")}>Back</button>
           <br /><br />
           <div class="jumbotron">
-            <h1>Configure Screenshots</h1>
-            <h2>Add, Delete, and Edit Screenshot data</h2>
+            <h1>Screenshot</h1>
+            <h2>Create a new Screenshot</h2>
           </div>
           <br />
           <form id="links" onSubmit={handleSubmit}>
-            <h3> Add Screenshot </h3>
+            <h3> New Screenshot </h3>
             <label for="file">File or Photo Directory:</label>
             <input type="file" name="image" onChange={(e) => { setScreenshotFile(e.target.files[0]) }} /><br />
             {imageDisplay}<br /><br />

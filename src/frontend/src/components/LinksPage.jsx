@@ -27,7 +27,7 @@ export default function LinksPage() {
         <button class="btn btn-info" onClick={() => setPage("main")}>Back</button>
         <br/><br/>
         <div class="jumbotron">
-          <h1>New Links</h1>
+          <h1>Link</h1>
           <h2>Create a new link</h2>
         </div>
         <br/>
