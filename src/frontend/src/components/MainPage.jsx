@@ -47,7 +47,7 @@ export default function MainPage() {
           <br/><br/><br/>
           <div class="jumbotron">
             <ViewModal />
-            <h1>MemoSearch</h1>
+            <h1>🔎MemoSearch</h1>
             <h3>Current View: <Badge bg="secondary">{view}</Badge></h3>
             <Button variant="primary" onClick={() => setShow(true)}>Add View</Button>
             &nbsp;&nbsp;

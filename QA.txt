@@ -75,3 +75,10 @@ How do we handle the image access issues from javascript?
   - As soon as we get access to the image in Python, we allow the backend server to save and 
   send out that Screenshot-ID matching file data as a binary object.
 
+How are we going to automatically sync Notes from the Notes app and screenshots from the iphone/mac?
+  - Our plan is currently to programmatically access the screenshots album from iphone and mac.
+
+  Are we going to upload these content items in bulk?
+    
+    - Yes, we are going to automatically load them
+    from start up decided by an env variable.

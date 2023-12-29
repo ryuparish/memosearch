@@ -1,7 +1,7 @@
 import os
 import random
 import json
-from flask import jsonify
+from flask import jsonify, current_app
 from urllib.parse import urlparse
 from flask import Blueprint, request
 from flask_cors import cross_origin
@@ -45,7 +45,6 @@ def update_screenshot(id):
     # Process request (return dict)
     if request.method == "POST":
 
-        print(f"Here is the json in update screenshot: {request_data}");
         screenshot = db.get_or_404(Screenshot, id)
         screenshot.caption = request_data["caption"]
         screenshot.text_in_image = request_data["text"]
@@ -234,8 +233,6 @@ def links():
     :rtype: list(dict (JSON))
     """
     request_data = request.json
-    for json_data in request_data:
-        print('Here is one of the json: ' + json.dumps(json_data))
 
     if request.method == "POST":
         # Link validation for POST
@@ -278,13 +275,14 @@ def links():
             }
 
             # Prevent duplicates
-            if len(Link.query.filter_by(link=link).all()) == 0:
-                print("Query Link is not yet known, adding to database")
-                db.session.add(new_link)
-                db.session.commit()
-                new_links.append(new_dict_link)
-            else:
-                print("Query Link is known")
+            with current_app.app_context():
+                if len(Link.query.filter_by(link=link).all()) == 0:
+                    print("Query Link is not yet known, adding to database")
+                    db.session.add(new_link)
+                    db.session.commit()
+                    new_links.append(new_dict_link)
+                else:
+                    print("Query Link is known")
 
         response = jsonify(new_links)
         return response
@@ -341,10 +339,11 @@ def notes():
         }
 
         # Prevent duplicates
-        if len(Note.query.filter_by(title=noteTitle).all()) == 0:
-            print("Query Note is not yet known, adding to database and writing file")
-            db.session.add(new_note)
-            db.session.commit()
+        with current_app.app_context():
+            if len(Note.query.filter_by(title=noteTitle).all()) == 0:
+                print("Query Note is not yet known, adding to database and writing file")
+                db.session.add(new_note)
+                db.session.commit()
 
-        response = jsonify([new_dict_note])
-        return response
+            response = jsonify([new_dict_note])
+            return response
