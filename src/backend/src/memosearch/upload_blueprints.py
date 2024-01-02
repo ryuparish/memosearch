@@ -5,9 +5,9 @@ from flask import jsonify, current_app
 from urllib.parse import urlparse
 from flask import Blueprint, request
 from flask_cors import cross_origin
-from .extensions import db
 from .models import Note, Screenshot, Link
-
+from .db import get_db
+from dotenv import load_dotenv
 
 upload = Blueprint('upload', __name__, template_folder='templates')
 # Routes
@@ -25,9 +25,9 @@ def delete_screenshot(id):
 
     # Process request (return dict)
     if request.method == "GET":
-        screenshot = db.get_or_404(Screenshot, id)
-        db.session.delete(screenshot)
-        db.session.commit()
+        db = get_db()
+        db.execute('''DELETE FROM "screenshots" WHERE id=?''', (id,))
+        db.commit()
         return f"{id} has been deleted"
 
 @upload.route("/update_screenshot/<id>", methods=["POST", "OPTIONS"])
@@ -45,14 +45,25 @@ def update_screenshot(id):
     # Process request (return dict)
     if request.method == "POST":
 
-        screenshot = db.get_or_404(Screenshot, id)
-        screenshot.caption = request_data["caption"]
-        screenshot.text_in_image = request_data["text"]
-        screenshot.about = request_data["about"]
-        screenshot.date = request_data["date"]
-        screenshot.view = request_data["view"]
-        screenshot.related_activity = request_data["related_activity"]
-        db.session.commit()
+        print(request_data)
+        db = get_db()
+        db.execute(
+            '''
+            UPDATE "screenshots"
+            SET caption=?, text_in_image=?, about=?, date=?, view=?, related_activity=?
+            WHERE id=?
+            ''',
+            (
+                request_data["caption"],
+                request_data["text"],
+                request_data["about"],
+                request_data["date"],
+                request_data["view"],
+                request_data["related_activity"],
+                id,
+            )
+        )
+        db.commit()
         return f"{id} has been updated"
 
 @upload.route("/delete_note/<id>", methods=["GET", "OPTIONS"])
@@ -68,9 +79,9 @@ def delete_note(id):
 
     # Process request (return dict)
     if request.method == "GET":
-        note = db.get_or_404(Note, id)
-        db.session.delete(note)
-        db.session.commit()
+        db = get_db()
+        db.execute('''DELETE FROM "notes" WHERE id=?''', (id,))
+        db.commit()
         return f"{id} has been deleted"
 
 @upload.route("/update_note/<id>", methods=["POST", "OPTIONS"])
@@ -88,14 +99,25 @@ def update_note(id):
     # Process request (return dict)
     if request.method == "POST":
 
-        note = db.get_or_404(Note, id)
-        note.title = request_data["title"]
-        note.about = request_data["about"]
-        note.date = request_data["date"]
-        note.view = request_data["view"]
-        note.related_activity = request_data["related_activity"]
-        db.session.commit()
+        db = get_db()
+        db.execute(
+            '''
+            UPDATE "notes"
+            SET title=?, about=?, date=?, view=?, related_activity=?
+            WHERE id=?
+            ''',
+            (
+                request_data["title"],
+                request_data["about"],
+                request_data["date"],
+                request_data["view"],
+                request_data["related_activity"],
+                id,
+            )
+        )
+        db.commit()
         return f"{id} has been updated"
+
 
 @upload.route("/delete_link/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
@@ -110,9 +132,9 @@ def delete_link(id):
 
     # Process request (return dict)
     if request.method == "GET":
-        link = db.get_or_404(Link, id)
-        db.session.delete(link)
-        db.session.commit()
+        db = get_db()
+        db.execute('''DELETE FROM "links" WHERE id=?''', (id,))
+        db.commit()
         return f"{id} has been deleted"
 
 @upload.route("/update_link/<id>", methods=["POST", "OPTIONS"])
@@ -130,14 +152,25 @@ def update_link(id):
     # Process request (return dict)
     if request.method == "POST":
 
-        link = db.get_or_404(Link, id)
-        link.link = request_data["link"]
-        link.about = request_data["about"]
-        link.site_name = request_data["site_name"]
-        link.date = request_data["date"]
-        link.view = request_data["view"]
-        link.related_activity = request_data["related_activity"]
-        db.session.commit()
+        db = get_db()
+        db.execute(
+            '''
+            UPDATE "links"
+            SET link=?, about=?, site_name=?, date=?, view=?, related_activity=?
+            WHERE id=?
+            ''',
+            (
+                request_data["link"],
+                request_data["about"],
+                request_data["site_name"],
+                request_data["date"],
+                request_data["view"],
+                request_data["related_activity"],
+                id,
+            )
+        )
+        db.commit()
+        print(f"{id} has been updated")
         return f"{id} has been updated"
 
 @upload.route("/screenshots", methods=["GET", "POST", "OPTIONS"])
@@ -155,6 +188,7 @@ def screenshots():
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
     """
+    db = get_db()
     request_form = request.form
 
     if request.method == "POST":
@@ -186,18 +220,6 @@ def screenshots():
         related_activity = request_form["activity"]
         view = request_form["view"]
 
-        # Getting data from request and adding to the database.
-        new_screenshot = Screenshot(
-            id=id,
-            about=about,
-            caption=caption,
-            date=date,
-            text_in_image=text_in_image,
-            path=path,
-            related_activity=related_activity,
-            view=view,
-        )
-
         new_dict_screenshot = {
             "id": id,
             "about": about,
@@ -209,9 +231,24 @@ def screenshots():
             "view": view
         }
 
+        print("Here is the screenshot path: " + path)
         # Do not prevent duplicates
-        db.session.add(new_screenshot)
-        db.session.commit()
+        db.execute("""
+            INSERT INTO screenshots
+            VALUES(?,?,?,?,?,?,?,?)
+            """,
+            (
+                id,
+                about,
+                caption,
+                date,
+                text_in_image,
+                path,
+                related_activity,
+                view,
+            )
+        )
+        db.commit()
 
         response = jsonify([new_dict_screenshot])
         return response
@@ -232,6 +269,7 @@ def links():
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
     """
+    db = get_db()
     request_data = request.json
 
     if request.method == "POST":
@@ -254,16 +292,6 @@ def links():
             view = json_data["view"]
 
             # Getting data from json and adding to the database.
-            new_link = Link(
-                id=id,
-                link=link,
-                about=about,
-                date=date,
-                site_name=site_name,
-                related_activity=related_activity,
-                view=view,
-            )
-
             new_dict_link = {
                 "id": id,
                 "link": link,
@@ -275,14 +303,20 @@ def links():
             }
 
             # Prevent duplicates
-            with current_app.app_context():
-                if len(Link.query.filter_by(link=link).all()) == 0:
-                    print("Query Link is not yet known, adding to database")
-                    db.session.add(new_link)
-                    db.session.commit()
-                    new_links.append(new_dict_link)
-                else:
-                    print("Query Link is known")
+            link_query = db.execute('SELECT * FROM links WHERE link = ?',(link,)).fetchall()
+            if len(link_query) == 0:
+                print("Query Link is not yet known, adding to database")
+                db.execute(
+                    '''
+                    INSERT INTO links
+                    VALUES(?, ?, ?, ?, ?, ?, ?)
+                    ''',
+                    (id, link, about, date, site_name, related_activity, view,)
+                )
+                db.commit()
+                new_links.append(new_dict_link)
+            else:
+                print("Query Link is known")
 
         response = jsonify(new_links)
         return response
@@ -303,6 +337,7 @@ def notes():
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
     """
+    db = get_db()
     request_data = request.json
 
     if request.method == "POST":
@@ -340,10 +375,29 @@ def notes():
 
         # Prevent duplicates
         with current_app.app_context():
-            if len(Note.query.filter_by(title=noteTitle).all()) == 0:
+            note = db.execute(
+                '''
+                SELECT * FROM notes
+                WHERE title=?
+                ''',
+                (noteTitle,)
+            ).fetchall()
+            if len(note) == 0:
                 print("Query Note is not yet known, adding to database and writing file")
-                db.session.add(new_note)
-                db.session.commit()
+                db.execute("""
+                    INSERT INTO notes
+                    VALUES(?,?,?,?,?,?)
+                    """,
+                    (
+                        id,
+                        noteTitle,
+                        about,
+                        date,
+                        related_activity,
+                        view,
+                    )
+                )
+                db.commit()
 
             response = jsonify([new_dict_note])
             return response

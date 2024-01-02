@@ -82,3 +82,8 @@ How are we going to automatically sync Notes from the Notes app and screenshots 
     
     - Yes, we are going to automatically load them
     from start up decided by an env variable.
+
+So, the flask tutorial from the docs uses sqlite3 w/ no sqlalchemy. How are we going 
+to set up the testing? In specific, how are going to create then insert values into a table and refresh every time?
+
+  - We will have to convert all of our sqlalchemy code into the raw sqlite commands.

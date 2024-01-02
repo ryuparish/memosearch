@@ -1,10 +1,11 @@
-from flask import jsonify, current_app
-from flask import Blueprint, request, render_template
+import os
+from flask import jsonify, current_app, send_file
+from flask import Blueprint, request
 from flask_cors import cross_origin
 from PIL import Image
 from thefuzz import fuzz
-from .models import Note, Screenshot, Link
-from .extensions import db
+from .models import Screenshot, Link
+from .db import get_db
 
 retrieve = Blueprint('retrieve', __name__, template_folder='templates')
 
@@ -25,11 +26,17 @@ def views():
     if request.method == "GET":
         all_views = set()
         all_views.add("all")
-        with current_app.app_context():
-            for table in [Note, Link, Screenshot]:
-                for value in table.query.distinct(table.view):
-                    all_views.add(value.view)
-            return list(all_views)
+        db = get_db()
+        uniq_views = db.execute(
+            'SELECT view FROM notes '
+            'UNION '
+            'SELECT view FROM links '
+            'UNION '
+            'SELECT view FROM screenshots'
+        ).fetchall()
+        uniq_views = [row["view"] for row in uniq_views]
+        all_views = all_views.union(set(uniq_views))
+        return list(all_views)
 
 @retrieve.route("/get_image/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
@@ -44,52 +51,14 @@ def get_image(id):
 
     # Process request (return dict)
     if request.method == "GET":
-        image_path = db.get_or_404(Screenshot, id).path
+        db = get_db()
+        image_path = db.execute('''SELECT * FROM "screenshots" WHERE id=?''', (id,)).fetchone()["path"]
         file = Image.open(image_path)
-        return file
-
-@retrieve.route("/delete_link/<id>", methods=["GET", "OPTIONS"])
-@cross_origin()
-def delete_link(id):
-    """Handles the file obtaining route given an object.
-
-    POST: This route returns an html page that has just text in it.
-
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
-    """
-
-    # Process request (return dict)
-    if request.method == "GET":
-        link = db.get_or_404(Link, id)
-        db.session.delete(link)
-        db.session.commit()
-        return f"{id} has been deleted"
-
-@retrieve.route("/update_link/<id>", methods=["POST", "OPTIONS"])
-@cross_origin()
-def update_link(id):
-    """Handles the file obtaining route given an object.
-
-    POST: This route returns an html page that has just text in it.
-
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
-    """
-    request_data = request.json
-
-    # Process request (return dict)
-    if request.method == "POST":
-
-        link = db.get_or_404(Link, id)
-        link.link = request_data["link"]
-        link.about = request_data["about"]
-        link.site_name = request_data["site_name"]
-        link.date = request_data["date"]
-        link.view = request_data["view"]
-        link.related_activity = request_data["related_activity"]
-        db.session.commit()
-        return f"{id} has been updated"
+        if os.path.splitext(image_path):
+            new_image = file.resize((700, 700))
+            new_image.save(image_path + ".jpeg")
+            image_path = image_path + ".jpeg"
+        return send_file(image_path, mimetype="image/jpeg")
 
 
 @retrieve.route("/open_link/<id>", methods=["GET", "OPTIONS"])
@@ -102,20 +71,20 @@ def open_link(id):
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
     """
-    with current_app.app_context():
-        request_data = Link.query.filter_by(id=id).one()
+    db = get_db()
+    request_data = db.execute('''SELECT * FROM "links" WHERE id=?''', (id,)).fetchone()
 
-        # Process request (return dict)
-        if request.method == "GET":
-            return {
-                "site_name": request_data.site_name,
-                "about": request_data.about,
-                "date": request_data.date,
-                "link": request_data.link,
-                "related_activity": request_data.related_activity,
-                "id": request_data.id,
-                "view": request_data.view,
-            }
+    # Process request (return dict)
+    if request.method == "GET":
+        return {
+            "site_name": request_data["site_name"],
+            "about": request_data["about"],
+            "date": request_data["date"],
+            "link": request_data["link"],
+            "related_activity": request_data["related_activity"],
+            "id": request_data["id"],
+            "view": request_data["view"],
+        }
 
 @retrieve.route("/open_screenshot/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
@@ -127,21 +96,21 @@ def open_screenshot(id):
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
     """
-    with current_app.app_context():
-        request_data = Screenshot.query.filter_by(id=int(id)).one()
+    db = get_db()
+    request_data = db.execute('''SELECT * FROM "screenshots" WHERE id=?''', (id,)).fetchone()
 
-        # Process request (return dict)
-        if request.method == "GET":
-            return {
-                "view": request_data.view,
-                "about": request_data.about,
-                "caption": request_data.caption,
-                "text": request_data.text_in_image,
-                "path": request_data.path,
-                "date": request_data.date,
-                "related_activity": request_data.related_activity,
-                "id": request_data.id
-            }
+    # Process request (return dict)
+    if request.method == "GET":
+        return {
+            "view": request_data["view"],
+            "caption": request_data["caption"],
+            "text": request_data["text_in_image"],
+            "path": request_data["path"],
+            "about": request_data["about"],
+            "date": request_data["date"],
+            "related_activity": request_data["related_activity"],
+            "id": request_data["id"]
+        }
 
 @retrieve.route("/open_note/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
@@ -153,29 +122,59 @@ def open_note(id):
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
     """
-    with current_app.app_context():
-        request_data = Note.query.filter_by(id=id).one()
-    
-        # Process request (return dict)
-        if request.method == "GET":
-            return {
-                "view": request_data.view,
-                "title": request_data.title,
-                "about": request_data.about,
-                "date": request_data.date,
-                "related_activity": request_data.related_activity,
-                "id": request_data.id
-            }
+    db = get_db()
+    request_data = db.execute('''SELECT * FROM "notes" WHERE id=?''', (id,)).fetchone()
+
+    # Process request (return dict)
+    print(request_data["date"])
+    if request.method == "GET":
+        return {
+            "view": request_data["view"],
+            "title": request_data["title"],
+            "about": request_data["about"],
+            "date": request_data["date"],
+            "related_activity": request_data["related_activity"],
+            "id": request_data["id"]
+        }
 
 @retrieve.route("/topfive", methods=["GET", "OPTIONS"])
 @cross_origin()
 def topfive():
-    with current_app.app_context():
-        top_5_links = Link.query.order_by(Link.date.desc()).limit(5).all()
-        top_5_notes = Note.query.order_by(Note.date.desc()).limit(5).all()
-        top_5_screenshots = Screenshot.query.order_by(Screenshot.date.desc()).limit(5).all()
+    db = get_db()
 
-        return {"links":top_5_links, "notes":top_5_notes, "screenshots":top_5_screenshots}
+    top_5_notes = db.execute('''SELECT * FROM "notes" ORDER BY date LIMIT 10''').fetchall() or []
+    top_5_notes_parsed = []
+    print(f"Here is top_5_notes: {top_5_notes} len={len(top_5_notes)}")
+    for note in top_5_notes:
+        new_addition = {}
+        for key in note.keys():
+            new_addition[key] = note[key]
+        top_5_notes_parsed.append(new_addition)
+
+    top_5_notes = {key:note[key] for note in top_5_notes for key in note.keys()}
+
+    top_5_links = db.execute('''SELECT * FROM "links" ORDER BY date LIMIT 10''').fetchall() or []
+    top_5_links_parsed = []
+    print(f"Here is top_5_links: {top_5_links} len={len(top_5_links)}")
+    for link in top_5_links:
+        new_addition = {}
+        for key in link.keys():
+            new_addition[key] = link[key]
+        top_5_links_parsed.append(new_addition)
+
+    top_5_links = {key:link[key] for link in top_5_links for key in link.keys()}
+
+    top_5_screenshots = db.execute('''SELECT * FROM "screenshots" ORDER BY date LIMIT 10''').fetchall() or []
+    top_5_screenshots_parsed = []
+    print(f"Here is top_5_screenshots: {top_5_screenshots} len={len(top_5_screenshots)}")
+    for screenshot in top_5_screenshots:
+        new_addition = {}
+        for key in screenshot.keys():
+            new_addition[key] = screenshot[key]
+        top_5_screenshots_parsed.append(new_addition)
+
+    res = {"links":top_5_links_parsed, "notes":top_5_notes_parsed, "screenshots":top_5_screenshots_parsed}
+    return res
 
 
 @retrieve.route("/search", methods=["POST", "OPTIONS"])
@@ -188,74 +187,102 @@ def search():
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
     """
+    db = get_db()
     request_data = request.json
 
     # Process request (return list of dicts)
     if request.method == "POST":
         curr_results = {k: [] for k in request_data["content"]}
 
-        with current_app.app_context():
-            # Adding site-name-matched links to the result list
-            if ("links" in request_data["content"]):
-                all_links = Link.query.all() if request_data["view"] == "all" else Link.query.where(Link.view == request_data["view"])
-                for link in all_links:
-                    token_set_score = fuzz.token_set_ratio(link.link, request_data["search"])
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(link.about, request_data["search"]))
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(link.site_name, request_data["search"]))
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(link.related_activity, request_data["search"]))
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(link.view, request_data["search"]))
-                    print(f"links token set score: {token_set_score}")
-                    if token_set_score > 50:
-                        curr_results["links"] += [{
-                            "id": link.id,
-                            "about": link.about,
-                            "link": link.link,
-                            "site_name": link.site_name,
-                            "related_activity": link.related_activity,
-                            "view": link.view,
-                        }]
+        # Adding site-name-matched links to the result list
+        if ("links" in request_data["content"]):
+            all_links = []
+            if request_data["view"] == "all":
+                all_links = db.execute(
+                    '''SELECT * FROM "links"'''
+                )
+            else:
+                all_links = db.execute(
+                    '''SELECT * FROM "links" WHERE view = ?''',
+                    (request_data["view"],)
+                )
+            for link in all_links:
+                token_set_score = fuzz.token_set_ratio(link["link"], request_data["search"])
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(link["about"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(link["site_name"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(link["related_activity"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(link["view"], request_data["search"]))
+                print(f"links token set score: {token_set_score}")
+                if token_set_score > 50:
+                    curr_results["links"] += [{
+                        "id": link["id"],
+                        "about": link["about"],
+                        "link": link["link"],
+                        "site_name": link["site_name"],
+                        "related_activity": link["related_activity"],
+                        "view": link["view"],
+                    }]
 
-            # Adding caption-matched screenshots to the result list
-            if ("screenshots" in request_data["content"]):
-                all_screenshots = Screenshot.query.all() if request_data["view"] == "all" else Screenshot.query.where(Screenshot.view == request_data["view"])
-                for screenshot in all_screenshots:
-                    token_set_score = fuzz.token_set_ratio(screenshot.caption, request_data["search"])
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot.about, request_data["search"]))
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot.text_in_image, request_data["search"]))
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot.related_activity, request_data["search"]))
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot.view, request_data["search"]))
-                    print(f"screenshots token set score: {token_set_score}")
-                    if token_set_score > 50:
-                        curr_results["screenshots"] += [{
-                            "id": screenshot.id,
-                            "about": screenshot.about,
-                            "date": screenshot.date,
-                            "path": screenshot.path,
-                            "caption": screenshot.caption,
-                            "text_in_image": screenshot.text_in_image,
-                            "related_activity": screenshot.related_activity,
-                            "view": screenshot.view,
-                        }]
+        # Adding caption-matched screenshots to the result list
+        if ("screenshots" in request_data["content"]):
+            all_screenshots = []
+            if request_data["view"] == "all":
+                all_screenshots = db.execute(
+                    '''SELECT * FROM "screenshots"'''
+                )
+            else:
+                all_screenshots = db.execute(
+                    '''SELECT * FROM "screenshots" WHERE view = ?''',
+                    (request_data["view"],)
+                )
+            for screenshot in all_screenshots:
+                token_set_score = fuzz.token_set_ratio(screenshot["caption"], request_data["search"])
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot["about"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot["text_in_image"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot["related_activity"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot["view"], request_data["search"]))
+                print(f"screenshots token set score: {token_set_score}")
+                if token_set_score > 50:
+                    curr_results["screenshots"] += [{
+                        "id": screenshot["id"],
+                        "about": screenshot["about"],
+                        "date": screenshot["date"],
+                        "path": screenshot["path"],
+                        "caption": screenshot["caption"],
+                        "text_in_image": screenshot["text_in_image"],
+                        "related_activity": screenshot["related_activity"],
+                        "view": screenshot["view"],
+                    }]
 
-            # Adding title-matched notes to the result list
-            if ("notes" in request_data["content"]):
-                all_notes = Note.query.all() if request_data["view"] == "all" else Note.query.where(Note.view == request_data["view"])
-                for note in all_notes:
-                    token_set_score = fuzz.token_set_ratio(note.title, request_data["search"])
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(note.about, request_data["search"]))
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(note.related_activity, request_data["search"]))
-                    token_set_score = max(token_set_score, fuzz.token_set_ratio(note.view, request_data["search"]))
-                    print(f"notes token set score: {token_set_score}")
-                    if token_set_score > 50:
-                        curr_results["notes"] += [{
-                            "id": note.id,
-                            "title": note.title,
-                            "about": note.about,
-                            "date": note.date,
-                            "related_activity": note.related_activity,
-                            "view": note.view,
-                        }]
+        # Adding title-matched notes to the result list
+        if ("notes" in request_data["content"]):
+            all_notes = []
+            if request_data["view"] == "all":
+                all_notes = db.execute(
+                    'SELECT * FROM notes'
+                )
+            else:
+                all_notes = db.execute(
+                    'SELECT * FROM notes'
+                    f'WHERE view == {request_data["view"]}'
+                )
+            for note in all_notes:
+                token_set_score = fuzz.token_set_ratio(note["title"], request_data["search"])
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(note["about"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(note["related_activity"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(note["view"], request_data["search"]))
+                print(f"notes token set score: {token_set_score}")
+                if token_set_score > 50:
+                    curr_results["notes"] += [{
+                        "id": note["id"],
+                        "title": note["title"],
+                        "about": note["about"],
+                        "date": note["date"],
+                        "related_activity": note["related_activity"],
+                        "view": note["view"],
+                    }]
 
-            response = jsonify(curr_results)
-            print(curr_results)
-            return response
+        response = jsonify(curr_results)
+        print(curr_results)
+        return response
+

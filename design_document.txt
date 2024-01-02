@@ -105,6 +105,8 @@ Infrastructure Design:
 
       - Search page
 
+        * Depreciated since launch (v1.0.0).
+
         * Search bar
 
         * List of search results
@@ -137,7 +139,7 @@ Infrastructure Design:
     - Jest
 
   Flask Testing:
-    - Flask Testing
+    - pytest
 
 Case Study:
 
@@ -169,3 +171,23 @@ Dying Wish:
   
 The application is really detailed for each of the three content types and each content type feels completely maxed out.
 Then again, the searching makes them feel all the same when searched.
+
+Log:
+
+  27/12/23: Application Complete
+
+  29/12/23: Declarative Flask-SQLAlchemy issues with Application Factories
+    
+    Error: KeyError: <weakref at 0x7fcb3756a770; to 'Flask' at 0x7fcb34edf640> 
+
+    Cause: Declarative use of SQLAlchemy: top_5_links = Link.query.order_by(Link.date.desc()).limit(5).all()
+
+    - Declarative Flask-SQLAlchemy requires a call to create_engine() in order
+    to setup the database connection. This is recommended to do for declarative SQLAlchemy in
+    a file called database.py (https://flask.palletsprojects.com/en/3.0.x/patterns/sqlalchemy/).
+
+    However, we cannot do this connection of the database
+    during the execution of the application factory (which cannot be global)
+    to establish the database connection/file to use by the app when factoried.
+    This is because the Declarative SQLAlchemy docs use the db connection as a 
+    global variable, not in the factory product context.
