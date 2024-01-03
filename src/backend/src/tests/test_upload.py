@@ -1,6 +1,7 @@
 from memosearch import create_app
 from memosearch.db import get_db
-import sys
+import os
+import json
 import pytest
 import sqlite3
 
@@ -26,32 +27,28 @@ def test_get_close_db(app):
 def test_notes_insertion(app, client):
     assert create_app({'TESTING': True}).testing
 
-    # Insert a new link
-    with app.app_context():
-        db = get_db()
-        db.execute(
-            """
-            INSERT INTO notes
-            VALUES(?,?,?,?,?,?)
-            """,
-            (
-                10,
-                "some title",
-                "some about text",
-                "2023-01-09T02:46:36.013Z",
-                "some related activity",
-                "some view",
-            )
-        )
-        db.commit()
+    # Insert a new note
+    new_note = {
+        "id": 11,
+        "noteTitle": "some new title",
+        "noteAbout": "some about text",
+        "noteDate": "2023-01-09T02:46:36.013Z",
+        "noteActivity": "some related activity",
+        "view": "some view"
+    }
+    generated_id = client.post(
+        "/notes",
+        content_type="application/json",
+        data=json.dumps(new_note)
+    ).json[0]["id"]
 
-    response = client.get('/open_note/10')
+    response = client.get(f'/open_note/{generated_id}')
 
     assert response.status_code == 200
     assert response.content_type == "application/json"
-    assert response.json["id"] == 10
+    assert response.json["id"] == generated_id
     assert response.json["about"] == "some about text"
-    assert response.json["title"] == "some title"
+    assert response.json["title"] == "some new title"
     assert response.json["date"] == "2023-01-09T02:46:36.013Z"
     assert response.json["related_activity"] == "some related activity"
     assert response.json["view"] == "some view"
@@ -61,31 +58,29 @@ def test_link_insertion(app, client):
     assert create_app({'TESTING': True}).testing
 
     # Insert a new link
-    with app.app_context():
-        db = get_db()
-        db.execute(
-            """
-            INSERT INTO links
-            VALUES(?,?,?,?,?,?,?)
-            """,
-            (
-                10,
-                "https://www.google.com/",
-                "some about text",
-                "2023-01-02T02:46:36.013Z",
-                "google.com",
-                "some related activity",
-                "some view",
-            )
-        )
-        db.commit()
+    new_link = {
+        "id": 11,
+        "link": "https://www.google.com/something",
+        "about": "some about text",
+        "date": "2023-01-02T02:46:36.013Z",
+        "site_name": "google.com",
+        "related_activity": "some related activity",
+        "view": "some view"
+    }
 
-    response = client.get('/open_link/10')
+    # Get generated id and check information
+    generated_id = client.post(
+        "/links",
+        content_type="application/json",
+        data=json.dumps([new_link])
+    ).json[0]["id"]
+
+    response = client.get(f'/open_link/{generated_id}')
 
     assert response.status_code == 200
     assert response.content_type == "application/json"
-    assert response.json["id"] == 10
-    assert response.json["link"] == "https://www.google.com/"
+    assert response.json["id"] == generated_id
+    assert response.json["link"] == "https://www.google.com/something"
     assert response.json["about"] == "some about text"
     assert response.json["date"] == "2023-01-02T02:46:36.013Z"
     assert response.json["site_name"] == "google.com"
@@ -96,37 +91,38 @@ def test_link_insertion(app, client):
 def test_screenshot_insertion(app, client):
     assert create_app({'TESTING': True}).testing
 
-    # Insert a new link
-    with app.app_context():
-        db = get_db()
-        db.execute(
-            """
-            INSERT INTO screenshots
-            VALUES(?,?,?,?,?,?,?,?)
-            """,
-            (
-                10,
-                "some caption",
-                "something",
-                "2023-01-07T02:46:36.013Z",
-                "some text",
-                "some path",
-                "some related activity",
-                "some view",
-            )
-        )
-        db.commit()
 
-    response = client.get('/open_screenshot/10')
+    # Insert a new screenshot
+    image = os.getenv("IMAGE_FILE")
+    new_screenshot = {
+        "about": "something",
+        "caption": "some caption",
+        "date": "2023-01-07T02:46:36.013Z",
+        "text": "some text",
+        "path": "",
+        "activity": "some related activity",
+        "view": "some view",
+        "file": (open(image, "rb"), image)
+    }
+
+    # Get generated id and check information
+    generated_id = client.post(
+        "/screenshots",
+        content_type="multipart/form-data",
+        follow_redirects=True,
+        data=new_screenshot
+    ).json[0]["id"]
+
+    response = client.get(f'/open_screenshot/{generated_id}')
 
     assert response.status_code == 200
     assert response.content_type == "application/json"
-    assert response.json["id"] == 10
+    assert response.json["id"] == generated_id
     assert response.json["about"] == "something"
     assert response.json["caption"] == "some caption"
     assert response.json["date"] == "2023-01-07T02:46:36.013Z"
     assert response.json["text"] == "some text"
-    assert response.json["path"] == "some path"
+    assert response.json["path"] != ("" or None)
     assert response.json["related_activity"] == "some related activity"
     assert response.json["view"] == "some view"
 
@@ -137,33 +133,29 @@ def test_screenshot_insertion(app, client):
 def test_notes_update(app, client):
     assert create_app({'TESTING': True}).testing
 
-    # Insert a new link
-    with app.app_context():
-        db = get_db()
-        db.execute(
-            '''
-            UPDATE "notes"
-            SET title=?, about=?, date=?, view=?, related_activity=?
-            WHERE id=?
-            ''',
-            (
-                "some new title",
-                "some about text",
-                "2023-01-09T02:46:36.013Z",
-                "some view",
-                "some related activity",
-                3,
-            )
-        )
-        db.commit()
+    # Update a note
+    new_note = {
+        "id": 3,
+        "title": "some updated title",
+        "about": "some about text",
+        "date": "2023-01-09T02:46:36.013Z",
+        "related_activity": "some related activity",
+        "view": "some view"
+    }
 
-    response = client.get('/open_note/3')
+    client.post(
+        "/update_note/3",
+        content_type="application/json",
+        data=json.dumps(new_note)
+    )
+
+    response = client.get("/open_note/3")
 
     assert response.status_code == 200
     assert response.content_type == "application/json"
     assert response.json["id"] == 3
     assert response.json["about"] == "some about text"
-    assert response.json["title"] == "some new title"
+    assert response.json["title"] == "some updated title"
     assert response.json["date"] == "2023-01-09T02:46:36.013Z"
     assert response.json["related_activity"] == "some related activity"
     assert response.json["view"] == "some view"
@@ -172,33 +164,29 @@ def test_notes_update(app, client):
 def test_link_update(app, client):
     assert create_app({'TESTING': True}).testing
 
-    # Insert a new link
-    with app.app_context():
-        db = get_db()
-        db.execute(
-            '''
-            UPDATE "links"
-            SET link=?, about=?, date=?, site_name=?, related_activity=?, view=?
-            WHERE id=?
-            ''',
-            (
-                "https://www.google.com/",
-                "some about text",
-                "2023-01-02T02:46:36.013Z",
-                "google.com",
-                "some new related activity",
-                "some view",
-                0,
-            )
-        )
-        db.commit()
+    # Update a link
+    new_link = {
+        "id": 0,
+        "link": "https://www.google.com/something_else",
+        "about": "some about text",
+        "date": "2023-01-02T02:46:36.013Z",
+        "site_name": "google.com",
+        "related_activity": "some new related activity",
+        "view": "some view"
+    }
 
-    response = client.get('/open_link/0')
+    client.post(
+        "/update_link/0",
+        content_type="application/json",
+        data=json.dumps(new_link)
+    )
+
+    response = client.get("/open_link/0")
 
     assert response.status_code == 200
     assert response.content_type == "application/json"
     assert response.json["id"] == 0
-    assert response.json["link"] == "https://www.google.com/"
+    assert response.json["link"] == "https://www.google.com/something_else"
     assert response.json["about"] == "some about text"
     assert response.json["date"] == "2023-01-02T02:46:36.013Z"
     assert response.json["site_name"] == "google.com"
@@ -259,9 +247,10 @@ def test_notes_deletion(app, client):
 
     # Check that it is now gone
     with pytest.raises(TypeError) as excinfo:
-        response = client.get('/open_note/3')
+        client.get('/open_note/3')
 
     assert str(excinfo.value) == "'NoneType' object is not subscriptable"
+
 
 def test_link_deletion(app, client):
     assert create_app({'TESTING': True}).testing
@@ -274,7 +263,7 @@ def test_link_deletion(app, client):
 
     # Check for deleted link
     with pytest.raises(TypeError) as excinfo:
-        response = client.get('/open_link/0')
+        client.get('/open_link/0')
 
     assert str(excinfo.value) == "'NoneType' object is not subscriptable"
 
@@ -290,6 +279,6 @@ def test_screenshot_deletion(app, client):
 
     # Check for deleted screenshot
     with pytest.raises(TypeError) as excinfo:
-        response = client.get('/open_screenshot/6')
+        client.get('/open_screenshot/6')
 
     assert str(excinfo.value) == "'NoneType' object is not subscriptable"

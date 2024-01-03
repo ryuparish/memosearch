@@ -10,6 +10,7 @@ retrieve = Blueprint('retrieve', __name__, template_folder='templates')
 
 # Routes
 
+
 @retrieve.route("/views", methods=["GET", "OPTIONS"])
 @cross_origin()
 def views():
@@ -37,6 +38,7 @@ def views():
         all_views = all_views.union(set(uniq_views))
         return sorted(list(all_views))
 
+
 @retrieve.route("/get_image/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def get_image(id):
@@ -51,7 +53,8 @@ def get_image(id):
     # Process request (return dict)
     if request.method == "GET":
         db = get_db()
-        image_path = db.execute('''SELECT * FROM "screenshots" WHERE id=?''', (id,)).fetchone()["path"]
+        image_path = db.execute(
+            '''SELECT * FROM "screenshots" WHERE id=?''', (id,)).fetchone()["path"]
         file = Image.open(image_path)
         if os.path.splitext(image_path):
             new_image = file.resize((700, 700))
@@ -71,7 +74,8 @@ def open_link(id):
     :rtype: list(dict (JSON))
     """
     db = get_db()
-    request_data = db.execute('''SELECT * FROM "links" WHERE id=?''', (id,)).fetchone()
+    request_data = db.execute(
+        '''SELECT * FROM "links" WHERE id=?''', (id,)).fetchone()
 
     # Process request (return dict)
     if request.method == "GET":
@@ -85,6 +89,7 @@ def open_link(id):
             "view": request_data["view"],
         }
 
+
 @retrieve.route("/open_screenshot/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def open_screenshot(id):
@@ -96,7 +101,8 @@ def open_screenshot(id):
     :rtype: list(dict (JSON))
     """
     db = get_db()
-    request_data = db.execute('''SELECT * FROM "screenshots" WHERE id=?''', (id,)).fetchone()
+    request_data = db.execute(
+        '''SELECT * FROM "screenshots" WHERE id=?''', (id,)).fetchone()
 
     # Process request (return dict)
     if request.method == "GET":
@@ -111,6 +117,7 @@ def open_screenshot(id):
             "id": request_data["id"]
         }
 
+
 @retrieve.route("/open_note/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def open_note(id):
@@ -122,7 +129,8 @@ def open_note(id):
     :rtype: list(dict (JSON))
     """
     db = get_db()
-    request_data = db.execute('''SELECT * FROM "notes" WHERE id=?''', (id,)).fetchone()
+    request_data = db.execute(
+        '''SELECT * FROM "notes" WHERE id=?''', (id,)).fetchone()
 
     # Process request (return dict)
     print(request_data["date"])
@@ -136,12 +144,14 @@ def open_note(id):
             "id": request_data["id"]
         }
 
+
 @retrieve.route("/topfive", methods=["GET", "OPTIONS"])
 @cross_origin()
 def topfive():
     db = get_db()
 
-    top_5_notes = db.execute('''SELECT * FROM "notes" ORDER BY date LIMIT 10''').fetchall() or []
+    top_5_notes = db.execute(
+        '''SELECT * FROM "notes" ORDER BY date LIMIT 10''').fetchall() or []
     top_5_notes_parsed = []
     print(f"Here is top_5_notes: {top_5_notes} len={len(top_5_notes)}")
     for note in top_5_notes:
@@ -150,9 +160,11 @@ def topfive():
             new_addition[key] = note[key]
         top_5_notes_parsed.append(new_addition)
 
-    top_5_notes = {key:note[key] for note in top_5_notes for key in note.keys()}
+    top_5_notes = {key: note[key]
+                   for note in top_5_notes for key in note.keys()}
 
-    top_5_links = db.execute('''SELECT * FROM "links" ORDER BY date LIMIT 10''').fetchall() or []
+    top_5_links = db.execute(
+        '''SELECT * FROM "links" ORDER BY date LIMIT 10''').fetchall() or []
     top_5_links_parsed = []
     print(f"Here is top_5_links: {top_5_links} len={len(top_5_links)}")
     for link in top_5_links:
@@ -161,18 +173,22 @@ def topfive():
             new_addition[key] = link[key]
         top_5_links_parsed.append(new_addition)
 
-    top_5_links = {key:link[key] for link in top_5_links for key in link.keys()}
+    top_5_links = {key: link[key]
+                   for link in top_5_links for key in link.keys()}
 
-    top_5_screenshots = db.execute('''SELECT * FROM "screenshots" ORDER BY date LIMIT 10''').fetchall() or []
+    top_5_screenshots = db.execute(
+        '''SELECT * FROM "screenshots" ORDER BY date LIMIT 10''').fetchall() or []
     top_5_screenshots_parsed = []
-    print(f"Here is top_5_screenshots: {top_5_screenshots} len={len(top_5_screenshots)}")
+    print(
+        f"Here is top_5_screenshots: {top_5_screenshots} len={len(top_5_screenshots)}")
     for screenshot in top_5_screenshots:
         new_addition = {}
         for key in screenshot.keys():
             new_addition[key] = screenshot[key]
         top_5_screenshots_parsed.append(new_addition)
 
-    res = {"links":top_5_links_parsed, "notes":top_5_notes_parsed, "screenshots":top_5_screenshots_parsed}
+    res = {"links": top_5_links_parsed, "notes": top_5_notes_parsed,
+           "screenshots": top_5_screenshots_parsed}
     return res
 
 
@@ -206,11 +222,16 @@ def search():
                     (request_data["view"],)
                 )
             for link in all_links:
-                token_set_score = fuzz.token_set_ratio(link["link"], request_data["search"])
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(link["about"], request_data["search"]))
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(link["site_name"], request_data["search"]))
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(link["related_activity"], request_data["search"]))
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(link["view"], request_data["search"]))
+                token_set_score = fuzz.token_set_ratio(
+                    link["link"], request_data["search"])
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    link["about"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    link["site_name"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    link["related_activity"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    link["view"], request_data["search"]))
                 print(f"links token set score: {token_set_score}")
                 if token_set_score > 50:
                     curr_results["links"] += [{
@@ -225,21 +246,29 @@ def search():
         # Adding caption-matched screenshots to the result list
         if ("screenshots" in request_data["content"]):
             all_screenshots = []
+
             if request_data["view"] == "all":
                 all_screenshots = db.execute(
                     '''SELECT * FROM "screenshots"'''
                 )
+
             else:
                 all_screenshots = db.execute(
                     '''SELECT * FROM "screenshots" WHERE view = ?''',
                     (request_data["view"],)
                 )
+
             for screenshot in all_screenshots:
-                token_set_score = fuzz.token_set_ratio(screenshot["caption"], request_data["search"])
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot["about"], request_data["search"]))
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot["text_in_image"], request_data["search"]))
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot["related_activity"], request_data["search"]))
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(screenshot["view"], request_data["search"]))
+                token_set_score = fuzz.token_set_ratio(
+                    screenshot["caption"], request_data["search"])
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    screenshot["about"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    screenshot["text_in_image"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    screenshot["related_activity"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    screenshot["view"], request_data["search"]))
                 print(f"screenshots token set score: {token_set_score}")
                 if token_set_score > 50:
                     curr_results["screenshots"] += [{
@@ -269,10 +298,14 @@ def search():
                     (request_data["view"],)
                 )
             for note in all_notes:
-                token_set_score = fuzz.token_set_ratio(note["title"], request_data["search"])
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(note["about"], request_data["search"]))
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(note["related_activity"], request_data["search"]))
-                token_set_score = max(token_set_score, fuzz.token_set_ratio(note["view"], request_data["search"]))
+                token_set_score = fuzz.token_set_ratio(
+                    note["title"], request_data["search"])
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    note["about"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    note["related_activity"], request_data["search"]))
+                token_set_score = max(token_set_score, fuzz.token_set_ratio(
+                    note["view"], request_data["search"]))
                 print(f"notes token set score: {token_set_score}")
                 if token_set_score > 50:
                     curr_results["notes"] += [{
@@ -287,4 +320,3 @@ def search():
         response = jsonify(curr_results)
         print(curr_results)
         return response
-

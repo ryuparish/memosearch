@@ -1,0 +1,12 @@
+Name                                                Stmts   Miss  Cover
+-----------------------------------------------------------------------
+src/backend/src/memosearch/__init__.py                 23      0   100%
+src/backend/src/memosearch/db.py                       23      2    91%
+src/backend/src/memosearch/retrieve_blueprints.py     136     10    93%
+src/backend/src/memosearch/upload_blueprints.py       151     15    90%
+src/backend/src/tests/conftest.py                      23      1    96%
+src/backend/src/tests/test_factory.py                   4      0   100%
+src/backend/src/tests/test_retrieve.py                 80      0   100%
+src/backend/src/tests/test_upload.py                  121      0   100%
+-----------------------------------------------------------------------
+TOTAL                                                 561     28    95%

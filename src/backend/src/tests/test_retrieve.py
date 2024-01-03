@@ -1,8 +1,42 @@
+import json
+import pytest
 from memosearch import create_app
-from memosearch.db import get_db
 
 
 # Testing retrieval
+@pytest.mark.parametrize(('search_content', 'view', 'search', 'count'), (
+    (["links"], "all", "all", 1),
+    (["screenshots"], "all", "all", 0),
+    (["notes"], "all", "all", 2),
+    (["links", "notes"], "random view1", "random view1", 2),
+    (["links", "screenshots"], "random view3", "all", 0),
+    (["notes", "screenshots"], "random view1", "bro2", 1),
+    (["links", "screenshots", "notes"], "all",
+     "somethingthatisdefinitelynotinthedatabasedude", 0),
+))
+def test_search(app, client, search_content, view, search, count):
+    assert create_app({'TESTING': True}).testing
+
+    search = {
+        "content": search_content,
+        "view": view,
+        "search": search
+    }
+
+    response = client.post(
+        "/search",
+        content_type="application/json",
+        data=json.dumps(search)
+    ).json
+    print(response)
+
+    totalCount = 0
+    for content in search_content:
+        totalCount += len(response[content])
+
+    assert totalCount == count
+
+
 def test_notes_query(app, client):
     assert create_app({'TESTING': True}).testing
 
@@ -17,6 +51,7 @@ def test_notes_query(app, client):
     assert response.json["related_activity"] == "writing note1"
     assert response.json["view"] == "all"
 
+
 def test_screenshots_query(app, client):
     assert create_app({'TESTING': True}).testing
 
@@ -30,6 +65,7 @@ def test_screenshots_query(app, client):
     assert response.json["date"] == "2024-05-02T02:46:36.013Z"
     assert response.json["text"] == "screenshot text1"
     assert response.json["view"] == "random view2"
+
 
 def test_links_query(app, client):
     assert create_app({'TESTING': True}).testing
@@ -57,31 +93,68 @@ def test_views(app, client):
     assert response.status_code == 200
     assert response.content_type == "application/json"
     assert len(response.json) == 4
-    assert response.json == ["all", "random view1", "random view2", "random view3"]
+    assert response.json == ["all", "random view1",
+                             "random view2", "random view3"]
+
 
 def test_views_after_insert(app, client):
     # Insert a new link
-    with app.app_context():
-        db = get_db()
-        db.execute(
-            """
-            INSERT INTO notes
-            VALUES(?,?,?,?,?,?)
-            """,
-            (
-                10,
-                "some title",
-                "some about text",
-                "2023-01-09T02:46:36.013Z",
-                "some related activity",
-                "some view",
-            )
-        )
-        db.commit()
+    new_note = {
+        "id": 11,
+        "noteTitle": "some new title",
+        "noteAbout": "some about text",
+        "noteDate": "2023-01-09T02:46:36.013Z",
+        "noteActivity": "some related activity",
+        "view": "some view"
+    }
+    client.post(
+        "/notes",
+        content_type="application/json",
+        data=json.dumps(new_note)
+    )
 
     # Retrieve views
     response = client.get('/views')
     assert response.status_code == 200
     assert response.content_type == "application/json"
     assert len(response.json) == 5
-    assert response.json == ["all", "random view1", "random view2", "random view3", "some view"]
+    assert response.json == ["all", "random view1",
+                             "random view2", "random view3", "some view"]
+
+# Testing topfive
+
+
+def test_topfive(app, client):
+    assert create_app({'TESTING': True}).testing
+
+    # Retrieve views
+    response = client.get('/topfive')
+    assert response.status_code == 200
+    assert response.content_type == "application/json"
+    assert len(response.json["links"]) == 3
+    assert len(response.json["notes"]) == 3
+    assert len(response.json["screenshots"]) == 3
+
+
+def test_topfive_after_insertion(app, client):
+    assert create_app({'TESTING': True}).testing
+
+    new_note = {
+        "id": 11,
+        "noteTitle": "some new title",
+        "noteAbout": "some about text",
+        "noteDate": "2023-01-09T02:46:36.013Z",
+        "noteActivity": "some related activity",
+        "view": "some view"
+    }
+    response = client.post("/notes",
+                           content_type="application/json",
+                           data=json.dumps(new_note))
+
+    # Retrieve views
+    response = client.get('/topfive')
+    assert response.status_code == 200
+    assert response.content_type == "application/json"
+    assert len(response.json["links"]) == 3
+    assert len(response.json["notes"]) == 4
+    assert len(response.json["screenshots"]) == 3
