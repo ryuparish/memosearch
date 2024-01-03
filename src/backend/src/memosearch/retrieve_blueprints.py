@@ -4,7 +4,6 @@ from flask import Blueprint, request
 from flask_cors import cross_origin
 from PIL import Image
 from thefuzz import fuzz
-from .models import Screenshot, Link
 from .db import get_db
 
 retrieve = Blueprint('retrieve', __name__, template_folder='templates')
@@ -36,7 +35,7 @@ def views():
         ).fetchall()
         uniq_views = [row["view"] for row in uniq_views]
         all_views = all_views.union(set(uniq_views))
-        return list(all_views)
+        return sorted(list(all_views))
 
 @retrieve.route("/get_image/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
@@ -263,8 +262,11 @@ def search():
                 )
             else:
                 all_notes = db.execute(
-                    'SELECT * FROM notes'
-                    f'WHERE view == {request_data["view"]}'
+                    '''
+                    SELECT * FROM notes
+                    WHERE view=?
+                    ''',
+                    (request_data["view"],)
                 )
             for note in all_notes:
                 token_set_score = fuzz.token_set_ratio(note["title"], request_data["search"])

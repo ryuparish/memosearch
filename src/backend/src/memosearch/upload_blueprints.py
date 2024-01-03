@@ -5,7 +5,6 @@ from flask import jsonify, current_app
 from urllib.parse import urlparse
 from flask import Blueprint, request
 from flask_cors import cross_origin
-from .models import Note, Screenshot, Link
 from .db import get_db
 from dotenv import load_dotenv
 
@@ -355,15 +354,6 @@ def notes():
         view = request_data["view"]
 
         # Getting data from request and adding to the database.
-        new_note = Note(
-            id=id,
-            title=noteTitle,
-            about=about,
-            date=date,
-            related_activity=related_activity,
-            view=view,
-        )
-
         new_dict_note = {
             "id": id,
             "title": noteTitle,

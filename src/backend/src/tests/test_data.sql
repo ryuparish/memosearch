@@ -15,6 +15,6 @@ VALUES
 -- Screenshots test initial data
 INSERT INTO screenshots (id, caption, about, date, text_in_image, path, related_activity, view)
 VALUES
-  (6, "screenshot1", "screenshot bro1", "2024-05-02T02:46:36.013Z", "screenshot text1", "random view3"),
-  (7, "screenshot2", "screenshot bro2", "2024-06-01T02:46:36.013Z", "screenshot text2", "all"),
-  (8, "screenshot3", "screenshot bro3", "2023-12-12T02:46:36.013Z", "screenshot text3", "all");
+  (6, "screenshot1", "screenshot bro1", "2024-05-02T02:46:36.013Z", "screenshot text1", "random path1", "random related activity1", "random view2"),
+  (7, "screenshot2", "screenshot bro2", "2024-06-01T02:46:36.013Z", "screenshot text2", "random path2", "random related activity2","random view2"),
+  (8, "screenshot3", "screenshot bro3", "2023-12-12T02:46:36.013Z", "screenshot text3", "random path3", "random related activity3","random view3");
