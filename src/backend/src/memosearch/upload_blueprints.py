@@ -372,6 +372,7 @@ def notes():
                 ''',
                 (noteTitle,)
             ).fetchall()
+
             if len(note) == 0:
                 print("Query Note is not yet known, adding to database and writing file")
                 db.execute("""

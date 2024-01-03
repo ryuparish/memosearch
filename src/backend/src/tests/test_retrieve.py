@@ -85,3 +85,16 @@ def test_views_after_insert(app, client):
     assert response.content_type == "application/json"
     assert len(response.json) == 5
     assert response.json == ["all", "random view1", "random view2", "random view3", "some view"]
+
+# Testing topfive
+
+def test_topfive(app, client):
+    assert create_app({'TESTING': True}).testing
+
+    # Retrieve views
+    response = client.get('/topfive')
+    assert response.status_code == 200
+    assert response.content_type == "application/json"
+    assert len(response.json["links"]) == 3
+    assert len(response.json["notes"]) == 3
+    assert len(response.json["screenshots"]) == 3
