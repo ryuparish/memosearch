@@ -58,6 +58,8 @@ def get_image(id):
         file = Image.open(image_path)
         if os.path.splitext(image_path):
             new_image = file.resize((700, 700))
+            if new_image.mode in ("RGBA", "P"):
+                new_image = new_image.convert("RGB")
             new_image.save(image_path + ".jpeg")
             image_path = image_path + ".jpeg"
         return send_file(image_path, mimetype="image/jpeg")
