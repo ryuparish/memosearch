@@ -1,9 +1,11 @@
 from memosearch import create_app
 from memosearch.db import get_db
+import io
 import os
 import json
 import pytest
 import sqlite3
+import PIL.Image as Image
 
 
 # Test sqlite3 execution
@@ -90,7 +92,6 @@ def test_link_insertion(app, client):
 
 def test_screenshot_insertion(app, client):
     assert create_app({'TESTING': True}).testing
-
 
     # Insert a new screenshot
     image = os.getenv("IMAGE_FILE")
@@ -282,3 +283,37 @@ def test_screenshot_deletion(app, client):
         client.get('/open_screenshot/6')
 
     assert str(excinfo.value) == "'NoneType' object is not subscriptable"
+
+
+def test_screenshot_image_get(app, client):
+    assert create_app({'TESTING': True}).testing
+
+    # Insert a new screenshot
+    image_name = os.getenv("IMAGE_FILE")
+    new_screenshot = {
+        "about": "something",
+        "caption": "some caption",
+        "date": "2023-01-07T02:46:36.013Z",
+        "text": "some text",
+        "path": "",
+        "activity": "some related activity",
+        "view": "some view",
+        "file": (open(image_name, "rb"), image_name)
+    }
+
+    # Get generated id and check information
+    generated_id = client.post(
+        "/screenshots",
+        content_type="multipart/form-data",
+        follow_redirects=True,
+        data=new_screenshot
+    ).json[0]["id"]
+
+    # Get image that we uploaded
+    response = client.get(f'/get_image/{generated_id}')
+    assert response.status_code == 200
+
+    # Extract image from the request
+    response_image = Image.open(io.BytesIO(response.data))
+    assert response_image.mode == "RGB"
+    assert response_image.size == (700, 700)

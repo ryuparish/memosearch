@@ -59,6 +59,7 @@ def get_image(id):
         if os.path.splitext(image_path):
             new_image = file.resize((700, 700))
             if new_image.mode in ("RGBA", "P"):
+                print("The image was in RGBA mode bro")
                 new_image = new_image.convert("RGB")
             new_image.save(image_path + ".jpeg")
             image_path = image_path + ".jpeg"
@@ -135,7 +136,6 @@ def open_note(id):
         '''SELECT * FROM "notes" WHERE id=?''', (id,)).fetchone()
 
     # Process request (return dict)
-    print(request_data["date"])
     if request.method == "GET":
         return {
             "view": request_data["view"],
@@ -155,7 +155,6 @@ def topfive():
     top_5_notes = db.execute(
         '''SELECT * FROM "notes" ORDER BY date LIMIT 10''').fetchall() or []
     top_5_notes_parsed = []
-    print(f"Here is top_5_notes: {top_5_notes} len={len(top_5_notes)}")
     for note in top_5_notes:
         new_addition = {}
         for key in note.keys():
@@ -168,7 +167,6 @@ def topfive():
     top_5_links = db.execute(
         '''SELECT * FROM "links" ORDER BY date LIMIT 10''').fetchall() or []
     top_5_links_parsed = []
-    print(f"Here is top_5_links: {top_5_links} len={len(top_5_links)}")
     for link in top_5_links:
         new_addition = {}
         for key in link.keys():
@@ -181,8 +179,6 @@ def topfive():
     top_5_screenshots = db.execute(
         '''SELECT * FROM "screenshots" ORDER BY date LIMIT 10''').fetchall() or []
     top_5_screenshots_parsed = []
-    print(
-        f"Here is top_5_screenshots: {top_5_screenshots} len={len(top_5_screenshots)}")
     for screenshot in top_5_screenshots:
         new_addition = {}
         for key in screenshot.keys():

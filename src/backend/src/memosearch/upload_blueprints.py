@@ -188,29 +188,24 @@ def screenshots():
     :rtype: list(dict (JSON))
     """
     db = get_db()
-    print("HERE ERERERERERERERERERE1")
     request_form = request.form
-    print("HERE ERERERERERERERERERE2")
 
     if request.method == "POST":
         # Check for empty screenshot
         if request.files["file"] is None or request.files["file"].filename == "":
             print("file is empty returning nothing")
             return "Error, file is empty"
-        print("HERE ERERERERERERERERERE3")
 
         # Upload file to our directory
         id = random.getrandbits(16)
         target = os.environ.get("UPLOAD_FOLDER")
         if not os.path.isdir(target):
             os.mkdir(target)
-        print("HERE ERERERERERERERERERE4")
 
         file = request.files['file']
         filename = str(id)
         destination = "/".join([target, filename])
         file.save(destination)
-        print(f"HERE ERERERERERERERERERE5, destination: {destination}")
 
         # Data for database.
         # The file is replaced with the path to the file in the
@@ -224,7 +219,6 @@ def screenshots():
         related_activity = request_form["activity"]
         view = request_form["view"]
 
-        print(f"Here is the caption in the code {request_form['caption']}")
         new_dict_screenshot = {
             "id": id,
             "about": about,
@@ -236,7 +230,6 @@ def screenshots():
             "view": view
         }
 
-        print("Here is the screenshot path: " + path)
         # Do not prevent duplicates
         db.execute("""
             INSERT INTO screenshots
