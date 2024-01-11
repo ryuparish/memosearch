@@ -128,6 +128,26 @@ export default function NoteEditor() {
       })
       .catch((error) => console.log(error));
   }
+	
+	// Enable Tabs in the editor.
+  function do_tab(e) {
+		if (e.keyCode === 9) { // tab was pressed
+			e.preventDefault();
+      // get caret position/selection
+      var val = e.target.value,
+          start = e.target.selectionStart,
+          end = e.target.selectionEnd;
+
+      // set textarea value to: text before caret + tab + text after caret
+      e.target.value = val.substring(0, start) + '\t' + val.substring(end);
+
+      // put caret at right position again
+      e.target.selectionStart = e.target.selectionEnd = start + 1;
+
+      // prevent the focus lose
+      return false;
+    }
+  }
 
   function close_window() {
     window.open('','_parent','');
@@ -155,7 +175,7 @@ export default function NoteEditor() {
               <label for="note">Title:</label>
             <input type="text" id="title" name="title" onChange={(e) => setTitle(e.target.value)} value={title}/><br/><br/>
               <label for="about">About:</label><br/>
-            <textarea id="about" name="freeform" rows="20" cols="100" onChange={(e) => setAbout(e.target.value)} value={about}></textarea><br/><br/>
+            <textarea id="about" name="freeform" rows="20" cols="100" onChange={(e) => setAbout(e.target.value)} onKeyDown={do_tab} value={about}></textarea><br/><br/>
               <label for="activity">Related Activity:</label>
             <input type="text" id="activity" name="activity" onChange={(e) => setRelatedActivity(e.target.value)} value={related_activity}/><br/><br/>
               <label for="view">View:</label>
