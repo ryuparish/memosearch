@@ -12,9 +12,6 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Link,
-  useRouteMatch,
-  useParams
 } from "react-router-dom";
 
 export const AppContext = React.createContext();
@@ -171,11 +168,11 @@ export default function App() {
             // Use absoute path only in env file for data folder.
             const href = process.env.REACT_APP_FRONTEND_ENDPOINT + "/" + route + "/" + item_id;
             top_fives.push(<SearchResult
-                route={route}
-                href={href}
-                display_field={data[key][obj][display_field]}
-                about={data[key][obj]["about"].substring(0, 25)}
-              />
+              route={route}
+              href={href}
+              display_field={data[key][obj][display_field]}
+              about={data[key][obj]["about"].substring(0, 25)}
+            />
             )
           }
           setSearchResults([...top_fives]);
@@ -189,10 +186,10 @@ export default function App() {
     return (
       <Router>
         <Routes>
-          <Route index element={<AppContext.Provider value={all_states}><MainPage /></AppContext.Provider>}/>
-          <Route path="/note/:Id" element={<AppContext.Provider value={all_states}><NoteEditor /></AppContext.Provider>}/>
-          <Route path="/link/:Id" element={<AppContext.Provider value={all_states}><LinkEditor /></AppContext.Provider>}/>
-          <Route path="/screenshot/:Id" element={<AppContext.Provider value={all_states}><ScreenshotEditor /></AppContext.Provider>}/>
+          <Route index element={<AppContext.Provider value={all_states}><MainPage /></AppContext.Provider>} />
+          <Route path="/note/:Id" element={<AppContext.Provider value={all_states}><NoteEditor /></AppContext.Provider>} />
+          <Route path="/link/:Id" element={<AppContext.Provider value={all_states}><LinkEditor /></AppContext.Provider>} />
+          <Route path="/screenshot/:Id" element={<AppContext.Provider value={all_states}><ScreenshotEditor /></AppContext.Provider>} />
         </Routes>
       </Router>
     );

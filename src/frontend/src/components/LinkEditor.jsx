@@ -1,22 +1,17 @@
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
   useParams
 } from "react-router-dom";
 import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from "../App";
-import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
-import ViewModal from "./ViewModal";
 import { close_window, do_tab } from "./utils"
 
+/**
+ * Component for the Editing links after creation.
+ *
+ * @returns {object} HTML for a page - This represents the LinkEditor
+ */
 export default function LinkEditor() {
-  const {
-
-  } = useContext(AppContext);
 
   const [link, setLink] = useState("");
   const [view, setView] = useState("");
@@ -57,8 +52,12 @@ export default function LinkEditor() {
   }, [])
 
 
-  // Get the submitted values and call the python backend
-  // to create the database entry
+  /**
+   * Get the submitted values and call the python backend
+   * to create the database entry.
+   *
+   * @param {object} event - Event object
+   */
   function handleSubmit(event) {
     event.preventDefault()
 
@@ -135,26 +134,6 @@ export default function LinkEditor() {
       .catch((error) => console.log(error));
   }
 
-	// Enable Tabs in the editor.
-  function do_tab(e) {
-		if (e.keyCode === 9) { // tab was pressed
-			e.preventDefault();
-      // get caret position/selection
-      var val = e.target.value,
-          start = e.target.selectionStart,
-          end = e.target.selectionEnd;
-
-      // set textarea value to: text before caret + tab + text after caret
-      e.target.value = val.substring(0, start) + '\t' + val.substring(end);
-
-      // put caret at right position again
-      e.target.selectionStart = e.target.selectionEnd = start + 1;
-
-      // prevent the focus lose
-      return false;
-    }
-  }
-
   return (
     <div>
       <head>
@@ -186,7 +165,7 @@ export default function LinkEditor() {
             <p>{date}</p><br />
             <Button type="submit" class="btn btn-info" onClick={(e) => handleSubmit(e)}>Update</Button>
             &nbsp;&nbsp;
-            <Button style={{"float":"right"}}class="btn btn-danger" onClick={(e) => {
+            <Button style={{ "float": "right" }} class="btn btn-danger" onClick={(e) => {
               handleDelete(e);
             }}>Delete</Button>
             <br /><br />
