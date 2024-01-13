@@ -1,25 +1,23 @@
 import os
 import random
-import json
 from flask import jsonify, current_app
-from urllib.parse import urlparse
 from flask import Blueprint, request
 from flask_cors import cross_origin
 from .db import get_db
-from dotenv import load_dotenv
 
 upload = Blueprint('upload', __name__, template_folder='templates')
 # Routes
 
+
 @upload.route("/delete_screenshot/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def delete_screenshot(id):
-    """Handles the file obtaining route given an object.
+    """Handles deleting a screenshot with the given screenshot id.
 
-    POST: This route returns an html page that has just text in it.
+    GET: This route deletes the screenshot data of the screenshot with the given id.
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :returns: String that shows the successful delete message.
+    :rtype: str
     """
 
     # Process request (return dict)
@@ -29,15 +27,16 @@ def delete_screenshot(id):
         db.commit()
         return f"{id} has been deleted"
 
+
 @upload.route("/update_screenshot/<id>", methods=["POST", "OPTIONS"])
 @cross_origin()
 def update_screenshot(id):
-    """Handles the file obtaining route given an object.
+    """Handles updating a screenshot with the given screenshot id.
 
-    POST: This route returns an html page that has just text in it.
+    POST: This route updates the screenshot data of the screenshot with the given id.
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :returns: String that shows the successful update message.
+    :rtype: str
     """
     request_data = request.json
 
@@ -65,15 +64,16 @@ def update_screenshot(id):
         db.commit()
         return f"{id} has been updated"
 
+
 @upload.route("/delete_note/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def delete_note(id):
-    """Handles the file obtaining route given an object.
+    """Handles deleting a note with the given note id.
 
-    POST: This route returns an html page that has just text in it.
+    GET: This route deletes the note data of the note with the given id.
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :returns: String that shows the successful delete message.
+    :rtype: str
     """
 
     # Process request (return dict)
@@ -83,15 +83,16 @@ def delete_note(id):
         db.commit()
         return f"{id} has been deleted"
 
+
 @upload.route("/update_note/<id>", methods=["POST", "OPTIONS"])
 @cross_origin()
 def update_note(id):
-    """Handles the file obtaining route given an object.
+    """Handles updating a note with the given note id.
 
-    POST: This route returns an html page that has just text in it.
+    POST: This route updates the note data of the note with the given id.
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :returns: String that shows the successful update message.
+    :rtype: str
     """
     request_data = request.json
 
@@ -121,12 +122,12 @@ def update_note(id):
 @upload.route("/delete_link/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def delete_link(id):
-    """Handles the file obtaining route given an object.
+    """Handles deleting a link with the given link id.
 
-    POST: This route returns an html page that has just text in it.
+    GET: This route deletes the link data of the link with the given id.
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :returns: String that shows the successful delete message.
+    :rtype: str
     """
 
     # Process request (return dict)
@@ -136,15 +137,16 @@ def delete_link(id):
         db.commit()
         return f"{id} has been deleted"
 
+
 @upload.route("/update_link/<id>", methods=["POST", "OPTIONS"])
 @cross_origin()
 def update_link(id):
-    """Handles the file obtaining route given an object.
+    """Handles updating a link with the given link id.
 
-    POST: This route returns an html page that has just text in it.
+    POST: This route updates the link data of the link with the given id.
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :returns: String that shows the successful update message.
+    :rtype: str
     """
     request_data = request.json
 
@@ -172,15 +174,16 @@ def update_link(id):
         print(f"{id} has been updated")
         return f"{id} has been updated"
 
+
 @upload.route("/screenshots", methods=["GET", "POST", "OPTIONS"])
 @cross_origin()
 def screenshots():
-    """Handles the note route.
+    """Handles the screenshot route.
 
-    GET: This route gets information about the note
+    GET: This route gets information about the screenshot
     and returns it in a dictionary.
 
-    POST: This route adds information about the note
+    POST: This route adds information about the given screenshot
     and returns the result in a dictionary.
 
 
@@ -235,17 +238,17 @@ def screenshots():
             INSERT INTO screenshots
             VALUES(?,?,?,?,?,?,?,?)
             """,
-            (
-                id,
-                caption,
-                about,
-                date,
-                text_in_image,
-                path,
-                related_activity,
-                view,
-            )
-        )
+                   (
+                       id,
+                       caption,
+                       about,
+                       date,
+                       text_in_image,
+                       path,
+                       related_activity,
+                       view,
+                   )
+                   )
         db.commit()
 
         response = jsonify([new_dict_screenshot])
@@ -277,7 +280,6 @@ def links():
             print(f"Error, link is empty: {request_data}")
             return f"Error, link is empty: {request_data}"
 
-
         new_links = []
         for json_data in request_data:
             # Data for database.
@@ -301,7 +303,8 @@ def links():
             }
 
             # Prevent duplicates
-            link_query = db.execute('SELECT * FROM links WHERE link = ?',(link,)).fetchall()
+            link_query = db.execute(
+                'SELECT * FROM links WHERE link = ?', (link,)).fetchall()
             if len(link_query) == 0:
                 print("Query Link is not yet known, adding to database")
                 db.execute(
@@ -378,15 +381,15 @@ def notes():
                     INSERT INTO notes
                     VALUES(?,?,?,?,?,?)
                     """,
-                    (
-                        id,
-                        noteTitle,
-                        about,
-                        date,
-                        related_activity,
-                        view,
-                    )
-                )
+                           (
+                               id,
+                               noteTitle,
+                               about,
+                               date,
+                               related_activity,
+                               view,
+                           )
+                           )
                 db.commit()
 
             response = jsonify([new_dict_note])

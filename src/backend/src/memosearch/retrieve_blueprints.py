@@ -1,5 +1,5 @@
 import os
-from flask import jsonify, current_app, send_file
+from flask import jsonify, send_file
 from flask import Blueprint, request
 from flask_cors import cross_origin
 from PIL import Image
@@ -14,14 +14,13 @@ retrieve = Blueprint('retrieve', __name__, template_folder='templates')
 @retrieve.route("/views", methods=["GET", "OPTIONS"])
 @cross_origin()
 def views():
-    """Handles the link route.
+    """Handles the views route.
 
-    GET: This route gets information about the link
-    and returns it in a dictionary.
+    GET: This route gets all views and returns them in a sorted list.
 
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :returns: List of strings that represent the views in the database.
+    :rtype: list(str)
     """
     if request.method == "GET":
         all_views = set()
@@ -42,12 +41,13 @@ def views():
 @retrieve.route("/get_image/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def get_image(id):
-    """Handles the file obtaining route given an object.
+    """Handles obtaining the image data from the saved directory when loading screenshot data.
 
-    POST: This route returns an html page that has just text in it.
+    GET: This route returns a jpeg image (700, 700) corresponding to the given screenshot id.
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :param id int: screenshot id
+    :returns: jpeg file
+    :rtype: bytes
     """
 
     # Process request (return dict)
@@ -59,7 +59,6 @@ def get_image(id):
         if os.path.splitext(image_path):
             new_image = file.resize((700, 700))
             if new_image.mode in ("RGBA", "P"):
-                print("The image was in RGBA mode bro")
                 new_image = new_image.convert("RGB")
             new_image.save(image_path + ".jpeg")
             image_path = image_path + ".jpeg"
@@ -69,12 +68,13 @@ def get_image(id):
 @retrieve.route("/open_link/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def open_link(id):
-    """Handles the file obtaining route given an object.
+    """Returns link information with the given id number.
 
-    POST: This route returns an html page that has just text in it.
+    GET: This route returns link information to display for link data.
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :param id int: link id
+    :returns:   JSON representation of what link was saved in database
+    :rtype: dict (JSON)
     """
     db = get_db()
     request_data = db.execute(
@@ -96,12 +96,13 @@ def open_link(id):
 @retrieve.route("/open_screenshot/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def open_screenshot(id):
-    """Handles the file obtaining route given an object.
+    """Returns screenshot information with the given id number.
 
-    POST: This route returns an html page that has just text in it.
+    GET: This route returns screenshot information to display for screenshot data.
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :param id int: screenshot id
+    :returns:   JSON representation of what screenshot was saved in database
+    :rtype: dict (JSON)
     """
     db = get_db()
     request_data = db.execute(
@@ -124,12 +125,13 @@ def open_screenshot(id):
 @retrieve.route("/open_note/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def open_note(id):
-    """Handles the file obtaining route given an object.
+    """Returns note information with the given id number.
 
-    POST: This route returns an html page that has just text in it.
+    GET: This route returns note information to display for note data.
 
-    :returns:   JSON representation of what was saved in database
-    :rtype: list(dict (JSON))
+    :param id int: note id
+    :returns:   JSON representation of what note was saved in database
+    :rtype: dict (JSON)
     """
     db = get_db()
     request_data = db.execute(
@@ -150,6 +152,13 @@ def open_note(id):
 @retrieve.route("/topfive", methods=["GET", "OPTIONS"])
 @cross_origin()
 def topfive():
+    """Returns top five most recent links, notes, and screenshot.
+
+    GET: This route returns top five items of each content type.
+
+    :returns:   JSON with each content type mapped to it's top five most recent items
+    :rtype: dict (JSON)
+    """
     db = get_db()
 
     top_5_notes = db.execute(
@@ -187,6 +196,7 @@ def topfive():
 
     res = {"links": top_5_links_parsed, "notes": top_5_notes_parsed,
            "screenshots": top_5_screenshots_parsed}
+
     return res
 
 
@@ -230,7 +240,6 @@ def search():
                     link["related_activity"], request_data["search"]))
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(
                     link["view"], request_data["search"]))
-                print(f"links token set score: {token_set_score}")
                 if token_set_score > 50:
                     curr_results["links"] += [{
                         "id": link["id"],
@@ -267,7 +276,6 @@ def search():
                     screenshot["related_activity"], request_data["search"]))
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(
                     screenshot["view"], request_data["search"]))
-                print(f"screenshots token set score: {token_set_score}")
                 if token_set_score > 50:
                     curr_results["screenshots"] += [{
                         "id": screenshot["id"],
@@ -304,7 +312,6 @@ def search():
                     note["related_activity"], request_data["search"]))
                 token_set_score = max(token_set_score, fuzz.token_set_ratio(
                     note["view"], request_data["search"]))
-                print(f"notes token set score: {token_set_score}")
                 if token_set_score > 50:
                     curr_results["notes"] += [{
                         "id": note["id"],
@@ -316,5 +323,4 @@ def search():
                     }]
 
         response = jsonify(curr_results)
-        print(curr_results)
         return response
