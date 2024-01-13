@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { AppContext } from "../App";
 import Button from "react-bootstrap/Button";
+import { do_tab } from "./utils";
 
 export default function ScreenshotsPage() {
   const {
@@ -130,7 +131,7 @@ export default function ScreenshotsPage() {
             <label for="date">Date:</label>
             <p>{formattedDate}</p><br />
             <label for="about">About:</label><br />
-            <textarea id="about" name="freeform" rows="20" cols="100" onChange={(e) => setScreenshotAbout(e.target.value)} value={screenshotAbout}></textarea><br /><br />
+            <textarea id="about" name="freeform" rows="20" cols="100" onKeyDown={do_tab} onChange={(e) => setScreenshotAbout(e.target.value)} value={screenshotAbout}></textarea><br /><br />
             <Button type="submit" class="btn btn-info">Submit</Button>
             &nbsp;&nbsp;
             <Button class="btn btn-info" onClick={handleClear}>Clear</Button>

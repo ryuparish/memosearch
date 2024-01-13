@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import {AppContext} from "../App";
 import Button from "react-bootstrap/Button";
+import { do_tab } from "./utils";
 
 export default function NotesPage() {
 
@@ -98,7 +99,7 @@ export default function NotesPage() {
             <label for="title">Title:</label>
           <input type="text" id="title" name="title" onChange={(e) => setNoteTitle(e.target.value)} value={noteTitle}/><br/><br/>
             <label for="about">About:</label><br/>
-          <textarea id="about" name="freeform" rows="20" cols="100" onChange={(e) => setNoteAbout(e.target.value)} value={noteAbout}></textarea><br/><br/>
+          <textarea id="about" name="freeform" rows="20" cols="100" onKeyDown={do_tab} onChange={(e) => setNoteAbout(e.target.value)} value={noteAbout}></textarea><br/><br/>
             <label for="activity">Related Activity:</label>
           <input type="text" id="activity" name="activity" onChange={(e) => setNoteActivity(e.target.value)} value={noteActivity}/><br/><br/>
             <label for="date">Date:</label>

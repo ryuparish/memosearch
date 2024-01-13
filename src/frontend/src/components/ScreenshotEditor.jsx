@@ -4,6 +4,8 @@ import {
 import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from "../App";
 import Button from "react-bootstrap/Button";
+import { close_window, do_tab } from "./utils";
+
 
 export default function ScreenshotEditor() {
   const {
@@ -62,10 +64,6 @@ export default function ScreenshotEditor() {
       .catch((error) => console.log(error));
   }, [])
 
-    function close_window() {
-      window.open('','_parent','');
-      window.close();
-    }
 
 
   // Get the submitted values and call the python backend
@@ -121,8 +119,6 @@ export default function ScreenshotEditor() {
       .catch((error) => console.log(error));
   }
 
-
-
   // Get the submitted values and call the python backend
   // to create the database entry
   function handleDelete(event) {
@@ -141,28 +137,7 @@ export default function ScreenshotEditor() {
       })
       .then((data) => {
         close_window();
-      })
-      .catch((error) => console.log(error));
-  }
-
-	// Enable Tabs in the editor.
-  function do_tab(e) {
-		if (e.keyCode === 9) { // tab was pressed
-			e.preventDefault();
-      // get caret position/selection
-      var val = e.target.value,
-          start = e.target.selectionStart,
-          end = e.target.selectionEnd;
-
-      // set textarea value to: text before caret + tab + text after caret
-      e.target.value = val.substring(0, start) + '\t' + val.substring(end);
-
-      // put caret at right position again
-      e.target.selectionStart = e.target.selectionEnd = start + 1;
-
-      // prevent the focus lose
-      return false;
-    }
+      }) .catch((error) => console.log(error));
   }
 
   const image_src = src ? URL.createObjectURL(src) : "";

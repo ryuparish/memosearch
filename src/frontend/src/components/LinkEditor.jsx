@@ -11,6 +11,7 @@ import { AppContext } from "../App";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import ViewModal from "./ViewModal";
+import { close_window, do_tab } from "./utils"
 
 export default function LinkEditor() {
   const {
@@ -153,12 +154,6 @@ export default function LinkEditor() {
       return false;
     }
   }
-
-  function close_window() {
-    window.open('','_parent','');
-    window.close();
-  }
-
 
   return (
     <div>
