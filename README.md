@@ -37,8 +37,13 @@ cd memosearch/src
 ```
 ## Usage
 I like to set the MemoSearch.command script as an alias like this:
+(in my .zshrc)
 ```sh
-
+alias ms="bash [path/to/Memosearch.command]"
+```
+then in my terminal I run:
+```sh
+ms
 ```
 
 ## Run tests
