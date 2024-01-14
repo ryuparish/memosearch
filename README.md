@@ -9,6 +9,8 @@
   </a>
 </p>
 
+![alt text](https://github.com/ryuparish/memosearch/blob/main/Memosearch%20Image.png?raw=true)
+
 > A search engine and note taking tool for screenshots, links, and text notes.
 
 ### 🏠 [Homepage](https://github.com/ryuparish/memosearch)
@@ -16,21 +18,36 @@
 ### ✨ [Demo](something)
 
 ## Install
-
+### Backend
 ```sh
-npm install
+cd memosearch/src/backend/src
+pip install -e .
+flask --app memosearch run (ensure server can start)
 ```
-
-## Usage
-
+### Frontend
 ```sh
-ms
+cd memosearch/src/frontend
+npm install src
+npm start (ensure server can start)
+```
+### Finally
+```sh
+cd memosearch/src
+./MemoSearch.command (run servers together)
+```
+## Usage
+I like to set the MemoSearch.command script as an alias like this:
+```sh
+
 ```
 
 ## Run tests
 
 ```sh
+cd memosearch/src/backend/src
 pytest
+coverage -m pytest
+coverage report (view code coverage)j
 ```
 
 ## Author
