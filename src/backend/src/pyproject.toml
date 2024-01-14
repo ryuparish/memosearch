@@ -11,7 +11,7 @@ dependencies = [
     "thefuzz",
     "pytest",
     "coverage",
-    "dotenv",
+    "python-dotenv",
 ]
 
 [build-system]
