@@ -162,7 +162,7 @@ def topfive():
     db = get_db()
 
     top_5_notes = db.execute(
-        '''SELECT * FROM "notes" ORDER BY date LIMIT 10''').fetchall() or []
+        '''SELECT * FROM "notes" ORDER BY date DESC LIMIT 10''').fetchall() or []
     top_5_notes_parsed = []
     for note in top_5_notes:
         new_addition = {}
@@ -174,7 +174,7 @@ def topfive():
                    for note in top_5_notes for key in note.keys()}
 
     top_5_links = db.execute(
-        '''SELECT * FROM "links" ORDER BY date LIMIT 10''').fetchall() or []
+        '''SELECT * FROM "links" ORDER BY date DESC LIMIT 10''').fetchall() or []
     top_5_links_parsed = []
     for link in top_5_links:
         new_addition = {}
@@ -186,7 +186,7 @@ def topfive():
                    for link in top_5_links for key in link.keys()}
 
     top_5_screenshots = db.execute(
-        '''SELECT * FROM "screenshots" ORDER BY date LIMIT 10''').fetchall() or []
+        '''SELECT * FROM "screenshots" ORDER BY date DESC LIMIT 10''').fetchall() or []
     top_5_screenshots_parsed = []
     for screenshot in top_5_screenshots:
         new_addition = {}

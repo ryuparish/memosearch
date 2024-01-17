@@ -17,9 +17,10 @@ def get_db():
     return g.db
 
 
-def close_db():
+def close_db(e=None):
     """
     Close connection if connection is still present
+    We use e to catch errors that cause a teardown.
     """
     db = g.pop('db', None)
 
