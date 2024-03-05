@@ -17,20 +17,19 @@ Infrastructure Design:
 
       Every Page:
 
-        - Separate pop up window for editing fields and or deletion.
-          
-          * We will need to use react-router-dom to solve our multiple-window
-          issue.
-
-            ^ Specifically, we can use content ids and their data for this type of 
-            dynamic route: https://reactrouter.com/en/main/route/route#path
+      - Separate pop up window for editing fields and or deletion.
         
-        - Editor for a content item
+        * We will need to use react-router-dom to solve our multiple-window
+        issue.
 
-          * Easy to switch from item to item within the content type
+          ^ Specifically, we can use content ids and their data for this type of 
+          dynamic route: https://reactrouter.com/en/main/route/route#path
+      
+      - Editor for a content item
 
-        - Bulk adding content items
+        * Easy to switch from item to item within the content type
 
+      - Bulk adding content items
 
       - Main Page
 
@@ -46,6 +45,12 @@ Infrastructure Design:
             - Preview of the about
             - A Link if found
             - Date of the content
+
+        * Email a list of todo items based on their activity.
+
+          ^ Attach things that are useful.
+
+        * Related items that come with opening items in their editors.
 
       - Links page
 
@@ -83,8 +88,6 @@ Infrastructure Design:
           ^ Related Activity (predicted activity)
 
         * Error message that automatically loads to show that validation for the image occurred.
-
-        * Upload button
 
         * Upload button
 
