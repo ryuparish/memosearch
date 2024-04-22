@@ -78,6 +78,10 @@
 + Email a list of todo items based on their activity.
   - Attach things that are useful.
 
++ Calendar
+    - Allows for creating, deleting, and modifying meetings/events.
+    - Currently at OAuth process for Google Calendar API step.
+
 
 
 ## 2. Backend
