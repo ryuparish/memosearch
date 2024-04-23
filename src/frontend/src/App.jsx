@@ -34,6 +34,7 @@ export default function App() {
   // Google Calendar State
   const [user, setUser] = React.useState(null);
   const [profile, setProfile] = React.useState(null);
+  const [calendarEvents, setCalendarEvents] = React.useState({});
 
   // Link Page state
   const [links, setLinks] = React.useState([]);
@@ -111,6 +112,8 @@ export default function App() {
     setUser,
     profile,
     setProfile,
+    calendarEvents,
+    setCalendarEvents,
   }
 
   // Load the Google Calendar 
@@ -134,8 +137,22 @@ export default function App() {
           return notTooEarly && notTooLate;
         });
 
+        for (var i = 0; i < events.length; i++){
+          var newCalendarEvents = calendarEvents;
+          if (!calendarEvents[events[i].created]){
+            newCalendarEvents[events[i].created] = {
+              id: events[i].created,
+              title: events[i].summary,
+              start: events[i].start.dateTime,
+              end: events[i].end.dateTime
+            }
+          }
+          setCalendarEvents(newCalendarEvents);
+        }
+
         // Set the events in the calendar if not added yet.
         console.log(events);
+        console.log(calendarEvents);
       });
     }
 

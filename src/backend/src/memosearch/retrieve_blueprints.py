@@ -12,7 +12,7 @@ retrieve = Blueprint('retrieve', __name__, template_folder='templates')
 
 
 @retrieve.route("/views", methods=["GET", "OPTIONS"])
-@cross_origin()
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def views():
     """Handles the views route.
 
@@ -22,6 +22,7 @@ def views():
     :returns: List of strings that represent the views in the database.
     :rtype: list(str)
     """
+    print(f"IN VIEWS here is the request: {request}")
     if request.method == "GET":
         all_views = set()
         all_views.add("all")
@@ -150,7 +151,7 @@ def open_note(id):
 
 
 @retrieve.route("/topfive", methods=["GET", "OPTIONS"])
-@cross_origin()
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def topfive():
     """Returns top five most recent links, notes, and screenshot.
 

@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(BASEDIR, '.env'))
 
+
 def create_app(test_config=None):
     # create and configure the app
     """
@@ -17,6 +18,8 @@ def create_app(test_config=None):
     :param test_config dict: a mapping for the application configuration
     """
     app = Flask(__name__, instance_relative_config=True)
+    CORS(app, supports_credentials=True)
+
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'data.db'),
