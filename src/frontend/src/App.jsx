@@ -132,17 +132,17 @@ export default function App() {
       }).then((data) => {
         const events = data.items.filter((e) => {
           // Two week threshold
-          const notTooEarly = new Date(e.created) >= (Date.now() - 12096e5)
-          const notTooLate = new Date(e.created) <= (Date.now() + 12096e5)
+          const notTooEarly = (new Date(e.created)) >= (Date.now() - 12096e5)
+          const notTooLate = (new Date(e.created)) <= (Date.now() + 12096e5)
           return notTooEarly && notTooLate;
         });
 
+        var newCalendarEvents = {...calendarEvents};
         for (var i = 0; i < events.length; i++){
-          var newCalendarEvents = calendarEvents;
           if (!calendarEvents[events[i].created]){
             newCalendarEvents[events[i].created] = {
               id: events[i].created,
-              title: events[i].summary,
+              title: events[i].summary || "something",
               start: events[i].start.dateTime,
               end: events[i].end.dateTime
             }
