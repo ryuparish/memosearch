@@ -13,6 +13,7 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export const AppContext = React.createContext();
 
@@ -29,6 +30,10 @@ export default function App() {
   const [views, setViews] = React.useState(["all"]);
   const [view, setView] = React.useState("all");
   const [show, setShow] = React.useState(false);
+
+  // Google Calendar State
+  const [user, setUser] = React.useState(null);
+  const [profile, setProfile] = React.useState(null);
 
   // Link Page state
   const [links, setLinks] = React.useState([]);
@@ -101,14 +106,41 @@ export default function App() {
     views,
     setViews,
     show,
-    setShow
+    setShow,
+    user,
+    setUser,
+    profile,
+    setProfile,
   }
 
+  // Load the Google Calendar 
   // Load the list of possible views initially
   // and load the top five content items from
   // each content group (Note, Screenshot, Link).
   useEffect(() => {
+    if (user) {
+      fetch("https://www.googleapis.com/calendar/v3/calendars/ryuparish1115@gmail.com/events?key=AIzaSyAdqZjAT9-3uUSIjl8rsZbx4QjNOVCd3wE", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.access_token}`
+        }
+      }).then((response) => {
+        return response.json();
+      }).then((data) => {
+        const events = data.items.filter((e) => {
+          // Two week threshold
+          const notTooEarly = new Date(e.created) >= (Date.now() - 12096e5)
+          const notTooLate = new Date(e.created) <= (Date.now() + 12096e5)
+          return notTooEarly && notTooLate;
+        });
+
+        // Set the events in the calendar if not added yet.
+        console.log(events);
+      });
+    }
+
     fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/views", {
+      credentials: "include",
       method: "GET",
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -179,14 +211,18 @@ export default function App() {
         }
       })
       .catch((error) => console.log(error));
-  }, [])
+  }, [user])
 
   // Page changing logic
   if (page === "main") {
     return (
       <Router>
         <Routes>
-          <Route index element={<AppContext.Provider value={all_states}><MainPage /></AppContext.Provider>} />
+          <Route index element={<AppContext.Provider value={all_states}>
+                                  <GoogleOAuthProvider clientId={"244785002873-4j6tlhji2o8kp1f29ub346ah442qpoi1.apps.googleusercontent.com"}>
+                                    <MainPage />
+                                  </GoogleOAuthProvider>
+                                </AppContext.Provider>} />
           <Route path="/note/:Id" element={<AppContext.Provider value={all_states}><NoteEditor /></AppContext.Provider>} />
           <Route path="/link/:Id" element={<AppContext.Provider value={all_states}><LinkEditor /></AppContext.Provider>} />
           <Route path="/screenshot/:Id" element={<AppContext.Provider value={all_states}><ScreenshotEditor /></AppContext.Provider>} />
