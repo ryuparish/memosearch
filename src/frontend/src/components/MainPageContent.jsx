@@ -13,7 +13,7 @@ import Button from 'react-bootstrap/Button';
 import ViewDropdown from "./ViewDropdown";
 import Calendar from '@toast-ui/react-calendar';
 import '@toast-ui/calendar/dist/toastui-calendar.min.css';
-import { googleLogout, useGoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { useGoogleOneTapLogin, useGoogleLogin, GoogleLogin} from '@react-oauth/google';
 
 /**
  * 
@@ -32,14 +32,21 @@ export default function MainPageContent() {
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
-      onError: (error) => console.log('Login Failed:', error)
+    onError: (error) => console.log('Login Failed:', error),
   });
+  //const login2 = useGoogleOneTapLogin({
+  //  onSuccess: (codeResponse) => setUser(codeResponse),
+  //  onError: (error) => console.log('Login Failed:', error),
+  //  auto_select: true
+  //});
+  //console.log("this is login: " + login);
+  //console.log("this is login2: " + login2);
 
   const onAfterRenderEvent = (event) => {
     console.log(event.title);
   };
-  console.log("This is calendarEvents:");
-  console.log(Object.values(calendarEvents));
+  //console.log("This is calendarEvents:");
+  //console.log(Object.values(calendarEvents));
   return (
     <div>
       <head>

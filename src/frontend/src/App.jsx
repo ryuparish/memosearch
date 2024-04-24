@@ -121,13 +121,30 @@ export default function App() {
   // and load the top five content items from
   // each content group (Note, Screenshot, Link).
   useEffect(() => {
+      console.log("About to json parse the window storage because init: " + JSON.stringify(window.sessionStorage));
+      setUser(JSON.parse(window.sessionStorage.getItem("user")));
+      console.log("About to json parse the window storage because init2");
+      console.log("Found this in user in window session storage: " + JSON.stringify(JSON.parse(window.sessionStorage.getItem("user"))));
+    }, []);
+
+  useEffect(() => {
+    if (user){
+      window.sessionStorage.setItem("user", JSON.stringify(user));
+      console.log("About to json parse the window storage because user change");
+      console.log("Set this in user in window session storage: " + JSON.parse(window.sessionStorage.getItem("user")))
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (user) {
+      console.log("Here is the user: " + JSON.stringify(user));
       fetch("https://www.googleapis.com/calendar/v3/calendars/ryuparish1115@gmail.com/events?key=AIzaSyAdqZjAT9-3uUSIjl8rsZbx4QjNOVCd3wE", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${user.access_token}`
         }
       }).then((response) => {
+        console.log("Here is the response: " + JSON.stringify(response));
         return response.json();
       }).then((data) => {
         const events = data.items.filter((e) => {
