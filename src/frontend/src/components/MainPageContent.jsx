@@ -34,19 +34,10 @@ export default function MainPageContent() {
     onSuccess: (codeResponse) => setUser(codeResponse),
     onError: (error) => console.log('Login Failed:', error),
   });
-  //const login2 = useGoogleOneTapLogin({
-  //  onSuccess: (codeResponse) => setUser(codeResponse),
-  //  onError: (error) => console.log('Login Failed:', error),
-  //  auto_select: true
-  //});
-  //console.log("this is login: " + login);
-  //console.log("this is login2: " + login2);
 
   const onAfterRenderEvent = (event) => {
     console.log(event.title);
   };
-  //console.log("This is calendarEvents:");
-  //console.log(Object.values(calendarEvents));
   return (
     <div>
       <head>

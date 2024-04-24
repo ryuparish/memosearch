@@ -115,11 +115,8 @@ export default function App() {
     calendarEvents,
     setCalendarEvents,
   }
-
-  // Load the Google Calendar 
-  // Load the list of possible views initially
-  // and load the top five content items from
-  // each content group (Note, Screenshot, Link).
+  
+  // Persist the access token until it expires.
   useEffect(() => {
       console.log("About to json parse the window storage because init: " + JSON.stringify(window.sessionStorage));
       setUser(JSON.parse(window.sessionStorage.getItem("user")));
@@ -135,16 +132,17 @@ export default function App() {
     }
   }, [user]);
 
+  // Load the Google Calendar and Load the list of possible views initially
+  // and load the top five content items from
+  // each content group (Note, Screenshot, Link).
   useEffect(() => {
     if (user) {
-      console.log("Here is the user: " + JSON.stringify(user));
       fetch("https://www.googleapis.com/calendar/v3/calendars/ryuparish1115@gmail.com/events?key=AIzaSyAdqZjAT9-3uUSIjl8rsZbx4QjNOVCd3wE", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${user.access_token}`
         }
       }).then((response) => {
-        console.log("Here is the response: " + JSON.stringify(response));
         return response.json();
       }).then((data) => {
         const events = data.items.filter((e) => {
@@ -155,6 +153,8 @@ export default function App() {
         });
 
         var newCalendarEvents = {...calendarEvents};
+
+        // Convert the Google data into calendar event for Toast UI Calendar.
         for (var i = 0; i < events.length; i++){
           if (!calendarEvents[events[i].created]){
             newCalendarEvents[events[i].created] = {
@@ -170,6 +170,8 @@ export default function App() {
         // Set the events in the calendar if not added yet.
         console.log(events);
         console.log(calendarEvents);
+      }).catch(err => {
+        setUser(null);
       });
     }
 
