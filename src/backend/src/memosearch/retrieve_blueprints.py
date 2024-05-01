@@ -1,6 +1,6 @@
 import os
-from flask import jsonify, send_file
-from flask import Blueprint, request
+from Flask import jsonify, send_file
+from Flask import Blueprint, request
 from flask_cors import cross_origin
 from PIL import Image
 from thefuzz import fuzz
@@ -12,14 +12,11 @@ retrieve = Blueprint('retrieve', __name__, template_folder='templates')
 
 
 @retrieve.route("/views", methods=["GET", "OPTIONS"])
-@cross_origin(origin='*',headers=['Content-Type','Authorization'])
+@cross_origin(origin='*', headers=['Content-Type', 'Authorization'])
 def views():
     """Handles the views route.
 
-    GET: This route gets all views and returns them in a sorted list.
-
-
-    :returns: List of strings that represent the views in the database.
+    :return: List of strings that represent the views in the database.
     :rtype: list(str)
     """
     print(f"IN VIEWS here is the request: {request}")
@@ -326,6 +323,7 @@ def search():
         response = jsonify(curr_results)
         return response
 
+
 def get_similar_memos(id):
     """Finds similar memos to the corresponding memo for the given id.
 
@@ -333,4 +331,3 @@ def get_similar_memos(id):
     :rtype: list(JSON)
     """
     return
-

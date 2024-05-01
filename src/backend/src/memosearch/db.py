@@ -4,8 +4,9 @@ from flask import current_app, g
 
 
 def get_db():
-    """
-    Get the global database connection (sqlite3)
+    """Get the global database connection (sqlite3)
+
+    :return
     """
     if 'db' not in g:
         g.db = sqlite3.connect(
