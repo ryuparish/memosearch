@@ -13,7 +13,7 @@ import Button from 'react-bootstrap/Button';
 import ViewDropdown from "./ViewDropdown";
 import Calendar from '@toast-ui/react-calendar';
 import '@toast-ui/calendar/dist/toastui-calendar.min.css';
-import { useGoogleOneTapLogin, useGoogleLogin, GoogleLogin} from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 
 /**
  * 
@@ -38,6 +38,7 @@ export default function MainPageContent() {
   const onAfterRenderEvent = (event) => {
     console.log(event.title);
   };
+
   return (
     <div>
       <head>
@@ -60,17 +61,17 @@ export default function MainPageContent() {
                 <div>
                   <img src={link_image} alt=""/>
                   <br />
-                  <button class="btn btn-info" onClick={() => setPage("links")}>Links</button>
+                  <button class="btn btn-info" onClick={() => setPage("links")}>New Link</button>
                 </div>
                 <div>
                   <img src={screenshot_image} alt=""/>
                   <br />
-                  <button class="btn btn-info" onClick={() => setPage("screenshots")}>Screenshots</button>
+                  <button class="btn btn-info" onClick={() => setPage("screenshots")}>New Photo</button>
                 </div>
                 <div>
                   <img src={notes_image} alt=""/>
                   <br />
-                  <button class="btn btn-info" onClick={() => setPage("notes")}>Notes</button>
+                  <button class="btn btn-info" onClick={() => setPage("notes")}>New Note</button>
                 </div>
           </div>
           <br /><br />

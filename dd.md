@@ -9,6 +9,7 @@
   Uses email and Google Calendar to remind, schedule, and show problems.
 
 ## Infrastructure Design:
+> This project initially followed this setup to get started: https://flask.palletsprojects.com/en/3.0.x/tutorial/ , it was a very important part of this project.
 
 ## Frontend 
 
@@ -20,7 +21,7 @@
 + Pages
     1. Every Page
         1. Separate pop up window for editing fields and or deletion. We will need to use react-router-dom to solve our multiple-window issue.
-                - Specifically, we can use content ids and their data for this type of dynamic route: https://reactrouter.com/en/main/route/route#path
+            - Specifically, we can use content ids and their data for this type of dynamic route: https://reactrouter.com/en/main/route/route#path
 
         2. Editor for a content items
             - Easy to switch from item to item within the content type
@@ -80,13 +81,16 @@
 
 + Calendar
     - Allows for creating, deleting, and modifying meetings/events.
-    - Currently at OAuth process for Google Calendar API step.
+    - Currently, we can log in through the google sign in and save session data in the browser.
 
 
 
-## 2. Backend
+## Backend
 
 #### The backend consists of a django server that feeds endpoints to the React frontend.
+#### The server uses two databases, one for vectors (similarity search) and one for memo objects.
+> The documentation for the backend uses Sphinx formatting and can generate documentation using Sphinx.
+
 
 ### 1. Features:
   + A text generation mvc model that:
@@ -97,6 +101,19 @@
   + A classicfication mvc model that:
     - Clusters all the textual data into categories
     - Asks user if they could classify the topic of the text, with one k-mean getting one topic.
+
+  + A database for memos:
+    - Each of the operations of the database are the main operations involved in the Memosearch app (Saving and retrieving Images, text, and Links)
+
+  + A database for vectors:
+    - Storage / Entry
+        - For every new note, image, and link, create a description-string made from the object data and
+        vectorize it. Once vectorized, we check to see if the vector has already been entered 
+        and if not, we enter it into the database.
+
+    - Retrieval
+        - When retrieving, we first transform the description-string into a vector and search 
+        for similar vectors and then finally return the corresponding ids to the caller.
 
 
 3. Testing
@@ -157,3 +174,13 @@ Log:
     to establish the database connection/file to use by the app when factoried.
     This is because the Declarative SQLAlchemy docs use the db connection as a 
     global variable, not in the factory product context.
+
+  ~ 15/04/24: Added Google Calendar integration to display calendar and events.
+
+  30/04/24: Dealing with Similarity Search
+
+    - There is a little issue. If we want to use this 
+    tutorial: https://python.langchain.com/docs/integrations/vectorstores/sqlitevss/ we
+    need to have a quick load time for the database since we need to load it everytime in order to 
+    use upon a search. Moreover, we need to have some sort of design to the vector database 
+    operations.

@@ -325,3 +325,12 @@ def search():
 
         response = jsonify(curr_results)
         return response
+
+def get_similar_memos(id):
+    """Finds similar memos to the corresponding memo for the given id.
+
+    :returns: List of JSONs/memos that match the given memo.
+    :rtype: list(JSON)
+    """
+    return
+
