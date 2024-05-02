@@ -297,7 +297,7 @@ def links():
             site_name = json_data["site_name"]
             related_activity = json_data["related_activity"]
             view = json_data["view"]
-            description_string = json_data["description_string"]
+            description_string = f"{about[:150]} {related_activity} {view}"
 
             # Getting data from json and adding to the database.
             new_dict_link = {
@@ -454,6 +454,7 @@ def save_vector(id, memo, memo_type):
         model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         sentence_embedding = model.encode(memo['description_string'])
         print(f"The size of the index before is: {faiss_index.ntotal}")
+        print(f"Id is of type: {type(id)}")
         faiss_index.add_with_ids(np.array([sentence_embedding]), np.array([id]))
         print(f"The size of the index after is: {faiss_index.ntotal}")
         faiss.write_index(faiss_index, "/Users/ryuparish/Code/memosearch/src/backend/src/instance/faiss.index")

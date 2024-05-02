@@ -203,7 +203,7 @@ export default function LinkTable() {
             site_name: link.site_name,
             related_activity: link.related_activity,
             status: "Done",
-            view: link.view
+            view: link.view,
           };
         }));
       })

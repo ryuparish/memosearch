@@ -379,7 +379,7 @@ def get_similar_memos(memo):
         screenshots_parsed = {}
         for screenshot in nearest_screenshot_neighbors:
             new_addition = {}
-            for key in note.keys():
+            for key in screenshot.keys():
                 new_addition[key] = screenshot[key]
             new_addition["display_field"] = new_addition["caption"]
             new_addition["route"] = "screenshot"
