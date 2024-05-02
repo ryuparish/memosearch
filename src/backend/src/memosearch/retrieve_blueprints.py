@@ -7,6 +7,7 @@ from thefuzz import fuzz
 from .db import get_db
 import faiss
 import numpy as np
+import json
 from sentence_transformers import SentenceTransformer
 
 retrieve = Blueprint('retrieve', __name__, template_folder='templates')
@@ -77,23 +78,23 @@ def open_link(id):
     :rtype: dict (JSON)
     """
     db = get_db()
-    request_data = db.execute(
+    data = db.execute(
         '''SELECT * FROM "links" WHERE id=?''', (id,)).fetchone()
 
     # Process request (return dict)
     if request.method == "GET":
-        res = {
-            "site_name": request_data["site_name"],
-            "about": request_data["about"],
-            "date": request_data["date"],
-            "link": request_data["link"],
-            "related_activity": request_data["related_activity"],
-            "id": request_data["id"],
-            "view": request_data["view"],
-            "description_string": request_data["description_string"],
+        request_JSON = {
+            "site_name": data["site_name"],
+            "about": data["about"],
+            "date": data["date"],
+            "link": data["link"],
+            "related_activity": data["related_activity"],
+            "id": data["id"],
+            "view": data["view"],
+            "description_string": data["description_string"],
         }
-        print(get_similar_memos(res))
-        return res
+        request_JSON["similar_ids"] = get_similar_memos(request_JSON)
+        return request_JSON
 
 
 @retrieve.route("/open_screenshot/<id>", methods=["GET", "OPTIONS"])
@@ -108,24 +109,24 @@ def open_screenshot(id):
     :rtype: dict (JSON)
     """
     db = get_db()
-    request_data = db.execute(
+    data = db.execute(
         '''SELECT * FROM "screenshots" WHERE id=?''', (id,)).fetchone()
 
     # Process request (return dict)
     if request.method == "GET":
-        res = {
-            "view": request_data["view"],
-            "caption": request_data["caption"],
-            "text": request_data["text_in_image"],
-            "path": request_data["path"],
-            "about": request_data["about"],
-            "date": request_data["date"],
-            "related_activity": request_data["related_activity"],
-            "id": request_data["id"],
-            "description_string": request_data["description_string"],
+        request_JSON = {
+            "view": data["view"],
+            "caption": data["caption"],
+            "text": data["text_in_image"],
+            "path": data["path"],
+            "about": data["about"],
+            "date": data["date"],
+            "related_activity": data["related_activity"],
+            "id": data["id"],
+            "description_string": data["description_string"],
         }
-        print(get_similar_memos(res))
-        return res
+        request_JSON["similar_ids"] = get_similar_memos(request_JSON)
+        return request_JSON
 
 
 @retrieve.route("/open_note/<id>", methods=["GET", "OPTIONS"])
@@ -140,22 +141,22 @@ def open_note(id):
     :rtype: dict (JSON)
     """
     db = get_db()
-    request_data = db.execute(
+    data = db.execute(
         '''SELECT * FROM "notes" WHERE id=?''', (id,)).fetchone()
 
     # Process request (return dict)
     if request.method == "GET":
-        res = {
-            "view": request_data["view"],
-            "title": request_data["title"],
-            "about": request_data["about"],
-            "date": request_data["date"],
-            "related_activity": request_data["related_activity"],
-            "id": request_data["id"],
-            "description_string": request_data["description_string"],
+        request_JSON = {
+            "view": data["view"],
+            "title": data["title"],
+            "about": data["about"],
+            "date": data["date"],
+            "related_activity": data["related_activity"],
+            "id": data["id"],
+            "description_string": data["description_string"],
         }
-        print(get_similar_memos(res))
-        return res
+        request_JSON["similar_ids"] = get_similar_memos(request_JSON)
+        return request_JSON
 
 
 @retrieve.route("/topfive", methods=["GET", "OPTIONS"])
@@ -351,48 +352,70 @@ def get_similar_memos(memo):
         # Calling the database for the matching indexes
         db = get_db()
         print(f"Here is the I[0] {I[0]} and it's inner type: {type(I[0][0])}")
+        print(f"Here is the D {D}")
 
         # Retrieve and parse neighbors from notes
         nearest_note_neighbors = db.execute(
-            'SELECT id FROM notes WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
+            'SELECT * FROM notes WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
             (*[str(x) for x in I[0]],)
         )
         print(f"Here is neighbors: {nearest_note_neighbors}")
-        notes_parsed = []
+        notes_parsed = {}
         for note in nearest_note_neighbors:
             new_addition = {}
             for key in note.keys():
                 new_addition[key] = note[key]
+            new_addition["display_field"] = new_addition["title"]
+            new_addition["route"] = "note"
             print("found a neighbor for note")
-            notes_parsed.append(new_addition)
+            notes_parsed[new_addition["id"]] = new_addition
 
         # Retrieve and parse neighbors from screenshots
         nearest_screenshot_neighbors = db.execute(
-            'SELECT id FROM screenshots WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
+            'SELECT * FROM screenshots WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
             (*[str(x) for x in I[0]],)
         ).fetchall()
-        screenshots_parsed = []
+        screenshots_parsed = {}
         for screenshot in nearest_screenshot_neighbors:
             new_addition = {}
             for key in note.keys():
                 new_addition[key] = screenshot[key]
+            new_addition["display_field"] = new_addition["caption"]
+            new_addition["route"] = "screenshot"
             print("found a neighbor for screenshots")
-            screenshots_parsed.append(new_addition)
+            screenshots_parsed[new_addition["id"]] = new_addition
 
         # Retrieve and parse neighbors from links
         nearest_link_neighbors = db.execute(
-            'SELECT id FROM links WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
+            'SELECT * FROM links WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
             (*[str(x) for x in I[0]],)
         ).fetchall()
-        links_parsed = []
+        links_parsed = {}
         for link in nearest_link_neighbors:
             new_addition = {}
             for key in link.keys():
                 new_addition[key] = link[key]
+            new_addition["display_field"] = new_addition["link"]
+            new_addition["route"] = "link"
             print("found a neighbor for links")
-            links_parsed.append(new_addition)
+            links_parsed[new_addition["id"]] = new_addition
 
-        neighbors = {"notes:" : notes_parsed, "links": links_parsed, "screenshots" : screenshots_parsed}
+        # Sort the neighbors respective to their memo type
+        neighbors = []
+        for idx in I[0]:
+            print(f"Looking for: {str(idx)} of type: {type(str(idx))}")
+            print(f"notes_parsed elements have type: {type(list(notes_parsed.keys())[0])}")
+            if idx in links_parsed:
+                neighbors.append(links_parsed[idx])
+            elif idx in screenshots_parsed:
+                neighbors.append(screenshots_parsed[idx])
+            elif idx in notes_parsed:
+                neighbors.append(notes_parsed[idx])
+            else:
+                print("Never found the returned index in dictionaries: " + str(idx))
+                print("Keys of notes: " + json.dumps(notes_parsed))
+
+        print(f"Returning: {neighbors}")
         return neighbors
     print("get similar memos got a null description_string")
-    return {"notes:" : [], "links": [], "screenshots" : []}
+    return []

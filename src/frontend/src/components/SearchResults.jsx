@@ -6,21 +6,24 @@ import { AppContext } from "../App";
  *
  * @returns {object} html object - This represents the search results in HTML.
  */
-export default function SearchResults() {
+export default function SearchResults({customSearchResults = null}) {
   const {
     searchResults,
   } = useContext(AppContext);
 
 
   let searchResult = <text>No Results</text>;
-  if (Object.keys(searchResults).length !== 0) {
+  if (customSearchResults != null){
+    searchResult = <ul>{customSearchResults}</ul>;
+  }
+  else if (Object.keys(searchResults).length !== 0) {
     searchResult = <ul>{searchResults}</ul>;
   }
 
   return (
     <div>
       <div class="container">
-        <h4><a>Results:</a></h4>
+        <h4><a>{customSearchResults ? "Similar memos:" : "Results:"}</a></h4>
         <div class="slider" >
           {searchResult}
         </div>

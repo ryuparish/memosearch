@@ -204,7 +204,6 @@ export default function App() {
         return response.json();
       })
       .then((data) => {
-        console.log("Here are the top fives we received: " + JSON.stringify(data));
         // Collect the search results to put into searchResults
         let top_fives = []
         for (const key in data) {
