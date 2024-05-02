@@ -176,7 +176,6 @@ export default function App() {
     }
 
     fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/views", {
-      credentials: "include",
       method: "GET",
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -190,6 +189,7 @@ export default function App() {
         for (let i = 0; i < data.length; i++) {
           init_views.push(data[i]);
         }
+        console.log("Got back this from /views: " + init_views);
         setViews(init_views);
       })
       .catch((error) => console.log(error));

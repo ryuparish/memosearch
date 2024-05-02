@@ -18,7 +18,7 @@ def create_app(test_config=None):
     :param test_config dict: a mapping for the application configuration
     """
     app = Flask(__name__, instance_relative_config=True)
-    CORS(app, supports_credentials=True)
+    CORS(app)
 
     app.config.from_mapping(
         SECRET_KEY='dev',
@@ -33,6 +33,7 @@ def create_app(test_config=None):
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
+    app.config['CORS_HEADERS'] = 'Content-Type'
     # register blueprints
     app.register_blueprint(upload)
     app.register_blueprint(retrieve)

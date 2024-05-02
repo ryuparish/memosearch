@@ -14,9 +14,10 @@ retrieve = Blueprint('retrieve', __name__, template_folder='templates')
 
 # Routes
 
+# @cross_origin(origin='*', headers=['Content-Type', 'Authorization'])
 
 @retrieve.route("/views", methods=["GET", "OPTIONS"])
-@cross_origin(origin='*', headers=['Content-Type', 'Authorization'])
+@cross_origin()
 def views():
     """Handles the views route.
 
@@ -400,7 +401,7 @@ def get_similar_memos(memo):
             print("found a neighbor for links")
             links_parsed[new_addition["id"]] = new_addition
 
-        # Sort the neighbors respective to their memo type
+        # Sort the neighbors in the return object (I[0] is in order)
         neighbors = []
         for idx in I[0]:
             print(f"Looking for: {str(idx)} of type: {type(str(idx))}")

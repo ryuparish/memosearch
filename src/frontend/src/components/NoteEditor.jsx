@@ -45,6 +45,7 @@ export default function NoteEditor() {
         setAbout(data.about);
         setDate(data.date);
         setRelatedActivity(data.related_activity);
+        setView(data.view);
 
         // Set similar results
         const similar_matches = []
