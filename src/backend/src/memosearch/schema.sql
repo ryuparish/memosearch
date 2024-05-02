@@ -5,7 +5,8 @@ CREATE TABLE links (
   date TEXT NOT NULL,
   site_name TEXT NOT NULL,
   related_activity TEXT NOT NULL,
-  view TEXT NOT NULL
+  view TEXT NOT NULL,
+  description_string TEXT NOT NULL
 );
 
 CREATE TABLE screenshots (
@@ -16,7 +17,8 @@ CREATE TABLE screenshots (
   text_in_image TEXT NOT NULL,
   path TEXT NOT NULL,
   related_activity TEXT NOT NULL,
-  view TEXT NOT NULL
+  view TEXT NOT NULL,
+  description_string TEXT NOT NULL
 );
 
 CREATE TABLE notes (
@@ -25,5 +27,6 @@ CREATE TABLE notes (
   about TEXT NOT NULL,
   date TEXT NOT NULL,
   related_activity TEXT NOT NULL,
-  view TEXT NOT NULL
+  view TEXT NOT NULL,
+  description_string TEXT NOT NULL
 );

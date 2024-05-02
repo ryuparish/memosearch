@@ -98,6 +98,7 @@ export default function ScreenshotEditor() {
       text:text,
       date:date,
       view:view,
+      description_string:about.slice(0,150) + " " + related_activity + " " + view,
     }
 
 

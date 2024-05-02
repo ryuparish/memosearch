@@ -49,6 +49,7 @@ export default function NotesPage() {
       noteAbout:noteAbout,
       noteDate:date,
       view:view,
+      description_string:noteAbout.slice(0,150) + " " + noteActivity + " " + view,
     }
 
     // Post to the "notes" api

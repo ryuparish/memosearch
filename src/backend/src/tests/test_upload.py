@@ -36,7 +36,8 @@ def test_notes_insertion(app, client):
         "noteAbout": "some about text",
         "noteDate": "2023-01-09T02:46:36.013Z",
         "noteActivity": "some related activity",
-        "view": "some view"
+        "view": "some view",
+        "description_string": "some description",
     }
     generated_id = client.post(
         "/notes",
@@ -54,6 +55,7 @@ def test_notes_insertion(app, client):
     assert response.json["date"] == "2023-01-09T02:46:36.013Z"
     assert response.json["related_activity"] == "some related activity"
     assert response.json["view"] == "some view"
+    assert response.json["description_string"] == "some description"
 
 
 def test_link_insertion(app, client):
@@ -67,7 +69,8 @@ def test_link_insertion(app, client):
         "date": "2023-01-02T02:46:36.013Z",
         "site_name": "google.com",
         "related_activity": "some related activity",
-        "view": "some view"
+        "view": "some view",
+        "description_string": "some description",
     }
 
     # Get generated id and check information
@@ -88,6 +91,7 @@ def test_link_insertion(app, client):
     assert response.json["site_name"] == "google.com"
     assert response.json["related_activity"] == "some related activity"
     assert response.json["view"] == "some view"
+    assert response.json["description_string"] == "some description"
 
 
 def test_screenshot_insertion(app, client):
@@ -103,7 +107,8 @@ def test_screenshot_insertion(app, client):
         "path": "",
         "activity": "some related activity",
         "view": "some view",
-        "file": (open(image, "rb"), image)
+        "file": (open(image, "rb"), image),
+        "description_string": "some description",
     }
 
     # Get generated id and check information
@@ -126,6 +131,7 @@ def test_screenshot_insertion(app, client):
     assert response.json["path"] != ("" or None)
     assert response.json["related_activity"] == "some related activity"
     assert response.json["view"] == "some view"
+    assert response.json["description_string"] == "some description"
 
 
 # Testing updates
@@ -298,7 +304,8 @@ def test_screenshot_image_get(app, client):
         "path": "",
         "activity": "some related activity",
         "view": "some view",
-        "file": (open(image_name, "rb"), image_name)
+        "file": (open(image_name, "rb"), image_name),
+        "description_string": "some description",
     }
 
     # Get generated id and check information

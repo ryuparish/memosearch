@@ -80,9 +80,11 @@ export default function NoteEditor() {
       title:title,
       date:date,
       view:view,
+      description_string:about.slice(0,150) + " " + related_activity + " " + view,
     }
 
     // Post to the "update_note" api
+    console.log("Sending this to the update note route: " + JSON.stringify(noteObj))
     fetch(process.env.REACT_APP_BACKEND_ENDPOINT + "/update_note/" + Id, {
       method: "POST",
       headers: {

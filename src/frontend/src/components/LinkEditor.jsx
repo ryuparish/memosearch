@@ -90,6 +90,7 @@ export default function LinkEditor() {
       site_name: site_name,
       date: date,
       view: view,
+      description_string:about.slice(0,150) + " " + related_activity + " " + view,
     }
 
     // Post to the "update_link" api

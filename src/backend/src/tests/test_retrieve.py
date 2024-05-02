@@ -105,7 +105,8 @@ def test_views_after_insert(app, client):
         "noteAbout": "some about text",
         "noteDate": "2023-01-09T02:46:36.013Z",
         "noteActivity": "some related activity",
-        "view": "some view"
+        "view": "some view",
+        "description_string": "some description"
     }
     client.post(
         "/notes",
@@ -145,7 +146,8 @@ def test_topfive_after_insertion(app, client):
         "noteAbout": "some about text",
         "noteDate": "2023-01-09T02:46:36.013Z",
         "noteActivity": "some related activity",
-        "view": "some view"
+        "view": "some view",
+        "description_string": "some description"
     }
     response = client.post("/notes",
                            content_type="application/json",

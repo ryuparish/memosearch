@@ -187,7 +187,7 @@ export default function LinkTable() {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
-      body: JSON.stringify(links)
+      body: JSON.stringify(links) // Modify this links to have an additional JSON field desc_string
     })
       .then((response) => {
         return response.json();

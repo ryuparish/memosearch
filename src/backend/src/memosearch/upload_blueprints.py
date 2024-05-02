@@ -4,6 +4,9 @@ from flask import jsonify, current_app
 from flask import Blueprint, request
 from flask_cors import cross_origin
 from .db import get_db
+import faiss
+from sentence_transformers import SentenceTransformer
+import numpy as np
 
 upload = Blueprint('upload', __name__, template_folder='templates')
 # Routes
@@ -221,6 +224,7 @@ def screenshots():
         path = destination
         related_activity = request_form["activity"]
         view = request_form["view"]
+        description_string = request_form["description_string"]
 
         new_dict_screenshot = {
             "id": id,
@@ -230,13 +234,15 @@ def screenshots():
             "text_in_image": text_in_image,
             "path": path,
             "related_activity": related_activity,
-            "view": view
+            "view": view,
+            "description_string": description_string,
         }
 
         # Do not prevent duplicates
+        save_vector(id, new_dict_screenshot, "screenshot")
         db.execute("""
             INSERT INTO screenshots
-            VALUES(?,?,?,?,?,?,?,?)
+            VALUES(?,?,?,?,?,?,?,?,?)
             """,
                    (
                        id,
@@ -247,6 +253,7 @@ def screenshots():
                        path,
                        related_activity,
                        view,
+                       description_string,
                    )
                    )
         db.commit()
@@ -290,6 +297,7 @@ def links():
             site_name = json_data["site_name"]
             related_activity = json_data["related_activity"]
             view = json_data["view"]
+            description_string = json_data["description_string"]
 
             # Getting data from json and adding to the database.
             new_dict_link = {
@@ -300,6 +308,7 @@ def links():
                 "site_name": site_name,
                 "related_activity": related_activity,
                 "view": view,
+                "description_string": description_string,
             }
 
             # Prevent duplicates
@@ -307,12 +316,13 @@ def links():
                 'SELECT * FROM links WHERE link = ?', (link,)).fetchall()
             if len(link_query) == 0:
                 print("Query Link is not yet known, adding to database")
+                save_vector(id, new_dict_link, "link")
                 db.execute(
                     '''
                     INSERT INTO links
-                    VALUES(?, ?, ?, ?, ?, ?, ?)
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?)
                     ''',
-                    (id, link, about, date, site_name, related_activity, view,)
+                    (id, link, about, date, site_name, related_activity, view, description_string,)
                 )
                 db.commit()
                 new_links.append(new_dict_link)
@@ -348,12 +358,14 @@ def notes():
             return f"Error, note title is empty: {request_data['noteTitle']}"
 
         # Data for database.
+        print(f"Here is the request_data: {request_data}")
         id = random.getrandbits(16)
         noteTitle = request_data["noteTitle"]
         about = request_data["noteAbout"]
         date = request_data["noteDate"]
         related_activity = request_data["noteActivity"]
         view = request_data["view"]
+        description_string = request_data["description_string"]
 
         # Getting data from request and adding to the database.
         new_dict_note = {
@@ -363,6 +375,7 @@ def notes():
             "date": date,
             "related_activity": related_activity,
             "view": view,
+            "description_string": description_string,
         }
 
         # Prevent duplicates
@@ -377,9 +390,10 @@ def notes():
 
             if len(note) == 0:
                 print("Query Note is not yet known, adding to database and writing file")
+                save_vector(id, new_dict_note, "note")
                 db.execute("""
                     INSERT INTO notes
-                    VALUES(?,?,?,?,?,?)
+                    VALUES(?,?,?,?,?,?,?)
                     """,
                            (
                                id,
@@ -388,9 +402,61 @@ def notes():
                                date,
                                related_activity,
                                view,
+                               description_string,
                            )
                            )
                 db.commit()
+            else:
+                print("Query Note already seen before")
 
             response = jsonify([new_dict_note])
             return response
+
+def save_vector(id, memo, memo_type):
+    """Saves the given memo into the vector database with the given id if not yet saved.
+
+    :returns:
+    :rtype:
+    """
+    memotypes = ["note", "screenshot", "link"]
+
+    # Checking for correct memo type given
+    if memo_type not in memotypes:
+        raise ValueError(f"Invalid memo type: {memo_type}")
+
+    # Combine data into description string then check
+    # Note: In order for matches to work, we need content about the memo in the vector.
+
+    # Checking if we have the same description_string
+    db = get_db()
+    matching_dstrings = db.execute(
+        """SELECT description_string FROM notes
+        WHERE description_string=?
+        UNION
+        SELECT description_string FROM links
+        WHERE description_string=?
+        UNION
+        SELECT description_string FROM screenshots
+        WHERE description_string=?""", (memo['description_string'], memo['description_string'], memo['description_string'],)
+    ).fetchall()
+
+    # If the description_string exists
+    if len(matching_dstrings) > 0:
+        print(f"We looked to check for a duplicate of this: {memo['description_string']}")
+        print(f"matching database entry was found, no vector created: {matching_dstrings[0]['description_string']}")
+        return
+
+    # If the description_string does not exist
+    # Loading faiss index if it exists
+    if os.path.isfile("/Users/ryuparish/Code/memosearch/src/backend/src/instance/faiss.index"):
+        faiss_index = faiss.read_index("/Users/ryuparish/Code/memosearch/src/backend/src/instance/faiss.index")
+
+        model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+        sentence_embedding = model.encode(memo['description_string'])
+        print(f"The size of the index before is: {faiss_index.ntotal}")
+        faiss_index.add_with_ids(np.array([sentence_embedding]), np.array([id]))
+        print(f"The size of the index after is: {faiss_index.ntotal}")
+        faiss.write_index(faiss_index, "/Users/ryuparish/Code/memosearch/src/backend/src/instance/faiss.index")
+    else:
+        print("Faiss file could be found on the python backend.")
+

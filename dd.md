@@ -184,3 +184,9 @@ Log:
     need to have a quick load time for the database since we need to load it everytime in order to 
     use upon a search. Moreover, we need to have some sort of design to the vector database 
     operations.
+
+  31/04/24: Dealing with Sphinx documentation
+
+    - The documentation for Sphinx doesn't work for decorated functions that can't be 
+    resolved (such as mock libraries used by decorators). We need to figure out a way 
+    to get the libraries non-mocked, or somehow find a way to get past the decorator problem.

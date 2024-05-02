@@ -1,10 +1,13 @@
 import os
-from Flask import jsonify, send_file
-from Flask import Blueprint, request
+from flask import jsonify, send_file
+from flask import Blueprint, request
 from flask_cors import cross_origin
 from PIL import Image
 from thefuzz import fuzz
 from .db import get_db
+import faiss
+import numpy as np
+from sentence_transformers import SentenceTransformer
 
 retrieve = Blueprint('retrieve', __name__, template_folder='templates')
 
@@ -34,7 +37,6 @@ def views():
         uniq_views = [row["view"] for row in uniq_views]
         all_views = all_views.union(set(uniq_views))
         return sorted(list(all_views))
-
 
 @retrieve.route("/get_image/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
@@ -80,7 +82,7 @@ def open_link(id):
 
     # Process request (return dict)
     if request.method == "GET":
-        return {
+        res = {
             "site_name": request_data["site_name"],
             "about": request_data["about"],
             "date": request_data["date"],
@@ -88,7 +90,10 @@ def open_link(id):
             "related_activity": request_data["related_activity"],
             "id": request_data["id"],
             "view": request_data["view"],
+            "description_string": request_data["description_string"],
         }
+        print(get_similar_memos(res))
+        return res
 
 
 @retrieve.route("/open_screenshot/<id>", methods=["GET", "OPTIONS"])
@@ -108,7 +113,7 @@ def open_screenshot(id):
 
     # Process request (return dict)
     if request.method == "GET":
-        return {
+        res = {
             "view": request_data["view"],
             "caption": request_data["caption"],
             "text": request_data["text_in_image"],
@@ -116,8 +121,11 @@ def open_screenshot(id):
             "about": request_data["about"],
             "date": request_data["date"],
             "related_activity": request_data["related_activity"],
-            "id": request_data["id"]
+            "id": request_data["id"],
+            "description_string": request_data["description_string"],
         }
+        print(get_similar_memos(res))
+        return res
 
 
 @retrieve.route("/open_note/<id>", methods=["GET", "OPTIONS"])
@@ -137,18 +145,21 @@ def open_note(id):
 
     # Process request (return dict)
     if request.method == "GET":
-        return {
+        res = {
             "view": request_data["view"],
             "title": request_data["title"],
             "about": request_data["about"],
             "date": request_data["date"],
             "related_activity": request_data["related_activity"],
-            "id": request_data["id"]
+            "id": request_data["id"],
+            "description_string": request_data["description_string"],
         }
+        print(get_similar_memos(res))
+        return res
 
 
 @retrieve.route("/topfive", methods=["GET", "OPTIONS"])
-@cross_origin(origin='*',headers=['Content-Type','Authorization'])
+@cross_origin(origin='*', headers=['Content-Type', 'Authorization'])
 def topfive():
     """Returns top five most recent links, notes, and screenshot.
 
@@ -324,10 +335,64 @@ def search():
         return response
 
 
-def get_similar_memos(id):
+
+def get_similar_memos(memo):
     """Finds similar memos to the corresponding memo for the given id.
 
     :returns: List of JSONs/memos that match the given memo.
     :rtype: list(JSON)
     """
-    return
+    if memo['description_string'] is not None:
+        faiss_index = faiss.read_index("/Users/ryuparish/Code/memosearch/src/backend/src/instance/faiss.index")
+        model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+        sentence_embedding = model.encode(memo['description_string'])
+        D, I = faiss_index.search(np.array([sentence_embedding]), 10)
+
+        # Calling the database for the matching indexes
+        db = get_db()
+        print(f"Here is the I[0] {I[0]} and it's inner type: {type(I[0][0])}")
+
+        # Retrieve and parse neighbors from notes
+        nearest_note_neighbors = db.execute(
+            'SELECT id FROM notes WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
+            (*[str(x) for x in I[0]],)
+        )
+        print(f"Here is neighbors: {nearest_note_neighbors}")
+        notes_parsed = []
+        for note in nearest_note_neighbors:
+            new_addition = {}
+            for key in note.keys():
+                new_addition[key] = note[key]
+            print("found a neighbor for note")
+            notes_parsed.append(new_addition)
+
+        # Retrieve and parse neighbors from screenshots
+        nearest_screenshot_neighbors = db.execute(
+            'SELECT id FROM screenshots WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
+            (*[str(x) for x in I[0]],)
+        ).fetchall()
+        screenshots_parsed = []
+        for screenshot in nearest_screenshot_neighbors:
+            new_addition = {}
+            for key in note.keys():
+                new_addition[key] = screenshot[key]
+            print("found a neighbor for screenshots")
+            screenshots_parsed.append(new_addition)
+
+        # Retrieve and parse neighbors from links
+        nearest_link_neighbors = db.execute(
+            'SELECT id FROM links WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
+            (*[str(x) for x in I[0]],)
+        ).fetchall()
+        links_parsed = []
+        for link in nearest_link_neighbors:
+            new_addition = {}
+            for key in link.keys():
+                new_addition[key] = link[key]
+            print("found a neighbor for links")
+            links_parsed.append(new_addition)
+
+        neighbors = {"notes:" : notes_parsed, "links": links_parsed, "screenshots" : screenshots_parsed}
+        return neighbors
+    print("get similar memos got a null description_string")
+    return {"notes:" : [], "links": [], "screenshots" : []}
