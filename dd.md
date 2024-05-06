@@ -190,3 +190,12 @@ Log:
     - The documentation for Sphinx doesn't work for decorated functions that can't be 
     resolved (such as mock libraries used by decorators). We need to figure out a way 
     to get the libraries non-mocked, or somehow find a way to get past the decorator problem.
+
+  05/05/24: Dealing with streamlining adding content
+
+    - The ideal way to get all the content we want to submit is by having
+        - A system to get all notes on my IPhone
+        - A system to get all the screenshots from my iphone and from my mac 
+        - A system to get all the links in my firefox folder
+        - Ideally, all in one place.
+
