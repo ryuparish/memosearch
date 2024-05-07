@@ -6,7 +6,8 @@ from flask import current_app, g
 def get_db():
     """Get the global database connection (sqlite3)
 
-    :return
+    :returns: global flask database object (g.db)
+    :rtype: sqlite3.Connection
     """
     if 'db' not in g:
         g.db = sqlite3.connect(
@@ -19,9 +20,11 @@ def get_db():
 
 
 def close_db(e=None):
-    """
-    Close connection if connection is still present
+    """Close connection if connection is still present
     We use e to catch errors that cause a teardown.
+
+    :param e: Optional parameter because of close_db bug. Defaults to None
+    :returns: None
     """
     db = g.pop('db', None)
 
@@ -31,7 +34,9 @@ def close_db(e=None):
 
 def init_db():
     """
-    Initialize database and load with schema sql file
+    Initialize database and load with schema sql file (schema.sql)
+
+    :returns: None
     """
     db = get_db()
 
@@ -43,6 +48,8 @@ def init_db():
 def init_db_command():
     """
     Clear the existing data and create new tables.
+
+    :returns: None
     """
     init_db()
     click.echo('Initialized the database.')
@@ -52,7 +59,9 @@ def init_app(app):
     """
     Setup teardown and add command to the application cli interface.
 
-    :param app Flask.app: The flask app to initialize
+    :param app: The flask app to initialize.
+    :type: Flask.app
+    :returns: None
     """
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)

@@ -15,10 +15,12 @@ upload = Blueprint('upload', __name__, template_folder='templates')
 @upload.route("/delete_screenshot/<id>", methods=["GET", "OPTIONS"])
 @cross_origin()
 def delete_screenshot(id):
-    """Handles deleting a screenshot with the given screenshot id.
+    """
+    delete_screenshot(id)
+    Handles deleting a screenshot with the given screenshot id. This route deletes the screenshot data of the screenshot with the given id.
 
-    GET: This route deletes the screenshot data of the screenshot with the given id.
-
+    :param id: The corresponding id to the screenshot we want to delete.
+    :type: int
     :returns: String that shows the successful delete message.
     :rtype: str
     """
@@ -35,9 +37,10 @@ def delete_screenshot(id):
 @cross_origin()
 def update_screenshot(id):
     """Handles updating a screenshot with the given screenshot id.
+    This route updates the screenshot data of the screenshot with the given id.
 
-    POST: This route updates the screenshot data of the screenshot with the given id.
-
+    :param id: The corresponding id to the screenshot we want to update.
+    :type: int
     :returns: String that shows the successful update message.
     :rtype: str
     """
@@ -72,9 +75,10 @@ def update_screenshot(id):
 @cross_origin()
 def delete_note(id):
     """Handles deleting a note with the given note id.
+    This route deletes the note data of the note with the given id.
 
-    GET: This route deletes the note data of the note with the given id.
-
+    :param id: The corresponding id to the note we want to delete.
+    :type: int
     :returns: String that shows the successful delete message.
     :rtype: str
     """
@@ -91,9 +95,10 @@ def delete_note(id):
 @cross_origin()
 def update_note(id):
     """Handles updating a note with the given note id.
+    This route updates the note data of the note with the given id.
 
-    POST: This route updates the note data of the note with the given id.
-
+    :param id: The corresponding id to the note we want to update.
+    :type: int
     :returns: String that shows the successful update message.
     :rtype: str
     """
@@ -126,9 +131,10 @@ def update_note(id):
 @cross_origin()
 def delete_link(id):
     """Handles deleting a link with the given link id.
+    This route deletes the link data of the link with the given id.
 
-    GET: This route deletes the link data of the link with the given id.
-
+    :param id: The corresponding id to the link we want to delete.
+    :type: int
     :returns: String that shows the successful delete message.
     :rtype: str
     """
@@ -145,9 +151,10 @@ def delete_link(id):
 @cross_origin()
 def update_link(id):
     """Handles updating a link with the given link id.
+    This route updates the link data of the link with the given id.
 
-    POST: This route updates the link data of the link with the given id.
-
+    :param id: The corresponding id to the link we want to update.
+    :type: int
     :returns: String that shows the successful update message.
     :rtype: str
     """
@@ -174,7 +181,6 @@ def update_link(id):
             )
         )
         db.commit()
-        print(f"{id} has been updated")
         return f"{id} has been updated"
 
 
@@ -182,10 +188,8 @@ def update_link(id):
 @cross_origin()
 def screenshots():
     """Handles the screenshot route.
-
     GET: This route gets information about the screenshot
     and returns it in a dictionary.
-
     POST: This route adds information about the given screenshot
     and returns the result in a dictionary.
 
@@ -239,7 +243,7 @@ def screenshots():
         }
 
         # Do not prevent duplicates
-        save_vector(id, new_dict_screenshot, "screenshot")
+        save_vector(new_dict_screenshot, "screenshot")
         db.execute("""
             INSERT INTO screenshots
             VALUES(?,?,?,?,?,?,?,?,?)
@@ -266,10 +270,8 @@ def screenshots():
 @cross_origin()
 def links():
     """Handles the link route.
-
     GET: This route gets information about the link
     and returns it in a dictionary.
-
     POST: This route adds information about the link
     and returns the result in a dictionary.
 
@@ -316,7 +318,7 @@ def links():
                 'SELECT * FROM links WHERE link = ?', (link,)).fetchall()
             if len(link_query) == 0:
                 print("Query Link is not yet known, adding to database")
-                save_vector(id, new_dict_link, "link")
+                save_vector(new_dict_link, "link")
                 db.execute(
                     '''
                     INSERT INTO links
@@ -337,10 +339,8 @@ def links():
 @cross_origin()
 def notes():
     """Handles the note route.
-
     GET: This route gets information about the note
     and returns it in a dictionary.
-
     POST: This route adds information about the note
     and returns the result in a dictionary.
 
@@ -354,11 +354,9 @@ def notes():
     if request.method == "POST":
         # Check for empty note
         if len(request_data["noteTitle"]) == 0:
-            print(f"Error, note title is empty: {request_data['noteTitle']}")
             return f"Error, note title is empty: {request_data['noteTitle']}"
 
         # Data for database.
-        print(f"Here is the request_data: {request_data}")
         id = random.getrandbits(16)
         noteTitle = request_data["noteTitle"]
         about = request_data["noteAbout"]
@@ -390,7 +388,7 @@ def notes():
 
             if len(note) == 0:
                 print("Query Note is not yet known, adding to database and writing file")
-                save_vector(id, new_dict_note, "note")
+                save_vector(new_dict_note, "note")
                 db.execute("""
                     INSERT INTO notes
                     VALUES(?,?,?,?,?,?,?)
@@ -412,11 +410,15 @@ def notes():
             response = jsonify([new_dict_note])
             return response
 
-def save_vector(id, memo, memo_type):
+def save_vector(memo, memo_type):
     """Saves the given memo into the vector database with the given id if not yet saved.
 
-    :returns:
-    :rtype:
+    :param memo: the memo we want to encode and save
+    :type: JSON
+    :param memotype: The corresponding memotype (note,ss,link) to the memo we want to encode.
+    :type: str
+    :raises ValueError: Invalid memo_type option from the below list
+    :returns: None
     """
     memotypes = ["note", "screenshot", "link"]
 

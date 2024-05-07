@@ -191,7 +191,6 @@ export default function LinkEditor() {
             <input type="text" id="view" name="view" onChange={(e) => setView(e.target.value)} value={view} /><br /><br />
             <label for="date">Date:</label>
             <p>{date}</p><br />
-            <SearchResults customSearchResults={similar_results}/>
             <Button type="submit" class="btn btn-info" onClick={(e) => handleSubmit(e)}>Update</Button>
             &nbsp;&nbsp;
             <Button style={{ "float": "right" }} class="btn btn-danger" onClick={(e) => {
@@ -199,6 +198,7 @@ export default function LinkEditor() {
             }}>Delete</Button>
             <br /><br />
           </form>
+          <SearchResults customSearchResults={similar_results}/>
         </div>
       </body>
     </div>

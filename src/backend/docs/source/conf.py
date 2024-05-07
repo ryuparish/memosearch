@@ -9,9 +9,11 @@ import os
 import sys
 basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, basedir)
+#sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
+#sys.path.insert(0, os.path.abspath(os.path.join("..")))
 sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src")))
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
-sys.path.insert(0, os.path.abspath(os.path.join("..")))
+#sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src", "memosearch")))
+print(sys.executable)
 
 project = 'Memosearch'
 copyright = '2024, Ryu Parish'
@@ -22,8 +24,7 @@ release = '1.0.0'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
-autodoc_mock_imports = ["flask", "flask_cors",
-                        "click", "Flask", "PIL", "thefuzz", "dotenv"]
+autodoc_mock_imports = []
 
 templates_path = ['_templates']
 exclude_patterns = []

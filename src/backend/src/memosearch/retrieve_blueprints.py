@@ -21,7 +21,7 @@ retrieve = Blueprint('retrieve', __name__, template_folder='templates')
 def views():
     """Handles the views route.
 
-    :return: List of strings that represent the views in the database.
+    :returns: List of strings that represent the views in the database.
     :rtype: list(str)
     """
     print(f"IN VIEWS here is the request: {request}")
@@ -44,11 +44,11 @@ def views():
 @cross_origin()
 def get_image(id):
     """Handles obtaining the image data from the saved directory when loading screenshot data.
+    This route returns a jpeg image (700, 700) corresponding to the given screenshot id.
 
-    GET: This route returns a jpeg image (700, 700) corresponding to the given screenshot id.
-
-    :param id int: screenshot id
-    :returns: jpeg file
+    :param id: screenshot id
+    :type: int
+    :returns: jpeg image file
     :rtype: bytes
     """
 
@@ -71,11 +71,11 @@ def get_image(id):
 @cross_origin()
 def open_link(id):
     """Returns link information with the given id number.
+    This route returns link information to display for link data.
 
-    GET: This route returns link information to display for link data.
-
-    :param id int: link id
-    :returns:   JSON representation of what link was saved in database
+    :param id: link id
+    :type: int
+    :returns: JSON representation of what link was saved in database
     :rtype: dict (JSON)
     """
     db = get_db()
@@ -102,10 +102,10 @@ def open_link(id):
 @cross_origin()
 def open_screenshot(id):
     """Returns screenshot information with the given id number.
+    This route returns screenshot information to display for screenshot data.
 
-    GET: This route returns screenshot information to display for screenshot data.
-
-    :param id int: screenshot id
+    :param id: screenshot id
+    :type: int
     :returns:   JSON representation of what screenshot was saved in database
     :rtype: dict (JSON)
     """
@@ -134,10 +134,10 @@ def open_screenshot(id):
 @cross_origin()
 def open_note(id):
     """Returns note information with the given id number.
+    This route returns note information to display for note data.
 
-    GET: This route returns note information to display for note data.
-
-    :param id int: note id
+    :param id: note id
+    :type: int
     :returns:   JSON representation of what note was saved in database
     :rtype: dict (JSON)
     """
@@ -164,8 +164,7 @@ def open_note(id):
 @cross_origin(origin='*', headers=['Content-Type', 'Authorization'])
 def topfive():
     """Returns top five most recent links, notes, and screenshot.
-
-    GET: This route returns top five items of each content type.
+    This route returns top five items of each content type.
 
     :returns:   JSON with each content type mapped to it's top five most recent items
     :rtype: dict (JSON)
@@ -215,8 +214,7 @@ def topfive():
 @cross_origin()
 def search():
     """Handles the search route.
-
-    POST: This route returns all the matching results from the query.
+    This route returns all the matching results from the query.
 
     :returns:   JSON representation of what was saved in database
     :rtype: list(dict (JSON))
@@ -302,10 +300,12 @@ def search():
         # Adding title-matched notes to the result list
         if ("notes" in request_data["content"]):
             all_notes = []
+
             if request_data["view"] == "all":
                 all_notes = db.execute(
                     'SELECT * FROM notes'
                 )
+
             else:
                 all_notes = db.execute(
                     '''
@@ -314,6 +314,7 @@ def search():
                     ''',
                     (request_data["view"],)
                 )
+
             for note in all_notes:
                 token_set_score = fuzz.token_set_ratio(
                     note["title"], request_data["search"])
@@ -341,9 +342,13 @@ def search():
 def get_similar_memos(memo):
     """Finds similar memos to the corresponding memo for the given id.
 
+    :param: JSON memo
+    :type: JSON
     :returns: List of JSONs/memos that match the given memo.
     :rtype: list(JSON)
     """
+
+    # Null check for the description string used to find similar memos
     if memo['description_string'] is not None:
         faiss_index = faiss.read_index("/Users/ryuparish/Code/memosearch/src/backend/src/instance/faiss.index")
         model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
@@ -352,23 +357,22 @@ def get_similar_memos(memo):
 
         # Calling the database for the matching indexes
         db = get_db()
-        print(f"Here is the I[0] {I[0]} and it's inner type: {type(I[0][0])}")
-        print(f"Here is the D {D}")
 
         # Retrieve and parse neighbors from notes
         nearest_note_neighbors = db.execute(
             'SELECT * FROM notes WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
             (*[str(x) for x in I[0]],)
         )
-        print(f"Here is neighbors: {nearest_note_neighbors}")
+
         notes_parsed = {}
+
+        # Parse notes
         for note in nearest_note_neighbors:
             new_addition = {}
             for key in note.keys():
                 new_addition[key] = note[key]
             new_addition["display_field"] = new_addition["title"]
             new_addition["route"] = "note"
-            print("found a neighbor for note")
             notes_parsed[new_addition["id"]] = new_addition
 
         # Retrieve and parse neighbors from screenshots
@@ -377,13 +381,14 @@ def get_similar_memos(memo):
             (*[str(x) for x in I[0]],)
         ).fetchall()
         screenshots_parsed = {}
+
+        # Parse screenshots
         for screenshot in nearest_screenshot_neighbors:
             new_addition = {}
             for key in screenshot.keys():
                 new_addition[key] = screenshot[key]
             new_addition["display_field"] = new_addition["caption"]
             new_addition["route"] = "screenshot"
-            print("found a neighbor for screenshots")
             screenshots_parsed[new_addition["id"]] = new_addition
 
         # Retrieve and parse neighbors from links
@@ -391,21 +396,21 @@ def get_similar_memos(memo):
             'SELECT * FROM links WHERE id IN ({}) '.format(', '.join('?' for _ in range(len(I[0])))),
             (*[str(x) for x in I[0]],)
         ).fetchall()
+
         links_parsed = {}
+
+        # Parse links
         for link in nearest_link_neighbors:
             new_addition = {}
             for key in link.keys():
                 new_addition[key] = link[key]
             new_addition["display_field"] = new_addition["link"]
             new_addition["route"] = "link"
-            print("found a neighbor for links")
             links_parsed[new_addition["id"]] = new_addition
 
         # Sort the neighbors in the return object (I[0] is in order)
         neighbors = []
         for idx in I[0]:
-            print(f"Looking for: {str(idx)} of type: {type(str(idx))}")
-            print(f"notes_parsed elements have type: {type(list(notes_parsed.keys())[0])}")
             if idx in links_parsed:
                 neighbors.append(links_parsed[idx])
             elif idx in screenshots_parsed:
@@ -416,7 +421,6 @@ def get_similar_memos(memo):
                 print("Never found the returned index in dictionaries: " + str(idx))
                 print("Keys of notes: " + json.dumps(notes_parsed))
 
-        print(f"Returning: {neighbors}")
         return neighbors
     print("get similar memos got a null description_string")
     return []

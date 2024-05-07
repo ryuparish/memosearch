@@ -20,9 +20,6 @@ memosearch.retrieve\_blueprints module
    :undoc-members:
    :show-inheritance:
 
-   .. autofunction:: views(self)
-   .. autofunction:: get_image(id)
-
 memosearch.upload\_blueprints module
 ------------------------------------
 

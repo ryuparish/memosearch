@@ -1,25 +1,27 @@
+
 <!DOCTYPE html>
 
-<html lang="en" data-content_root="./">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>memosearch package &#8212; Memosearch 1.0.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=8d563738"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="src" href="modules.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
-
   
-  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head><body>
   
@@ -32,67 +34,104 @@
           <div class="body" role="main">
             
   <section id="memosearch-package">
-<h1>memosearch package<a class="headerlink" href="#memosearch-package" title="Link to this heading">¶</a></h1>
+<h1>memosearch package<a class="headerlink" href="#memosearch-package" title="Permalink to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-memosearch.db">
-<span id="memosearch-db-module"></span><h2>memosearch.db module<a class="headerlink" href="#module-memosearch.db" title="Link to this heading">¶</a></h2>
+<span id="memosearch-db-module"></span><h2>memosearch.db module<a class="headerlink" href="#module-memosearch.db" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="memosearch.db.close_db">
-<span class="sig-prename descclassname"><span class="pre">memosearch.db.</span></span><span class="sig-name descname"><span class="pre">close_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.db.close_db" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">memosearch.db.</span></span><span class="sig-name descname"><span class="pre">close_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.db.close_db" title="Permalink to this definition">¶</a></dt>
 <dd><p>Close connection if connection is still present
 We use e to catch errors that cause a teardown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>e</strong> – Optional parameter because of close_db bug. Defaults to None</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="memosearch.db.get_db">
-<span class="sig-prename descclassname"><span class="pre">memosearch.db.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.db.get_db" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">memosearch.db.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.db.get_db" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the global database connection (sqlite3)</p>
-<p>:return</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>global flask database object (g.db)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sqlite3.Connection</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="memosearch.db.init_app">
-<span class="sig-prename descclassname"><span class="pre">memosearch.db.</span></span><span class="sig-name descname"><span class="pre">init_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.db.init_app" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">memosearch.db.</span></span><span class="sig-name descname"><span class="pre">init_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.db.init_app" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setup teardown and add command to the application cli interface.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>Flask.app</strong> (<em>app</em>) – The flask app to initialize</p>
+<dd class="field-odd"><p><strong>app</strong> – The flask app to initialize.</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Flask.app</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="memosearch.db.init_db">
-<span class="sig-prename descclassname"><span class="pre">memosearch.db.</span></span><span class="sig-name descname"><span class="pre">init_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.db.init_db" title="Link to this definition">¶</a></dt>
-<dd><p>Initialize database and load with schema sql file</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="memosearch.db.init_db_command">
-<span class="sig-prename descclassname"><span class="pre">memosearch.db.</span></span><span class="sig-name descname"><span class="pre">init_db_command</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.db.init_db_command" title="Link to this definition">¶</a></dt>
-<dd><p>Clear the existing data and create new tables.</p>
+<span class="sig-prename descclassname"><span class="pre">memosearch.db.</span></span><span class="sig-name descname"><span class="pre">init_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.db.init_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize database and load with schema sql file (schema.sql)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
 <section id="module-memosearch.retrieve_blueprints">
-<span id="memosearch-retrieve-blueprints-module"></span><h2>memosearch.retrieve_blueprints module<a class="headerlink" href="#module-memosearch.retrieve_blueprints" title="Link to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="memosearch.retrieve_blueprints.views">
-<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">views</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.views" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<span id="memosearch-retrieve-blueprints-module"></span><h2>memosearch.retrieve_blueprints module<a class="headerlink" href="#module-memosearch.retrieve_blueprints" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="memosearch.retrieve_blueprints.get_image">
-<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">get_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.get_image" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">get_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.get_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles obtaining the image data from the saved directory when loading screenshot data.
+This route returns a jpeg image (700, 700) corresponding to the given screenshot id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – screenshot id</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>jpeg image file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="memosearch.retrieve_blueprints.get_similar_memos">
-<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">get_similar_memos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.get_similar_memos" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">get_similar_memos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">memo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.get_similar_memos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds similar memos to the corresponding memo for the given id.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON memo</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON</p>
+</dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List of JSONs/memos that match the given memo.</p>
 </dd>
@@ -102,15 +141,327 @@ We use e to catch errors that cause a teardown.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.retrieve_blueprints.open_link">
+<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">open_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.open_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns link information with the given id number.
+This route returns link information to display for link data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – link id</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON representation of what link was saved in database</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict (JSON)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.retrieve_blueprints.open_note">
+<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">open_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.open_note" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns note information with the given id number.
+This route returns note information to display for note data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – note id</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON representation of what note was saved in database</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict (JSON)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.retrieve_blueprints.open_screenshot">
+<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">open_screenshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.open_screenshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns screenshot information with the given id number.
+This route returns screenshot information to display for screenshot data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – screenshot id</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON representation of what screenshot was saved in database</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict (JSON)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.retrieve_blueprints.search">
+<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the search route.
+This route returns all the matching results from the query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON representation of what was saved in database</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list(dict (JSON))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.retrieve_blueprints.topfive">
+<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">topfive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.topfive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns top five most recent links, notes, and screenshot.
+This route returns top five items of each content type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON with each content type mapped to it’s top five most recent items</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict (JSON)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.retrieve_blueprints.views">
+<span class="sig-prename descclassname"><span class="pre">memosearch.retrieve_blueprints.</span></span><span class="sig-name descname"><span class="pre">views</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.retrieve_blueprints.views" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the views route.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of strings that represent the views in the database.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-memosearch.upload_blueprints">
-<span id="memosearch-upload-blueprints-module"></span><h2>memosearch.upload_blueprints module<a class="headerlink" href="#module-memosearch.upload_blueprints" title="Link to this heading">¶</a></h2>
+<span id="memosearch-upload-blueprints-module"></span><h2>memosearch.upload_blueprints module<a class="headerlink" href="#module-memosearch.upload_blueprints" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.upload_blueprints.delete_link">
+<span class="sig-prename descclassname"><span class="pre">memosearch.upload_blueprints.</span></span><span class="sig-name descname"><span class="pre">delete_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.upload_blueprints.delete_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles deleting a link with the given link id.
+This route deletes the link data of the link with the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – The corresponding id to the link we want to delete.</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>String that shows the successful delete message.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.upload_blueprints.delete_note">
+<span class="sig-prename descclassname"><span class="pre">memosearch.upload_blueprints.</span></span><span class="sig-name descname"><span class="pre">delete_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.upload_blueprints.delete_note" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles deleting a note with the given note id.
+This route deletes the note data of the note with the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – The corresponding id to the note we want to delete.</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>String that shows the successful delete message.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.upload_blueprints.delete_screenshot">
+<span class="sig-prename descclassname"><span class="pre">memosearch.upload_blueprints.</span></span><span class="sig-name descname"><span class="pre">delete_screenshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.upload_blueprints.delete_screenshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles deleting a screenshot with the given screenshot id. This route deletes the screenshot data of the screenshot with the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – The corresponding id to the screenshot we want to delete.</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>String that shows the successful delete message.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.upload_blueprints.links">
+<span class="sig-prename descclassname"><span class="pre">memosearch.upload_blueprints.</span></span><span class="sig-name descname"><span class="pre">links</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.upload_blueprints.links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the link route.
+GET: This route gets information about the link
+and returns it in a dictionary.
+POST: This route adds information about the link
+and returns the result in a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON representation of what was saved in database</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list(dict (JSON))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.upload_blueprints.notes">
+<span class="sig-prename descclassname"><span class="pre">memosearch.upload_blueprints.</span></span><span class="sig-name descname"><span class="pre">notes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.upload_blueprints.notes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the note route.
+GET: This route gets information about the note
+and returns it in a dictionary.
+POST: This route adds information about the note
+and returns the result in a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON representation of what was saved in database</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list(dict (JSON))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.upload_blueprints.save_vector">
+<span class="sig-prename descclassname"><span class="pre">memosearch.upload_blueprints.</span></span><span class="sig-name descname"><span class="pre">save_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">memo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memo_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.upload_blueprints.save_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the given memo into the vector database with the given id if not yet saved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>memo</strong> – the memo we want to encode and save</p></li>
+<li><p><strong>memotype</strong> – The corresponding memotype (note,ss,link) to the memo we want to encode.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON</p>
+</dd>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Invalid memo_type option from the below list</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.upload_blueprints.screenshots">
+<span class="sig-prename descclassname"><span class="pre">memosearch.upload_blueprints.</span></span><span class="sig-name descname"><span class="pre">screenshots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.upload_blueprints.screenshots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the screenshot route.
+GET: This route gets information about the screenshot
+and returns it in a dictionary.
+POST: This route adds information about the given screenshot
+and returns the result in a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON representation of what was saved in database</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list(dict (JSON))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.upload_blueprints.update_link">
+<span class="sig-prename descclassname"><span class="pre">memosearch.upload_blueprints.</span></span><span class="sig-name descname"><span class="pre">update_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.upload_blueprints.update_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles updating a link with the given link id.
+This route updates the link data of the link with the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – The corresponding id to the link we want to update.</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>String that shows the successful update message.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.upload_blueprints.update_note">
+<span class="sig-prename descclassname"><span class="pre">memosearch.upload_blueprints.</span></span><span class="sig-name descname"><span class="pre">update_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.upload_blueprints.update_note" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles updating a note with the given note id.
+This route updates the note data of the note with the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – The corresponding id to the note we want to update.</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>String that shows the successful update message.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="memosearch.upload_blueprints.update_screenshot">
+<span class="sig-prename descclassname"><span class="pre">memosearch.upload_blueprints.</span></span><span class="sig-name descname"><span class="pre">update_screenshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.upload_blueprints.update_screenshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles updating a screenshot with the given screenshot id.
+This route updates the screenshot data of the screenshot with the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – The corresponding id to the screenshot we want to update.</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>String that shows the successful update message.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-memosearch">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-memosearch" title="Link to this heading">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-memosearch" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="memosearch.create_app">
-<span class="sig-prename descclassname"><span class="pre">memosearch.</span></span><span class="sig-name descname"><span class="pre">create_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.create_app" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">memosearch.</span></span><span class="sig-name descname"><span class="pre">create_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#memosearch.create_app" title="Permalink to this definition">¶</a></dt>
 <dd><p>Application factory for memosearch application.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -157,7 +508,7 @@ We use e to catch errors that cause a teardown.</p>
   </ul></li>
 </ul>
 </div>
-<search id="searchbox" style="display: none" role="search">
+<div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
@@ -165,7 +516,7 @@ We use e to catch errors that cause a teardown.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</search>
+</div>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -180,11 +531,11 @@ We use e to catch errors that cause a teardown.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2024, Ryu Parish.
+      &copy;2024, Ryu Parish.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/memosearch.rst.txt"

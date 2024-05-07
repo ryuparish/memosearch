@@ -184,12 +184,16 @@ Log:
     need to have a quick load time for the database since we need to load it everytime in order to 
     use upon a search. Moreover, we need to have some sort of design to the vector database 
     operations.
+        - SOLUTION: With a small enough model, load times aren't that long at all.
 
   31/04/24: Dealing with Sphinx documentation
 
     - The documentation for Sphinx doesn't work for decorated functions that can't be 
     resolved (such as mock libraries used by decorators). We need to figure out a way 
     to get the libraries non-mocked, or somehow find a way to get past the decorator problem.
+        - SOLUTION: Turns out that I was using a python version within the brew-installed Sphinx
+        and it did not recognize the conda environments libraries and was looking at sys.path without
+        looking at my current conda library.
 
   05/05/24: Dealing with streamlining adding content
 
