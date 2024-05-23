@@ -457,7 +457,7 @@ def save_vector(memo, memo_type):
         sentence_embedding = model.encode(memo['description_string'])
         print(f"The size of the index before is: {faiss_index.ntotal}")
         print(f"Id is of type: {type(id)}")
-        faiss_index.add_with_ids(np.array([sentence_embedding]), np.array([id]))
+        faiss_index.add_with_ids(np.array([sentence_embedding]), np.array([memo["id"]]))
         print(f"The size of the index after is: {faiss_index.ntotal}")
         faiss.write_index(faiss_index, "/Users/ryuparish/Code/memosearch/src/backend/src/instance/faiss.index")
     else:

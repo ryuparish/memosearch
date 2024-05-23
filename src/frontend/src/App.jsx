@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import './App.css';
 import MainPage from "./components/MainPage";
 import LinksPage from "./components/LinksPage";
@@ -115,20 +115,16 @@ export default function App() {
     calendarEvents,
     setCalendarEvents,
   }
+
   
   // Persist the access token until it expires.
   useEffect(() => {
-      console.log("About to json parse the window storage because init: " + JSON.stringify(window.sessionStorage));
       setUser(JSON.parse(window.sessionStorage.getItem("user")));
-      console.log("About to json parse the window storage because init2");
-      console.log("Found this in user in window session storage: " + JSON.stringify(JSON.parse(window.sessionStorage.getItem("user"))));
     }, []);
 
   useEffect(() => {
     if (user){
       window.sessionStorage.setItem("user", JSON.stringify(user));
-      console.log("About to json parse the window storage because user change");
-      console.log("Set this in user in window session storage: " + JSON.parse(window.sessionStorage.getItem("user")))
     }
   }, [user]);
 
@@ -161,16 +157,15 @@ export default function App() {
               id: events[i].created,
               title: events[i].summary || "something",
               start: events[i].start.dateTime,
-              end: events[i].end.dateTime
+              end: events[i].end.dateTime,
             }
           }
           setCalendarEvents(newCalendarEvents);
         }
 
         // Set the events in the calendar if not added yet.
-        console.log(events);
-        console.log(calendarEvents);
       }).catch(err => {
+        console.log(err);
         setUser(null);
       });
     }
@@ -189,7 +184,6 @@ export default function App() {
         for (let i = 0; i < data.length; i++) {
           init_views.push(data[i]);
         }
-        console.log("Got back this from /views: " + init_views);
         setViews(init_views);
       })
       .catch((error) => console.log(error));

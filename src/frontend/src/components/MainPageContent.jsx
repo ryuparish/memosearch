@@ -35,10 +35,6 @@ export default function MainPageContent() {
     onError: (error) => console.log('Login Failed:', error),
   });
 
-  const onAfterRenderEvent = (event) => {
-    console.log(event.title);
-  };
-
   return (
     <div>
       <head>
@@ -89,11 +85,10 @@ export default function MainPageContent() {
               view="week"
               events={Object.values(calendarEvents)}
               month={{
-                visibleWeeksCount: 2,
+                visibleWeeksCount: 4,
               }}
               useFormPopup={true}
               useDetailPopup={true}
-              onAfterRenderEvent={onAfterRenderEvent}
             />
             <button class="btn btn-info" onClick={() => login()}>Google Sign In</button>
             <br/>
