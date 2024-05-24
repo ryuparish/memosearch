@@ -18,7 +18,7 @@ export default function LinkTable() {
   } = useContext(AppContext);
 
   const date = new Date();
-  const cleaned_date = date.toLocaleString();
+  const cleaned_date = date.toISOString();
 
   /**
    * Function for loading links file into links state.

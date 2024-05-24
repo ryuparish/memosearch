@@ -22,7 +22,7 @@ export default function ScreenshotsPage() {
   } = useContext(AppContext);
 
   const date = new Date();
-  const cleaned_date = date.toLocaleString();
+  const cleaned_date = date.toISOString();
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
   /**

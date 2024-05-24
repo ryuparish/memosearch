@@ -223,7 +223,6 @@ def screenshots():
         # the database.
         about = request_form["about"]
         date = request_form["date"]
-        print(f"Here is the date that we received: {date}")
         caption = request_form["caption"]
         text_in_image = request_form["text"]
         path = destination
@@ -262,7 +261,6 @@ def screenshots():
                    )
                   )
         db.commit()
-        print(f"Made it here. Here is the object to return {[new_dict_screenshot]}")
 
         response = jsonify([new_dict_screenshot])
         return response

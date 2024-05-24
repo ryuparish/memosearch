@@ -20,7 +20,7 @@ export default function NotesPage() {
 
   // Get current date and insert into input field.
   const date = new Date();
-  const cleaned_date = date.toLocaleString();
+  const cleaned_date = date.toISOString();
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
   // Get the submitted values and call the python backend
