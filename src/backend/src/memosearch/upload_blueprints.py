@@ -223,12 +223,13 @@ def screenshots():
         # the database.
         about = request_form["about"]
         date = request_form["date"]
+        print(f"Here is the date that we received: {date}")
         caption = request_form["caption"]
         text_in_image = request_form["text"]
         path = destination
         related_activity = request_form["activity"]
         view = request_form["view"]
-        description_string = request_form["description_string"]
+        description_string = f"{about[:150]} {related_activity} {view}"
 
         new_dict_screenshot = {
             "id": id,
@@ -239,7 +240,7 @@ def screenshots():
             "path": path,
             "related_activity": related_activity,
             "view": view,
-            "description_string": description_string,
+            "description_string" : description_string,
         }
 
         # Do not prevent duplicates
@@ -259,8 +260,9 @@ def screenshots():
                        view,
                        description_string,
                    )
-                   )
+                  )
         db.commit()
+        print(f"Made it here. Here is the object to return {[new_dict_screenshot]}")
 
         response = jsonify([new_dict_screenshot])
         return response
@@ -363,7 +365,7 @@ def notes():
         date = request_data["noteDate"]
         related_activity = request_data["noteActivity"]
         view = request_data["view"]
-        description_string = request_data["description_string"]
+        description_string = f"{about[:150]} {related_activity} {view}"
 
         # Getting data from request and adding to the database.
         new_dict_note = {

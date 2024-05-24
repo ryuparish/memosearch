@@ -203,3 +203,11 @@ Log:
         - A system to get all the links in my firefox folder
         - Ideally, all in one place.
 
+  23/05/24: Dealing with automatically adding additional context to memos 
+
+    - We need to find ways to automatically added text from images into their metadata, along 
+    with:
+        - Suggesting what type of goal/activity was being prepared or scheduled.
+        - Suggesting what steps need to be taken in order to do that activity.
+        - Suggesting what resources would be most helpful in getting that activity done.
+        - Grouping things into categories.

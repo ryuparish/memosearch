@@ -55,7 +55,7 @@ def test_notes_insertion(app, client):
     assert response.json["date"] == "2023-01-09T02:46:36.013Z"
     assert response.json["related_activity"] == "some related activity"
     assert response.json["view"] == "some view"
-    assert response.json["description_string"] == "some description"
+    assert response.json["description_string"] == "some about text some related activity some view"
 
 
 def test_link_insertion(app, client):
@@ -91,7 +91,7 @@ def test_link_insertion(app, client):
     assert response.json["site_name"] == "google.com"
     assert response.json["related_activity"] == "some related activity"
     assert response.json["view"] == "some view"
-    assert response.json["description_string"] == "some description"
+    assert response.json["description_string"] == "some about text some related activity some view"
 
 
 def test_screenshot_insertion(app, client):
@@ -108,7 +108,7 @@ def test_screenshot_insertion(app, client):
         "activity": "some related activity",
         "view": "some view",
         "file": (open(image, "rb"), image),
-        "description_string": "some description",
+        "description_string": "something some related activity some view",
     }
 
     # Get generated id and check information
@@ -131,7 +131,7 @@ def test_screenshot_insertion(app, client):
     assert response.json["path"] != ("" or None)
     assert response.json["related_activity"] == "some related activity"
     assert response.json["view"] == "some view"
-    assert response.json["description_string"] == "some description"
+    assert response.json["description_string"] == "something some related activity some view"
 
 
 # Testing updates

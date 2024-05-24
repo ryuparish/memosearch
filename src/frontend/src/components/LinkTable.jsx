@@ -18,6 +18,7 @@ export default function LinkTable() {
   } = useContext(AppContext);
 
   const date = new Date();
+  const cleaned_date = date.toLocaleString();
 
   /**
    * Function for loading links file into links state.
@@ -43,7 +44,7 @@ export default function LinkTable() {
               id: Math.floor(Math.random() * 65536),
               about: "",
               link: anchors[i].href,
-              date: date,
+              date: cleaned_date,
               site_name: domain ? matches[1] : "",
               related_activity: "",
               status: "New",
@@ -103,7 +104,7 @@ export default function LinkTable() {
           id: link.id,
           about: event.target.value,
           link: link.link,
-          date: date,
+          date: cleaned_date,
           site_name: link.site_name,
           related_activity: link.related_activity,
           status: "New",
@@ -124,7 +125,7 @@ export default function LinkTable() {
           id: link.id,
           about: link.about,
           link: link.link,
-          date: date,
+          date: cleaned_date,
           site_name: link.site_name,
           related_activity: event.target.value,
           status: "New",
@@ -141,7 +142,7 @@ export default function LinkTable() {
         id: Math.floor(Math.random() * 65536),
         link: "",
         about: "",
-        date: date,
+        date: cleaned_date,
         site_name: "",
         related_activity: "",
         status: "New",
@@ -199,7 +200,7 @@ export default function LinkTable() {
             id: link.id,
             about: link.about,
             link: link.link,
-            date: date,
+            date: cleaned_date,
             site_name: link.site_name,
             related_activity: link.related_activity,
             status: "Done",

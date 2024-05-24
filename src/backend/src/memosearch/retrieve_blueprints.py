@@ -204,6 +204,10 @@ def topfive():
             new_addition[key] = screenshot[key]
         top_5_screenshots_parsed.append(new_addition)
 
+    top_5_screenshots = {key: screenshot[key]
+                   for screenshot in top_5_screenshots for key in screenshot.keys()}
+
+    print(f"Here are the top ten screenshots: {top_5_screenshots_parsed}")
     res = {"links": top_5_links_parsed, "notes": top_5_notes_parsed,
            "screenshots": top_5_screenshots_parsed}
 

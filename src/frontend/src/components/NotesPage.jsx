@@ -20,6 +20,7 @@ export default function NotesPage() {
 
   // Get current date and insert into input field.
   const date = new Date();
+  const cleaned_date = date.toLocaleString();
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
   // Get the submitted values and call the python backend
@@ -47,7 +48,7 @@ export default function NotesPage() {
       noteTitle:noteTitle,
       noteActivity:noteActivity,
       noteAbout:noteAbout,
-      noteDate:date,
+      noteDate:cleaned_date,
       view:view,
       description_string:noteAbout.slice(0,150) + " " + noteActivity + " " + view,
     }

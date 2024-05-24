@@ -22,6 +22,7 @@ export default function ScreenshotsPage() {
   } = useContext(AppContext);
 
   const date = new Date();
+  const cleaned_date = date.toLocaleString();
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
   /**
@@ -60,7 +61,8 @@ export default function ScreenshotsPage() {
     formData.append("activity", screenshotActivity)
     formData.append("about", screenshotAbout)
     formData.append("view", view)
-    formData.append("date", date)
+    formData.append("date", cleaned_date)
+    console.log("Here is the date we send: " + cleaned_date);
 
 
     // Post to the "links" api
@@ -75,7 +77,7 @@ export default function ScreenshotsPage() {
         return response.json();
       })
       .then((data) => {
-        console.log("Here is the data we put into the database: " + JSON.stringify(data[0]));
+        console.log("Here is the data: " + data);
       })
       .catch((error) => console.log(error));
     setPage("main");
