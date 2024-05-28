@@ -30,6 +30,8 @@ export default function App() {
   const [views, setViews] = React.useState(["all"]);
   const [view, setView] = React.useState("all");
   const [show, setShow] = React.useState(false);
+  const [newEventName, setNewEventName] = React.useState("default");
+  const [newEventType, setNewEventType] = React.useState("default");
 
   // Google Calendar State
   const [user, setUser] = React.useState(null);
@@ -114,13 +116,17 @@ export default function App() {
     setProfile,
     calendarEvents,
     setCalendarEvents,
+    newEventName,
+    setNewEventName,
+    newEventType,
+    setNewEventType,
   }
 
   
   // Persist the access token until it expires.
   useEffect(() => {
-      setUser(JSON.parse(window.sessionStorage.getItem("user")));
-    }, []);
+    setUser(JSON.parse(window.sessionStorage.getItem("user")));
+  }, []);
 
   useEffect(() => {
     if (user){

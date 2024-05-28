@@ -211,3 +211,9 @@ Log:
         - Suggesting what steps need to be taken in order to do that activity.
         - Suggesting what resources would be most helpful in getting that activity done.
         - Grouping things into categories.
+
+  24/05/24: Adding events to google calendar through the webapp.
+
+    - It would be nice if we could add events to the calendar without having to go through the google calendar app, just a simple form to fill out and send
+    to google calendar for it to create an event.
+        - Use Google Calendar API to send through the Javascript frontend.
