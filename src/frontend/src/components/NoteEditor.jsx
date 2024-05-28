@@ -127,8 +127,6 @@ export default function NoteEditor() {
       .catch((error) => console.log(error));
   }
 
-
-
   // Get the submitted values and call the python backend
   // to create the database entry
   function handleDelete(event) {

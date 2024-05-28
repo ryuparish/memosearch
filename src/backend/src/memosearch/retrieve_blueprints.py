@@ -24,7 +24,6 @@ def views():
     :returns: List of strings that represent the views in the database.
     :rtype: list(str)
     """
-    print(f"IN VIEWS here is the request: {request}")
     if request.method == "GET":
         all_views = set()
         all_views.add("all")
@@ -207,7 +206,6 @@ def topfive():
     top_5_screenshots = {key: screenshot[key]
                    for screenshot in top_5_screenshots for key in screenshot.keys()}
 
-    print(f"Here are the top ten screenshots: {top_5_screenshots_parsed}")
     res = {"links": top_5_links_parsed, "notes": top_5_notes_parsed,
            "screenshots": top_5_screenshots_parsed}
 
@@ -423,7 +421,6 @@ def get_similar_memos(memo):
                 neighbors.append(notes_parsed[idx])
             else:
                 print("Never found the returned index in dictionaries: " + str(idx))
-                print("Keys of notes: " + json.dumps(notes_parsed))
 
         return neighbors
     print("get similar memos got a null description_string")

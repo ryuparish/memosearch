@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useContext } from 'react';
+import React, { useEffect, useRef, useCallback, useContext } from 'react';
 import link_image from "../images/link.jpg";
 import screenshot_image from "../images/screenshot.jpg";
 import notes_image from "../images/notes.png";
@@ -14,6 +14,8 @@ import ViewDropdown from "./ViewDropdown";
 import Calendar from '@toast-ui/react-calendar';
 import '@toast-ui/calendar/dist/toastui-calendar.min.css';
 import { useGoogleLogin } from '@react-oauth/google';
+import 'tui-date-picker/dist/tui-date-picker.css';
+import 'tui-time-picker/dist/tui-time-picker.css';
 
 /**
  * 
@@ -35,6 +37,42 @@ export default function MainPageContent() {
     setNewEventType
   } = useContext(AppContext); // Getting all the views and changing when clicked in dropdown.
 
+  const calendarRef = useRef();
+
+  // Adding the delete feature to the TUI calendar
+  useEffect(() => {
+    // If there is a calendar active
+    if (calendarRef.current) {
+
+      calendarRef.current.calendarInstance.on('beforeDeleteEvent', (eventObj) => {
+
+        // If we still have the event in our calendar events state, we delete from gcal and actual calendar.
+        if (calendarEvents[eventObj.id]){
+
+          // Deleting from Google Calendar
+          fetch(`https://www.googleapis.com/calendar/v3/calendars/ryuparish1115@gmail.com/events/${calendarEvents[eventObj.id].GCalId}?key=AIzaSyAdqZjAT9-3uUSIjl8rsZbx4QjNOVCd3wE`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${user.access_token}`
+            },
+          })
+            .then((response) => {
+              return response.json();
+            })
+            .then((data) => {
+              console.log("Here is the data we put into the database: " + JSON.stringify(data));
+            })
+            .catch((error) => console.log(error));
+
+          // Deleting from the actual calendar object
+          delete calendarEvents[eventObj.id];
+          console.log("Deleted: " + eventObj.id);
+        }
+      })
+    }
+  }, [calendarEvents]);
+
+
   // Login to Google to see Calendar
   const login = useGoogleLogin({
     scope: [
@@ -47,6 +85,16 @@ export default function MainPageContent() {
     onSuccess: (codeResponse) => setUser(codeResponse),
     onError: (error) => console.log('Login Failed:', error),
   });
+
+  // Delete event object from google calendar
+  function handleEventDelete(event) {
+    event.preventDefault()
+    console.log("Here is the event in handleEventDelete: " + event);
+
+    // Post to the google calendar api to create event
+    if (user) {
+    }
+  }
 
   // Send new event object to google calendar
   function handleEventSubmit(event) {
@@ -76,7 +124,7 @@ export default function MainPageContent() {
           return response.json();
         })
         .then((data) => {
-          console.log("Here is the data we put into the database: " + JSON.stringify(data));
+          console.log("Here is the new event: " + JSON.stringify(data));
         })
         .catch((error) => console.log(error));
     }
@@ -153,6 +201,7 @@ export default function MainPageContent() {
             </fieldset>
             <br />
             <Calendar
+              ref={calendarRef}
               height="900px"
               view="week"
               events={Object.values(calendarEvents)}

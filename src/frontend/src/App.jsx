@@ -160,6 +160,7 @@ export default function App() {
         for (var i = 0; i < events.length; i++){
           if (!calendarEvents[events[i].created]){
             newCalendarEvents[events[i].created] = {
+              GCalId: events[i].id,
               id: events[i].created,
               title: events[i].summary || "something",
               start: events[i].start.dateTime,
@@ -204,6 +205,7 @@ export default function App() {
         return response.json();
       })
       .then((data) => {
+
         // Collect the search results to put into searchResults
         let top_fives = []
         for (const key in data) {
