@@ -6,7 +6,7 @@ import sqlite3
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 faiss_index = faiss.IndexFlatL2(384) # Note the size of the vector because of this specific model
 faiss_index = faiss.IndexIDMap(faiss_index)
-con = sqlite3.connect("data.db")
+con = sqlite3.connect("memos.db")
 cur = con.cursor()
 cur.execute("SELECT * FROM notes")
 

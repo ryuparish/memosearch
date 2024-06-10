@@ -3,44 +3,46 @@ import click
 from flask import current_app, g
 
 
-def get_db():
-    """Get the global database connection (sqlite3)
+def get_db(database_name='memos'):
+    """Manage and get the global database connection (sqlite3)
 
-    :returns: global flask database object (g.db)
+    :returns: global flask database object for the respective database
     :rtype: sqlite3.Connection
     """
-    if 'db' not in g:
-        g.db = sqlite3.connect(
+
+    if database_name in g:
+        return g[database_name]
+    else:
+        g[database_name] = sqlite3.connect(
             current_app.config['DATABASE'],
             detect_types=sqlite3.PARSE_DECLTYPES
         )
-        g.db.row_factory = sqlite3.Row
+        g[database_name].row_factory = sqlite3.Row
+        return g[database_name]
 
-    return g.db
 
-
-def close_db(e=None):
+def close_db(database_name='memos', e=None):
     """Close connection if connection is still present
     We use e to catch errors that cause a teardown.
 
     :param e: Optional parameter because of close_db bug. Defaults to None
     :returns: None
     """
-    db = g.pop('db', None)
+    db = g.pop(database_name, None)
 
     if db is not None:
         db.close()
 
 
-def init_db():
+def init_db(database_name='memos'):
     """
     Initialize database and load with schema sql file (schema.sql)
 
     :returns: None
     """
-    db = get_db()
+    db = get_db(database_name)
 
-    with current_app.open_resource('schema.sql') as f:
+    with current_app.open_resource(database_name + '.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
 

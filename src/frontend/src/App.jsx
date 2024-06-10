@@ -122,14 +122,14 @@ export default function App() {
     setNewEventType,
   }
 
-  
+
   // Persist the access token until it expires.
   useEffect(() => {
     setUser(JSON.parse(window.sessionStorage.getItem("user")));
   }, []);
 
   useEffect(() => {
-    if (user){
+    if (user) {
       window.sessionStorage.setItem("user", JSON.stringify(user));
     }
   }, [user]);
@@ -154,11 +154,11 @@ export default function App() {
           return notTooEarly && notTooLate;
         });
 
-        var newCalendarEvents = {...calendarEvents};
+        var newCalendarEvents = { ...calendarEvents };
 
         // Convert the Google data into calendar event for Toast UI Calendar.
-        for (var i = 0; i < events.length; i++){
-          if (!calendarEvents[events[i].created]){
+        for (var i = 0; i < events.length; i++) {
+          if (!calendarEvents[events[i].created]) {
             newCalendarEvents[events[i].created] = {
               GCalId: events[i].id,
               id: events[i].created,
@@ -256,10 +256,10 @@ export default function App() {
       <Router>
         <Routes>
           <Route index element={<AppContext.Provider value={all_states}>
-                                  <GoogleOAuthProvider clientId={"244785002873-4j6tlhji2o8kp1f29ub346ah442qpoi1.apps.googleusercontent.com"}>
-                                    <MainPage />
-                                  </GoogleOAuthProvider>
-                                </AppContext.Provider>} />
+            <GoogleOAuthProvider clientId={"244785002873-4j6tlhji2o8kp1f29ub346ah442qpoi1.apps.googleusercontent.com"}>
+              <MainPage />
+            </GoogleOAuthProvider>
+          </AppContext.Provider>} />
           <Route path="/note/:Id" element={<AppContext.Provider value={all_states}><NoteEditor /></AppContext.Provider>} />
           <Route path="/link/:Id" element={<AppContext.Provider value={all_states}><LinkEditor /></AppContext.Provider>} />
           <Route path="/screenshot/:Id" element={<AppContext.Provider value={all_states}><ScreenshotEditor /></AppContext.Provider>} />

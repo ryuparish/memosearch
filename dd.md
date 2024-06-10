@@ -216,4 +216,11 @@ Log:
 
     - It would be nice if we could add events to the calendar without having to go through the google calendar app, just a simple form to fill out and send
     to google calendar for it to create an event.
-        - Use Google Calendar API to send through the Javascript frontend.
+        - SOLUTION: Use Google Calendar API to send commands through the Javascript frontend.
+
+  09/06/24: Dealing with Task Management
+
+    - There should be some sort of task management system that allows us to create tasks both implicitly and 
+    explicitly for ease of use. Then we should also have some sort of task board that can send reminders to do tasks that I have assigned.
+    Even have a table that allows us to quickly delete tasks that are too old or allow us to refresh them.
+        

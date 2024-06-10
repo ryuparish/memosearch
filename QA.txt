@@ -33,8 +33,6 @@ What is public/main.js?
   - This file in the src is for piping everything that the react application on port XXXX sends into the
   electron desktop application.
 
-How does the search page work in
-
 What is the process of getting a link added, analyzed and retrieved?
   - Adding a link
     * User enters information in on the Links icon.
@@ -87,3 +85,17 @@ So, the flask tutorial from the docs uses sqlite3 w/ no sqlalchemy. How are we g
 to set up the testing? In specific, how are going to create then insert values into a table and refresh every time?
 
   - We will have to convert all of our sqlalchemy code into the raw sqlite commands.
+
+How does the task management system work?
+
+  - We will use the fronend to send new tasks to the backend server through forms and a table for deleting 
+  tasks. The backend can process one or more tasks and then keep track of a list of tasks in a database.
+  The backend should also handle the reminder system and update the reminders upon loading.
+
+How does the reminder system work?
+
+  - The python backend will track the unix time stamp of the expiration time (one week) for a 
+  task. The task can then be considered active or needing review. Both types of tasks will then 
+  be sent to the frontend, tagged with active or needing review. These tasks should get their status
+  updated everytime the python server is loaded and should send the reminder immediately after the 
+  server is loaded and while the server is loaded.
